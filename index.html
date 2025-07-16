@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>macOS Homepage</title>
+    <title>Leonard Zirk | Creative Strategist</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -70,6 +71,8 @@
             transform: scale(1.2);
             margin-bottom: 10px;
         }
+
+        /* --- Desktop-Only Icon Styles --- */
         .desktop-icon {
             color: white;
             text-align: center;
@@ -78,7 +81,7 @@
             cursor: grab;
             z-index: 100;
         }
-        .desktop-icon img {
+        .desktop-icon img, .desktop-icon .folder-icon-svg {
             width: 60px;
             height: 60px;
             margin: 0 auto;
@@ -89,155 +92,99 @@
             text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
             word-wrap: break-word;
         }
-        #cv-icon {
-            top: 40px;
-            right: 20px;
-        }
-        #linkedin-icon {
-            top: 140px;
-            right: 20px;
-        }
-        #github-icon {
-            top: 240px;
-            right: 20px;
-        }
-        #instagram-icon {
-            top: 340px;
-            right: 20px;
-        }
-        #tiktok-icon {
-            top: 440px;
-            right: 20px;
-        }
-        #substack-icon {
-            top: 540px;
-            right: 20px;
-        }
-        /* --- NEW CSS FOR Klipp Linding Lab ICON --- */
-        #klipp-linding-icon {
-            top: 640px;
-            right: 20px;
-        }
-        /* --- END NEW CSS --- */
-
-        /* Window Styles */
+        
+        /* --- Mobile-First Window Styles --- */
         .window {
-            position: absolute;
-            top: 100px;
-            left: 100px;
-            width: 600px;
-            max-width: 90vw;
-            height: 70vh;
-            background-color: rgba(40, 40, 40, 0.6);
+            position: fixed; /* Fullscreen on mobile */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(30, 30, 30, 0.8);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
-            border-radius: 12px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             z-index: 500;
             display: flex;
             flex-direction: column;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
+
+        /* --- Desktop Window Overrides (using Tailwind's lg prefix) --- */
+        .lg\:window-desktop {
+            position: absolute !important;
+            top: 100px !important;
+            left: 100px !important;
+            width: 600px !important;
+            height: 70vh !important;
+            border-radius: 12px !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
         .window-header {
             display: flex;
             align-items: center;
             padding: 8px;
             background-color: rgba(60, 60, 60, 0.8);
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            cursor: move;
+            cursor: default; /* Default cursor */
             color: white;
             font-size: 14px;
             flex-shrink: 0;
         }
-        .traffic-lights {
-            display: flex;
-            gap: 8px;
-            margin-right: 8px;
+        .lg\:window-desktop .window-header {
+            cursor: move; /* Draggable cursor on desktop */
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
         }
-        .traffic-light {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
+        .traffic-lights { display: flex; gap: 8px; margin-right: 8px; }
+        .traffic-light { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
         .close { background-color: #ff5f56; }
         .minimize { background-color: #ffbd2e; }
         .maximize { background-color: #27c93f; }
-        .window-body {
-            padding: 20px;
-            color: #e0e0e0;
-            overflow-y: auto;
-            flex-grow: 1;
+        .window-body { padding: 20px; color: #e0e0e0; overflow-y: auto; flex-grow: 1; }
+        .window-body h2 { font-size: 1.2rem; font-weight: 600; color: white; margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.25rem; }
+        .window-body p { margin-bottom: 0.75rem; line-height: 1.6; }
+        .cv-header { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1rem; margin-bottom: 2rem; }
+        @media (min-width: 640px) { /* sm breakpoint */
+            .cv-header { flex-direction: row; text-align: left; }
         }
-        .window-body h2 {
-            font-size: 1.2rem;
-            font-weight: 600;
+        .cv-header img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+        .cv-header-info h1 { font-size: 2rem; font-weight: 700; color: white; }
+        
+        /* --- Mobile Icon Grid --- */
+        .mobile-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
             color: white;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding-bottom: 0.25rem;
+            text-align: center;
+            cursor: pointer;
         }
-        .window-body p {
-            margin-bottom: 0.75rem;
-            line-height: 1.6;
-        }
-        .window-body strong {
-            color: white;
-            font-weight: 500;
-        }
-        .cv-header {
+        .mobile-icon .icon-bg {
+            width: 64px;
+            height: 64px;
+            border-radius: 1rem;
             display: flex;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 2rem;
+            justify-content: center;
+            background-color: rgba(255,255,255,0.1);
         }
-        .cv-header img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .cv-header-info h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: white;
-        }
-        /* Contact Form Styles */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #ccc;
-        }
-        .form-group input, .form-group textarea {
+        .mobile-icon img {
             width: 100%;
-            background-color: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
-            padding: 10px;
-            color: white;
-            outline: none;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 1rem;
         }
-        .form-group input:focus, .form-group textarea:focus {
-            border-color: #4a90e2;
+        .mobile-icon .fa-folder, .mobile-icon .fa-file-lines {
+            font-size: 32px;
+            color: #60a5fa;
         }
-        .submit-btn {
-            background-color: #4a90e2;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-        .submit-btn:disabled {
-            background-color: #333;
-            cursor: not-allowed;
+        .mobile-icon p {
+            font-size: 12px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            word-wrap: break-word;
+            width: 80px;
         }
     </style>
 </head>
@@ -252,77 +199,70 @@
         <div class="flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-apple" viewBox="0 0 16 16"><path d="M11.182.008C10.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516s.579.09 1.672-.93c1.092-1.02 1.869-2.059 2.354-2.468C12.433.056 12.318 0 11.182.007Zm.622 1.422a3.48 3.48 0 0 0-2.233 2.233c.213.01.426.01.639.01.213 0 .426 0 .64-.01A3.48 3.48 0 0 0 11.804 1.43Z"/><path d="M8 1a2.5 2.5 0 0 1 2.5 2.5A2.5 2.5 0 0 1 8 6a2.5 2.5 0 0 1-2.5-2.5A2.5 2.5 0 0 1 8 1Zm0 9.5A2.5 2.5 0 0 1 5.5 13a2.5 2.5 0 0 1 2.5 2.5A2.5 2.5 0 0 1 8 13a2.5 2.5 0 0 1 2.5-2.5A2.5 2.5 0 0 1 8 10.5Z"/><path d="M4.176 5.633A6.5 6.5 0 0 0 8 15a6.5 6.5 0 0 0 3.824-9.367c.213.01.426.01.64.01.213 0 .426 0 .639-.01A6.5 6.5 0 0 0 16 8a6.5 6.5 0 0 0-6.5-6.5A6.5 6.5 0 0 0 3.176 8c0 .213.01.426.01.64 0 .213 0 .426-.01.639A6.5 6.5 0 0 0 4.176 5.633Z"/></svg>
-                <span class="font-bold">Finder</span>
-                <span>File</span>
-                <span>Edit</span>
-                <span>View</span>
-                <span>Go</span>
-                <span>Window</span>
-                <span>Help</span>
+                <span class="font-bold hidden sm:inline">Finder</span>
+                <span class="hidden sm:inline">File</span>
+                <span class="hidden sm:inline">Edit</span>
+                <span class="hidden sm:inline">View</span>
             </div>
             <div id="time" class="font-medium"></div>
         </div>
     </div>
 
-    <!-- Desktop Icons -->
-    <div class="p-5">
-        <div id="cv-icon" class="desktop-icon">
+    <!-- Desktop Icons (Hidden on mobile) -->
+    <div id="desktop-icons-container" class="p-5 hidden lg:block">
+        <div id="cv-icon-desktop" class="desktop-icon" style="top: 40px; right: 20px;">
              <img src="https://ik.imagekit.io/ex6ksvxsvk/mailicon.png?updatedAt=1752667698506" alt="CV Icon" class="rounded-lg">
              <p>CV Leonard Zirk Juni.pdf</p>
         </div>
-
-        <div id="linkedin-icon" class="desktop-icon">
+        <div data-url="https://www.linkedin.com/in/leonard-zirk-9687ba223/" class="desktop-icon link-icon" style="top: 140px; right: 20px;">
             <img src="https://ik.imagekit.io/ex6ksvxsvk/linkedin.png?updatedAt=1752678709680" alt="LinkedIn Icon" class="rounded-md">
             <p>LinkedIn.url</p>
         </div>
-        <div id="github-icon" class="desktop-icon">
+        <div data-url="https://github.com/Devilthatwearsprada" class="desktop-icon link-icon" style="top: 240px; right: 20px;">
             <img src="https://ik.imagekit.io/ex6ksvxsvk/github.png?updatedAt=1752679143531" alt="GitHub Icon" class="rounded-full">
             <p>GitHub.url</p>
         </div>
-        <div id="instagram-icon" class="desktop-icon">
-            <img src="https://ik.imagekit.io/ex6ksvxsvk/instagramicon.webp?updatedAt=1752678971026" alt="Instagram Icon" class="rounded-md">
-            <p>Instagram.url</p>
+        <div id="projects-icon-desktop" class="desktop-icon" style="top: 40px; left: 20px;">
+            <i class="fas fa-folder fa-3x" style="color: #60a5fa;"></i>
+            <p>Projects</p>
         </div>
-        <div id="tiktok-icon" class="desktop-icon">
-            <img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon" class="rounded-md">
-            <p>TikTok.url</p>
-        </div>
-        <div id="substack-icon" class="desktop-icon">
-            <img src="https://ik.imagekit.io/ex6ksvxsvk/substack.png?updatedAt=1752679004979" alt="Substack Icon" class="rounded-md">
-            <p>Substack.url</p>
-        </div>
-        <!-- --- NEW HTML FOR Klipp Linding Lab ICON --- -->
-        <div id="klipp-linding-icon" class="desktop-icon">
-            <img src="https://ik.imagekit.io/ex6ksvxsvk/klipplindinglab_256.png?updatedAt=1752678845945" alt="Klipp Linding Lab Icon" class="rounded-md">
-            <p>Klipp Linding Lab.url</p>
-        </div>
-        <!-- --- END NEW HTML --- -->
     </div>
 
-    <!-- CV Window -->
-    <div id="cv-window" class="window hidden">
-        <div class="window-header">
-            <div class="traffic-lights"><div class="traffic-light close"></div><div class="traffic-light minimize"></div><div class="traffic-light maximize"></div></div>
-            <span class="flex-grow text-center">CV Leonard Zirk Juni.pdf</span>
+    <!-- Mobile Icon Grid (Hidden on desktop) -->
+    <div id="mobile-icons-container" class="pt-20 px-5 pb-24 lg:hidden h-full overflow-y-auto">
+        <div class="grid grid-cols-3 sm:grid-cols-4 gap-y-8 gap-x-4">
+            <div id="cv-icon-mobile" class="mobile-icon">
+                <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/mailicon.png?updatedAt=1752667698506" alt="CV Icon"></div>
+                <p>CV Leonard Zirk</p>
+            </div>
+            <div id="projects-icon-mobile" class="mobile-icon">
+                <div class="icon-bg"><i class="fas fa-folder"></i></div>
+                <p>Projects</p>
+            </div>
+            <div data-url="https://www.linkedin.com/in/leonard-zirk-9687ba223/" class="mobile-icon link-icon">
+                <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/linkedin.png?updatedAt=1752678709680" alt="LinkedIn Icon"></div>
+                <p>LinkedIn</p>
+            </div>
+            <div data-url="https://github.com/Devilthatwearsprada" class="mobile-icon link-icon">
+                <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/github.png?updatedAt=1752679143531" alt="GitHub Icon" class="rounded-full"></div>
+                <p>GitHub</p>
+            </div>
+            <div data-url="https://www.instagram.com/your-username" class="mobile-icon link-icon">
+                <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/instagramicon.webp?updatedAt=1752678971026" alt="Instagram Icon"></div>
+                <p>Instagram</p>
+            </div>
+            <div data-url="https://www.tiktok.com/@leonardzirk" class="mobile-icon link-icon">
+                <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon"></div>
+                <p>TikTok</p>
+            </div>
         </div>
-        <div class="window-body"><!-- CV Content is injected by JS --></div>
     </div>
-    
-    <!-- Contact Window -->
-    <div id="contact-window" class="window hidden">
-        <div class="window-header">
-            <div class="traffic-lights"><div class="traffic-light close"></div><div class="traffic-light minimize"></div><div class="traffic-light maximize"></div></div>
-            <span class="flex-grow text-center">Contact Me</span>
-        </div>
-        <div class="window-body">
-            <form>
-                <div class="form-group"><label for="name">Name</label><input type="text" id="name" name="name" required></div>
-                <div class="form-group"><label for="email">Your Email</label><input type="email" id="email" name="email" required></div>
-                <div class="form-group"><label for="message">Message</label><textarea id="message" name="message" rows="4" required></textarea></div>
-                <button type="submit" class="submit-btn">Send</button>
-            </form>
-        </div>
-    </div>
+
+    <!-- Windows -->
+    <div id="cv-window" class="window hidden"><div class="window-content"><!-- Content Injected by JS --></div></div>
+    <div id="contact-window" class="window hidden"><div class="window-content"><!-- Content Injected by JS --></div></div>
+    <div id="projects-window" class="window hidden"><div class="window-content"><!-- Content Injected by JS --></div></div>
+    <div id="story-window" class="window hidden"><div class="window-content"><!-- Content Injected by JS --></div></div>
 
     <!-- Dock -->
     <div class="dock">
@@ -330,211 +270,215 @@
         <div id="contact-dock-icon" class="dock-item"><img src="https://ik.imagekit.io/ex6ksvxsvk/mailicon.png?updatedAt=1752667698506" alt="Mail"></div>
         <div class="dock-item"><img src="https://placehold.co/48x48/db2777/ffffff?text=P" alt="Photos" class="rounded-lg"></div>
         <div class="dock-item"><img src="https://placehold.co/48x48/16a34a/ffffff?text=S" alt="Safari" class="rounded-lg"></div>
-        <div class="dock-item"><img src="https://placehold.co/48x48/f97316/ffffff?text=N" alt="Notes" class="rounded-lg"></div>
     </div>
 
     <script>
-        const timeEl = document.getElementById('time');
-        
-        // --- Clock ---
-        function updateTime() {
-            const now = new Date();
-            const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            timeEl.textContent = now.toLocaleDateString('en-US', options).replace(',', '');
-        }
-        updateTime();
-        setInterval(updateTime, 1000 * 60);
+        document.addEventListener('DOMContentLoaded', () => {
+            const timeEl = document.getElementById('time');
+            let isDesktop = window.innerWidth >= 1024;
 
-        // --- Generic Window/Icon Dragging and Opening Logic ---
+            // --- Clock ---
+            function updateTime() {
+                const now = new Date();
+                const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                timeEl.textContent = now.toLocaleDateString('en-US', options).replace(',', '');
+            }
+            updateTime();
+            setInterval(updateTime, 1000 * 60);
 
-        function makeWindowDraggable(windowEl) {
-            const header = windowEl.querySelector('.window-header');
-            let isDragging = false;
-            let offsetX, offsetY;
-
-            header.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                offsetX = e.clientX - windowEl.getBoundingClientRect().left;
-                offsetY = e.clientY - windowEl.getBoundingClientRect().top;
-                header.style.cursor = 'grabbing';
-                document.querySelectorAll('.window').forEach(w => w.style.zIndex = 500);
-                windowEl.style.zIndex = 501;
-            });
-
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                windowEl.style.left = `${e.clientX - offsetX}px`;
-                windowEl.style.top = `${e.clientY - offsetY}px`;
-            });
-
-            document.addEventListener('mouseup', () => {
-                isDragging = false;
-                header.style.cursor = 'move';
-            });
-        }
-        
-        function makeIconDraggable(iconEl) {
-            let isDragging = false;
-            let hasDragged = false;
-            let offsetX, offsetY;
-
-            iconEl.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                hasDragged = false;
-                offsetX = e.clientX - iconEl.getBoundingClientRect().left;
-                offsetY = e.clientY - iconEl.getBoundingClientRect().top;
-                iconEl.style.cursor = 'grabbing';
-                iconEl.style.zIndex = 101;
-            });
-
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                hasDragged = true;
-                iconEl.style.left = `${e.clientX - offsetX}px`;
-                iconEl.style.top = `${e.clientY - offsetY}px`;
-            });
-
-            document.addEventListener('mouseup', () => {
-                isDragging = false;
-                iconEl.style.cursor = 'grab';
-                iconEl.style.zIndex = 100;
-                // Use a short timeout to prevent click event from firing after a drag
-                setTimeout(() => { hasDragged = false; }, 0);
-            });
+            // --- Window Management ---
+            const windows = document.querySelectorAll('.window');
             
-            // This closure returns the state of `hasDragged` at the moment of the click
-            return () => hasDragged;
-        }
-
-        // --- CV App ---
-        const cvWindow = document.getElementById('cv-window');
-        const cvIcon = document.getElementById('cv-icon');
-        const cvDockIcon = document.getElementById('cv-dock-icon');
-        const cvWasDragged = makeIconDraggable(cvIcon);
-
-        const openCvWindow = () => {
-            cvWindow.classList.remove('hidden');
-            cvWindow.style.zIndex = 501;
-        };
-        
-        cvIcon.addEventListener('click', () => {
-            if (!cvWasDragged()) {
-                openCvWindow();
+            function openWindow(windowEl) {
+                windows.forEach(w => w.style.zIndex = 500);
+                windowEl.classList.remove('hidden');
+                windowEl.style.zIndex = 501;
+                if (isDesktop) {
+                    windowEl.classList.add('lg:window-desktop');
+                } else {
+                    windowEl.classList.remove('lg:window-desktop');
+                }
             }
-        });
-        cvDockIcon.addEventListener('click', openCvWindow);
-        cvWindow.querySelector('.close').addEventListener('click', () => cvWindow.classList.add('hidden'));
-        makeWindowDraggable(cvWindow);
-        
-        // --- Contact App ---
-        const contactWindow = document.getElementById('contact-window');
-        const contactDockIcon = document.getElementById('contact-dock-icon');
-        const contactForm = contactWindow.querySelector('form');
-        const submitBtn = contactForm.querySelector('.submit-btn');
-        
-        contactDockIcon.addEventListener('click', () => {
-            contactWindow.classList.remove('hidden');
-            contactWindow.style.zIndex = 501;
-        });
-        contactWindow.querySelector('.close').addEventListener('click', () => contactWindow.classList.add('hidden'));
-        makeWindowDraggable(contactWindow);
 
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = contactForm.querySelector('#name').value;
-            const email = contactForm.querySelector('#email').value;
-            const message = contactForm.querySelector('#message').value;
-            const myEmail = 'leonard.zirk@gmail.com';
-            const subject = `Message from ${name} via Website`;
-            const body = `From: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
-            const mailtoLink = `mailto:${myEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-            window.open(mailtoLink);
-
-            submitBtn.textContent = 'Sent!';
-            submitBtn.disabled = true;
-            setTimeout(() => {
-                submitBtn.textContent = 'Send';
-                submitBtn.disabled = false;
-                contactForm.reset();
-                contactWindow.classList.add('hidden');
-            }, 3000);
-        });
-
-        // --- Social Icons Logic ---
-        const linkedinIcon = document.getElementById('linkedin-icon');
-        const githubIcon = document.getElementById('github-icon');
-        const instagramIcon = document.getElementById('instagram-icon');
-        const tiktokIcon = document.getElementById('tiktok-icon');
-        const substackIcon = document.getElementById('substack-icon');
-        // --- NEW JAVASCRIPT FOR Klipp Linding Lab ICON ---
-        const klippLindingIcon = document.getElementById('klipp-linding-icon');
-
-        const linkedinWasDragged = makeIconDraggable(linkedinIcon);
-        const githubWasDragged = makeIconDraggable(githubIcon);
-        const instagramWasDragged = makeIconDraggable(instagramIcon);
-        const tiktokWasDragged = makeIconDraggable(tiktokIcon);
-        const substackWasDragged = makeIconDraggable(substackIcon);
-        const klippLindingWasDragged = makeIconDraggable(klippLindingIcon);
-
-        linkedinIcon.addEventListener('click', () => {
-            if (!linkedinWasDragged()) {
-                window.open('https://www.linkedin.com/in/leonard-zirk-9687ba223/', '_blank');
+            function closeWindow(windowEl) {
+                windowEl.classList.add('hidden');
             }
-        });
-        
-        githubIcon.addEventListener('click', () => {
-            if (!githubWasDragged()) {
-                window.open('https://github.com/Devilthatwearsprada', '_blank');
-            }
-        });
-        
-        instagramIcon.addEventListener('click', () => {
-            if (!instagramWasDragged()) {
-                // IMPORTANT: Replace with your actual Instagram URL
-                window.open('https://www.instagram.com/your-username', '_blank');
-            }
-        });
 
-        tiktokIcon.addEventListener('click', () => {
-            if (!tiktokWasDragged()) {
-                // IMPORTANT: Replace with your actual TikTok URL
-                window.open('https://www.tiktok.com/@leonardzirk', '_blank');
-            }
-        });
+            // --- Draggable Logic (Desktop Only) ---
+            function makeWindowDraggable(windowEl) {
+                const header = windowEl.querySelector('.window-header');
+                if (!header) return;
+                let isDragging = false, offsetX, offsetY;
 
-        substackIcon.addEventListener('click', () => {
-            if (!substackWasDragged()) {
-                // IMPORTANT: Replace with your actual Substack URL
-                window.open('https://your-username.substack.com', '_blank');
+                const onMouseDown = (e) => {
+                    if (!isDesktop) return;
+                    isDragging = true;
+                    const rect = windowEl.getBoundingClientRect();
+                    offsetX = e.clientX - rect.left;
+                    offsetY = e.clientY - rect.top;
+                    header.style.cursor = 'grabbing';
+                    openWindow(windowEl); // Bring to front
+                };
+
+                const onMouseMove = (e) => {
+                    if (!isDragging || !isDesktop) return;
+                    windowEl.style.left = `${e.clientX - offsetX}px`;
+                    windowEl.style.top = `${e.clientY - offsetY}px`;
+                };
+
+                const onMouseUp = () => {
+                    isDragging = false;
+                    if (header) header.style.cursor = 'move';
+                };
+                
+                header.addEventListener('mousedown', onMouseDown);
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
             }
-        });
-        
-        klippLindingIcon.addEventListener('click', () => {
-            if (!klippLindingWasDragged()) {
-                window.open('https://klipp-linding.science/index.php/en/', '_blank');
+
+            function makeIconDraggable(iconEl) {
+                let isDragging = false, hasDragged = false, offsetX, offsetY;
+                
+                iconEl.addEventListener('mousedown', (e) => {
+                    if (!isDesktop) return;
+                    isDragging = true;
+                    hasDragged = false;
+                    offsetX = e.clientX - iconEl.getBoundingClientRect().left;
+                    offsetY = e.clientY - iconEl.getBoundingClientRect().top;
+                    iconEl.style.cursor = 'grabbing';
+                    iconEl.style.zIndex = 101;
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging || !isDesktop) return;
+                    hasDragged = true;
+                    iconEl.style.left = `${e.clientX - offsetX}px`;
+                    iconEl.style.top = `${e.clientY - offsetY}px`;
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (!isDesktop) return;
+                    isDragging = false;
+                    iconEl.style.cursor = 'grab';
+                    iconEl.style.zIndex = 100;
+                    setTimeout(() => { hasDragged = false; }, 0);
+                });
+                
+                return () => hasDragged;
             }
+
+            // --- Content Injection ---
+            function injectContent() {
+                // CV Window
+                document.getElementById('cv-window').querySelector('.window-content').innerHTML = `
+                    <div class="window-header"><div class="traffic-lights"><div class="traffic-light close"></div></div><span class="flex-grow text-center">CV Leonard Zirk Juni.pdf</span></div>
+                    <div class="window-body">
+                        <div class="cv-header"><img src="https://i.imgur.com/3f5tJ1e.png" alt="Leonard Zirk"><div class="cv-header-info"><h1>LEONARD ZIRK</h1><p>+49 1637150123 | leonard.zirk@gmail.com</p></div></div>
+                        <p class="italic">"A creative strategist with a scientific background developing pitches and social media campaigns for global brands. Seeking to leverage a unique blend of creative marketing and scientific expertise in a Science Communication / Product Management role."</p>
+                        <h2>Work Experience</h2><p><strong>Guest Scientist</strong> | Klipp Linding Lab (1.4.2025 - 1.2.2025)<br>Development of Hybrid Modeling of Cell Cycle Protein and mRNA.</p>
+                        <p><strong>Creative Strategist</strong> | OZMOZE GMBH (1.6.2024 - 1.1.2025)<br>Project strategies in Social Media, PR-Events for Telekom, Tinder, Duolingo. Preparing Pitch Decks for: Funk, Huawei, Telekom, Spotify.</p>
+                        <h2>Education</h2><p><strong>BACHELOR BIOLOGY</strong> | HUMBOLDT UNIVERSITÄT (16.10.2020 - 1.6.2025)</p>
+                    </div>`;
+
+                // Contact Window
+                document.getElementById('contact-window').querySelector('.window-content').innerHTML = `
+                    <div class="window-header"><div class="traffic-lights"><div class="traffic-light close"></div></div><span class="flex-grow text-center">Contact Me</span></div>
+                    <div class="window-body"><form><div class="mb-4"><label class="block mb-2 text-ccc" for="name">Name</label><input class="w-full bg-black/30 border border-white/20 rounded-lg p-2 text-white" type="text" id="name" required></div><div class="mb-4"><label class="block mb-2 text-ccc" for="email">Your Email</label><input class="w-full bg-black/30 border border-white/20 rounded-lg p-2 text-white" type="email" id="email" required></div><div class="mb-4"><label class="block mb-2 text-ccc" for="message">Message</label><textarea class="w-full bg-black/30 border border-white/20 rounded-lg p-2 text-white" id="message" rows="4" required></textarea></div><button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg font-medium">Send</button></form></div>`;
+
+                // Projects Window
+                document.getElementById('projects-window').querySelector('.window-content').innerHTML = `
+                    <div class="window-header"><div class="traffic-lights"><div class="traffic-light close"></div></div><span class="flex-grow text-center">Projects</span></div>
+                    <div class="window-body p-4 flex gap-4 items-start">
+                        <div id="story-file-icon" class="mobile-icon"><div class="icon-bg"><i class="fas fa-file-lines"></i></div><p>My Story.txt</p></div>
+                    </div>`;
+                
+                // Story Window
+                document.getElementById('story-window').querySelector('.window-content').innerHTML = `
+                    <div class="window-header"><div class="traffic-lights"><div class="traffic-light close"></div></div><span class="flex-grow text-center">My Story.txt</span></div>
+                    <div class="window-body">
+                        <h2 class="text-white font-bold text-xl mb-4">My Journey</h2>
+                        <p>This is where the story of my projects begins. It's a tale of curiosity, late-night coding sessions, and the thrill of bringing ideas to life.</p>
+                        <p>From a simple "Hello, World!" to complex applications, every project has been a stepping stone, teaching me valuable lessons in persistence and problem-solving. This space will document that evolution.</p>
+                    </div>`;
+            }
+
+            // --- Event Listeners Setup ---
+            function setupEventListeners() {
+                // Close buttons
+                windows.forEach(w => {
+                    w.querySelector('.close').addEventListener('click', () => closeWindow(w));
+                });
+
+                // Window-opening icons
+                const cvWindow = document.getElementById('cv-window');
+                document.getElementById('cv-icon-desktop')?.addEventListener('click', () => openWindow(cvWindow));
+                document.getElementById('cv-icon-mobile')?.addEventListener('click', () => openWindow(cvWindow));
+                document.getElementById('cv-dock-icon')?.addEventListener('click', () => openWindow(cvWindow));
+
+                const contactWindow = document.getElementById('contact-window');
+                document.getElementById('contact-dock-icon')?.addEventListener('click', () => openWindow(contactWindow));
+                
+                const projectsWindow = document.getElementById('projects-window');
+                document.getElementById('projects-icon-desktop')?.addEventListener('click', () => openWindow(projectsWindow));
+                document.getElementById('projects-icon-mobile')?.addEventListener('click', () => openWindow(projectsWindow));
+                
+                const storyWindow = document.getElementById('story-window');
+                document.getElementById('projects-window').querySelector('#story-file-icon')?.addEventListener('click', () => openWindow(storyWindow));
+
+                // Link icons (mobile and desktop)
+                document.querySelectorAll('.link-icon').forEach(icon => {
+                    const wasDragged = isDesktop ? makeIconDraggable(icon) : () => false;
+                    icon.addEventListener('click', () => {
+                        if (!wasDragged()) {
+                            window.open(icon.dataset.url, '_blank');
+                        }
+                    });
+                });
+
+                // Make desktop icons draggable
+                if (isDesktop) {
+                    makeIconDraggable(document.getElementById('cv-icon-desktop'));
+                    makeIconDraggable(document.getElementById('projects-icon-desktop'));
+                    windows.forEach(makeWindowDraggable);
+                }
+
+                // Contact form submission
+                const contactForm = document.getElementById('contact-window').querySelector('form');
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = contactForm.querySelector('#name').value;
+                    const email = contactForm.querySelector('#email').value;
+                    const message = contactForm.querySelector('#message').value;
+                    const mailtoLink = `mailto:leonard.zirk@gmail.com?subject=${encodeURIComponent(`Message from ${name}`)}&body=${encodeURIComponent(`From: ${name} <${email}>\n\n${message}`)}`;
+                    window.open(mailtoLink);
+                });
+            }
+
+            // --- Responsive Handler ---
+            function handleResize() {
+                isDesktop = window.innerWidth >= 1024;
+                windows.forEach(w => {
+                    if (!w.classList.contains('hidden')) {
+                        if (isDesktop) {
+                            w.classList.add('lg:window-desktop');
+                        } else {
+                            w.classList.remove('lg:window-desktop');
+                        }
+                    }
+                });
+            }
+
+            // --- Initialization ---
+            injectContent();
+            setupEventListeners();
+            window.addEventListener('resize', handleResize);
+            handleResize(); // Initial check
         });
-        // --- END NEW JAVASCRIPT ---
-        
-        // Fill CV window body (to keep HTML clean)
-        cvWindow.querySelector('.window-body').innerHTML = `
-            <div class="cv-header">
-                <img src="https://i.imgur.com/3f5tJ1e.png" alt="Leonard Zirk">
-                <div class="cv-header-info">
-                    <h1>LEONARD ZIRK</h1>
-                    <p>+49 1637150123 | leonard.zirk@gmail.com</p>
-                </div>
-            </div>
-            <p class="italic">"A creative strategist with a scientific background developing pitches and social media campaigns for global brands. Seeking to leverage a unique blend of creative marketing and scientific expertise in a Science Communication / Product Management role."</p>
-            <h2>Work Experience</h2>
-            <p><strong>Guest Scientist</strong> | Klipp Linding Lab (1.4.2025 - 1.2.2025)<br>Development of Hybrid Modeling of Cell Cycle Protein and mRNA.</p>
-            <p><strong>Creative Strategist</strong> | OZMOZE GMBH (1.6.2024 - 1.1.2025)<br>Project strategies in Social Media, PR-Events for Telekom, Tinder, Duolingo. Preparing Pitch Decks for: Funk, Huawei, Telekom, Spotify.</p>
-            <p><strong>Social Media Manager</strong> | MODULOR (15.4.2023 - 30.5.2024)<br>Effective full scope Social Media presence management.</p>
-            <p><strong>Guest Scientist</strong> | MUSEUM FÜR NATURKUNDE (1.4.2023 - 1.2.2025)<br>Development of practical scientific work and practical knowledge in the 3D evaluation of micro CT scan data.</p>
-            <p><strong>Marketing Assistant</strong> | SEO AGENTUR ALWAYS (1.9.2022 - 1.2.2023)<br>Building skills in performance marketing and SEO.</p>
-            <p><strong>Scientific Talent Performance</strong> | RESEARCHGATE (21.11.2021 - 31.8.2022)<br>Evaluating Job Openings and Relevance within Top Tier Universities.</p>
-            <h2>Education</h2>
+    </script>
+
+</body>
+</html>
+h2>Education</h2>
             <p><strong>BACHELOR BIOLOGY</strong> | HUMBOLDT UNIVERSITÄT (16.10.2020 - 1.6.2025)</p>
             <p><strong>BACHELOR PSYCHOLOGY</strong> | FERNUNIVERSITÄT HAGEN (1.10.2020 - Present)</p>
             <h2>Skills & Languages</h2>
