@@ -151,7 +151,37 @@
         .cv-header img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
         .cv-header-info h1 { font-size: 2rem; font-weight: 700; color: white; }
         
-        /* --- Mobile Icon Grid --- */
+        /* --- Mobile Icon Grid & Pages --- */
+        #mobile-view-wrapper {
+            padding-top: 5rem;
+            height: calc(100% - 90px); /* Full height minus menubar and dock allowance */
+            display: flex;
+            flex-direction: column;
+        }
+        #mobile-icons-container {
+            flex-grow: 1;
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            /* Hide scrollbar */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        #mobile-icons-container::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
+        }
+        .mobile-page {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
+            padding: 0 1.25rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem 1rem;
+            align-content: start;
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+            .mobile-page { grid-template-columns: repeat(4, 1fr); }
+        }
         .mobile-icon {
             display: flex;
             flex-direction: column;
@@ -185,6 +215,22 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
             word-wrap: break-word;
             width: 80px;
+        }
+        #pagination-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 1rem 0;
+        }
+        .pagination-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            transition: background-color 0.3s ease;
+        }
+        .pagination-dot.active {
+            background-color: rgba(255, 255, 255, 0.9);
         }
     </style>
 </head>
@@ -228,34 +274,50 @@
         </div>
     </div>
 
-    <!-- Mobile Icon Grid (Hidden on desktop) -->
-    <div id="mobile-icons-container" class="pt-20 px-5 pb-24 lg:hidden h-full overflow-y-auto">
-        <div class="grid grid-cols-3 sm:grid-cols-4 gap-y-8 gap-x-4">
-            <div id="cv-icon-mobile" class="mobile-icon">
-                <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/mailicon.png?updatedAt=1752667698506" alt="CV Icon"></div>
-                <p>CV Leonard Zirk</p>
+    <!-- Mobile View Wrapper (Hidden on desktop) -->
+    <div id="mobile-view-wrapper" class="lg:hidden">
+        <div id="mobile-icons-container">
+            <!-- Page 1 -->
+            <div class="mobile-page">
+                <div id="cv-icon-mobile" class="mobile-icon">
+                    <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/mailicon.png?updatedAt=1752667698506" alt="CV Icon"></div>
+                    <p>CV Leonard Zirk</p>
+                </div>
+                <div id="projects-icon-mobile" class="mobile-icon">
+                    <div class="icon-bg"><i class="fas fa-folder"></i></div>
+                    <p>Projects</p>
+                </div>
+                <div data-url="https://www.linkedin.com/in/leonard-zirk-9687ba223/" class="mobile-icon link-icon">
+                    <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/linkedin.png?updatedAt=1752678709680" alt="LinkedIn Icon"></div>
+                    <p>LinkedIn</p>
+                </div>
+                <div data-url="https://github.com/Devilthatwearsprada" class="mobile-icon link-icon">
+                    <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/github.png?updatedAt=1752679143531" alt="GitHub Icon" class="rounded-full"></div>
+                    <p>GitHub</p>
+                </div>
+                <div data-url="https://www.instagram.com/your-username" class="mobile-icon link-icon">
+                    <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/instagramicon.webp?updatedAt=1752678971026" alt="Instagram Icon"></div>
+                    <p>Instagram</p>
+                </div>
+                <div data-url="https://www.tiktok.com/@leonardzirk" class="mobile-icon link-icon">
+                    <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon"></div>
+                    <p>TikTok</p>
+                </div>
             </div>
-            <div id="projects-icon-mobile" class="mobile-icon">
-                <div class="icon-bg"><i class="fas fa-folder"></i></div>
-                <p>Projects</p>
-            </div>
-            <div data-url="https://www.linkedin.com/in/leonard-zirk-9687ba223/" class="mobile-icon link-icon">
-                <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/linkedin.png?updatedAt=1752678709680" alt="LinkedIn Icon"></div>
-                <p>LinkedIn</p>
-            </div>
-            <div data-url="https://github.com/Devilthatwearsprada" class="mobile-icon link-icon">
-                <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/github.png?updatedAt=1752679143531" alt="GitHub Icon" class="rounded-full"></div>
-                <p>GitHub</p>
-            </div>
-            <div data-url="https://www.instagram.com/your-username" class="mobile-icon link-icon">
-                <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/instagramicon.webp?updatedAt=1752678971026" alt="Instagram Icon"></div>
-                <p>Instagram</p>
-            </div>
-            <div data-url="https://www.tiktok.com/@leonardzirk" class="mobile-icon link-icon">
-                <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon"></div>
-                <p>TikTok</p>
+            <!-- Page 2 -->
+            <div class="mobile-page">
+                <!-- Add more icons here for the second page -->
+                 <div data-url="https://your-username.substack.com" class="mobile-icon link-icon">
+                    <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/substack.png?updatedAt=1752679004979" class="rounded-md" alt="Substack Icon"></div>
+                    <p>Substack</p>
+                </div>
+                 <div data-url="https://klipp-linding.science/index.php/en/" class="mobile-icon link-icon">
+                    <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/klipplindinglab_256.png?updatedAt=1752678845945" class="rounded-md" alt="Klipp Linding Lab Icon"></div>
+                    <p>Klipp Linding Lab</p>
+                </div>
             </div>
         </div>
+        <div id="pagination-dots"></div>
     </div>
 
     <!-- Windows -->
@@ -402,6 +464,30 @@
                     </div>`;
             }
 
+            // --- Mobile Pagination ---
+            function setupPagination() {
+                const container = document.getElementById('mobile-icons-container');
+                const dotsContainer = document.getElementById('pagination-dots');
+                const pages = container.querySelectorAll('.mobile-page');
+                if (pages.length <= 1) return;
+
+                dotsContainer.innerHTML = '';
+                pages.forEach(() => {
+                    dotsContainer.innerHTML += `<div class="pagination-dot"></div>`;
+                });
+
+                const dots = dotsContainer.querySelectorAll('.pagination-dot');
+                const updateDots = () => {
+                    const pageIndex = Math.round(container.scrollLeft / container.clientWidth);
+                    dots.forEach((dot, index) => {
+                        dot.classList.toggle('active', index === pageIndex);
+                    });
+                };
+                
+                container.addEventListener('scroll', updateDots, { passive: true });
+                updateDots(); // Initial call
+            }
+
             // --- Event Listeners Setup ---
             function setupEventListeners() {
                 // Close buttons
@@ -471,6 +557,7 @@
             // --- Initialization ---
             injectContent();
             setupEventListeners();
+            setupPagination(); // New function call
             window.addEventListener('resize', handleResize);
             handleResize(); // Initial check
         });
@@ -478,14 +565,4 @@
 
 </body>
 </html>
-h2>Education</h2>
-            <p><strong>BACHELOR BIOLOGY</strong> | HUMBOLDT UNIVERSITÄT (16.10.2020 - 1.6.2025)</p>
-            <p><strong>BACHELOR PSYCHOLOGY</strong> | FERNUNIVERSITÄT HAGEN (1.10.2020 - Present)</p>
-            <h2>Skills & Languages</h2>
-            <p><strong>Languages:</strong> German (fluent), English (fluent), Russian (mother tongue), Latinum, Portuguese</p>
-            <p><strong>Skills:</strong> Writing, Adobe Creative Cloud (Photoshop, Lightroom), Microsoft Office, Video editing</p>
-        `;
-    </script>
 
-</body>
-</html>
