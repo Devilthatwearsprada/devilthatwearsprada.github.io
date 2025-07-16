@@ -118,6 +118,7 @@
             top: 640px;
             right: 20px;
         }
+        /* --- NEW CSS FOR FOLDER --- */
         #projects-icon {
             top: 40px;
             left: 20px;
@@ -145,6 +146,7 @@
             font-size: 12px;
             word-wrap: break-word;
         }
+        /* --- END NEW CSS --- */
 
         /* Window Styles */
         .window {
@@ -265,46 +267,6 @@
             background-color: #333;
             cursor: not-allowed;
         }
-
-        /* --- NEW CSS FOR MOBILE RESPONSIVENESS --- */
-        @media (max-width: 640px) {
-            .window {
-                top: 5vh;
-                left: 5vw;
-                width: 90vw;
-                height: 85vh;
-            }
-            .window-body {
-                -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
-            }
-            .dock {
-                gap: 8px;
-                padding: 6px;
-            }
-            .dock-item {
-                width: 48px;
-                height: 48px;
-            }
-            .desktop-icon {
-                width: 75px;
-            }
-            .desktop-icon img, .desktop-icon .folder-icon-svg {
-                width: 50px;
-                height: 50px;
-            }
-            .desktop-icon p {
-                font-size: 11px;
-            }
-            .cv-header {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-            .cv-header-info h1 {
-                font-size: 1.5rem;
-            }
-        }
-        /* --- END NEW CSS --- */
     </style>
 </head>
 <body class="bg-black">
@@ -361,10 +323,12 @@
             <img src="https://ik.imagekit.io/ex6ksvxsvk/klipplindinglab_256.png?updatedAt=1752678845945" alt="Klipp Linding Lab Icon" class="rounded-md">
             <p>Klipp Linding Lab.url</p>
         </div>
+        <!-- --- NEW HTML FOR FOLDER --- -->
         <div id="projects-icon" class="desktop-icon">
             <i class="fas fa-folder fa-3x folder-icon-svg"></i>
             <p>Projects</p>
         </div>
+        <!-- --- END NEW HTML --- -->
     </div>
 
     <!-- CV Window -->
@@ -392,7 +356,7 @@
         </div>
     </div>
 
-    <!-- Folder Windows -->
+    <!-- --- NEW HTML FOR FOLDER WINDOWS --- -->
     <div id="projects-window" class="window hidden">
         <div class="window-header">
             <div class="traffic-lights"><div class="traffic-light close"></div><div class="traffic-light minimize"></div><div class="traffic-light maximize"></div></div>
@@ -415,6 +379,7 @@
             <!-- Story content injected by JS -->
         </div>
     </div>
+    <!-- --- END NEW HTML --- -->
 
     <!-- Dock -->
     <div class="dock">
@@ -561,17 +526,15 @@
 
         icons.forEach(iconInfo => {
             const iconEl = document.getElementById(iconInfo.id);
-            if (iconEl) {
-                const wasDragged = makeIconDraggable(iconEl);
-                iconEl.addEventListener('click', () => {
-                    if (!wasDragged()) {
-                        window.open(iconInfo.url, '_blank');
-                    }
-                });
-            }
+            const wasDragged = makeIconDraggable(iconEl);
+            iconEl.addEventListener('click', () => {
+                if (!wasDragged()) {
+                    window.open(iconInfo.url, '_blank');
+                }
+            });
         });
 
-        // --- Folder & File Logic ---
+        // --- NEW JAVASCRIPT FOR FOLDER ---
         const projectsIcon = document.getElementById('projects-icon');
         const projectsWindow = document.getElementById('projects-window');
         const storyFileIcon = document.getElementById('story-file-icon');
@@ -607,6 +570,7 @@
             <p>This is where the story of my projects begins. It's a tale of curiosity, late-night coding sessions, and the thrill of bringing ideas to life.</p>
             <p>From a simple "Hello, World!" to complex applications, every project has been a stepping stone, teaching me valuable lessons in persistence and problem-solving. This space will document that evolution.</p>
         `;
+        // --- END NEW JAVASCRIPT ---
         
         // Fill CV window body (to keep HTML clean)
         cvWindow.querySelector('.window-body').innerHTML = `
@@ -636,3 +600,4 @@
 
 </body>
 </html>
+
