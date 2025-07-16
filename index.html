@@ -93,6 +93,32 @@
             top: 40px;
             right: 20px;
         }
+        #linkedin-icon {
+            top: 140px;
+            right: 20px;
+        }
+        #github-icon {
+            top: 240px;
+            right: 20px;
+        }
+        #instagram-icon {
+            top: 340px;
+            right: 20px;
+        }
+        #tiktok-icon {
+            top: 440px;
+            right: 20px;
+        }
+        #substack-icon {
+            top: 540px;
+            right: 20px;
+        }
+        /* --- NEW CSS FOR Klipp Linding Lab ICON --- */
+        #klipp-linding-icon {
+            top: 640px;
+            right: 20px;
+        }
+        /* --- END NEW CSS --- */
 
         /* Window Styles */
         .window {
@@ -241,9 +267,36 @@
     <!-- Desktop Icons -->
     <div class="p-5">
         <div id="cv-icon" class="desktop-icon">
-             <img src="https://placehold.co/60x75/ffffff/000000?text=PDF" alt="CV Icon" class="rounded-lg">
+             <img src="https://ik.imagekit.io/ex6ksvxsvk/mailicon.png?updatedAt=1752667698506" alt="CV Icon" class="rounded-lg">
              <p>CV Leonard Zirk Juni.pdf</p>
         </div>
+
+        <div id="linkedin-icon" class="desktop-icon">
+            <img src="https://ik.imagekit.io/ex6ksvxsvk/linkedin.png?updatedAt=1752678709680" alt="LinkedIn Icon" class="rounded-md">
+            <p>LinkedIn.url</p>
+        </div>
+        <div id="github-icon" class="desktop-icon">
+            <img src="https://ik.imagekit.io/ex6ksvxsvk/github.png?updatedAt=1752679143531" alt="GitHub Icon" class="rounded-full">
+            <p>GitHub.url</p>
+        </div>
+        <div id="instagram-icon" class="desktop-icon">
+            <img src="https://ik.imagekit.io/ex6ksvxsvk/instagramicon.webp?updatedAt=1752678971026" alt="Instagram Icon" class="rounded-md">
+            <p>Instagram.url</p>
+        </div>
+        <div id="tiktok-icon" class="desktop-icon">
+            <img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon" class="rounded-md">
+            <p>TikTok.url</p>
+        </div>
+        <div id="substack-icon" class="desktop-icon">
+            <img src="https://ik.imagekit.io/ex6ksvxsvk/substack.png?updatedAt=1752679004979" alt="Substack Icon" class="rounded-md">
+            <p>Substack.url</p>
+        </div>
+        <!-- --- NEW HTML FOR Klipp Linding Lab ICON --- -->
+        <div id="klipp-linding-icon" class="desktop-icon">
+            <img src="https://ik.imagekit.io/ex6ksvxsvk/klipplindinglab_256.png?updatedAt=1752678845945" alt="Klipp Linding Lab Icon" class="rounded-md">
+            <p>Klipp Linding Lab.url</p>
+        </div>
+        <!-- --- END NEW HTML --- -->
     </div>
 
     <!-- CV Window -->
@@ -345,9 +398,11 @@
                 isDragging = false;
                 iconEl.style.cursor = 'grab';
                 iconEl.style.zIndex = 100;
+                // Use a short timeout to prevent click event from firing after a drag
                 setTimeout(() => { hasDragged = false; }, 0);
             });
-
+            
+            // This closure returns the state of `hasDragged` at the moment of the click
             return () => hasDragged;
         }
 
@@ -405,6 +460,62 @@
                 contactWindow.classList.add('hidden');
             }, 3000);
         });
+
+        // --- Social Icons Logic ---
+        const linkedinIcon = document.getElementById('linkedin-icon');
+        const githubIcon = document.getElementById('github-icon');
+        const instagramIcon = document.getElementById('instagram-icon');
+        const tiktokIcon = document.getElementById('tiktok-icon');
+        const substackIcon = document.getElementById('substack-icon');
+        // --- NEW JAVASCRIPT FOR Klipp Linding Lab ICON ---
+        const klippLindingIcon = document.getElementById('klipp-linding-icon');
+
+        const linkedinWasDragged = makeIconDraggable(linkedinIcon);
+        const githubWasDragged = makeIconDraggable(githubIcon);
+        const instagramWasDragged = makeIconDraggable(instagramIcon);
+        const tiktokWasDragged = makeIconDraggable(tiktokIcon);
+        const substackWasDragged = makeIconDraggable(substackIcon);
+        const klippLindingWasDragged = makeIconDraggable(klippLindingIcon);
+
+        linkedinIcon.addEventListener('click', () => {
+            if (!linkedinWasDragged()) {
+                window.open('https://www.linkedin.com/in/leonard-zirk-9687ba223/', '_blank');
+            }
+        });
+        
+        githubIcon.addEventListener('click', () => {
+            if (!githubWasDragged()) {
+                window.open('https://github.com/Devilthatwearsprada', '_blank');
+            }
+        });
+        
+        instagramIcon.addEventListener('click', () => {
+            if (!instagramWasDragged()) {
+                // IMPORTANT: Replace with your actual Instagram URL
+                window.open('https://www.instagram.com/your-username', '_blank');
+            }
+        });
+
+        tiktokIcon.addEventListener('click', () => {
+            if (!tiktokWasDragged()) {
+                // IMPORTANT: Replace with your actual TikTok URL
+                window.open('https://www.tiktok.com/@leonardzirk', '_blank');
+            }
+        });
+
+        substackIcon.addEventListener('click', () => {
+            if (!substackWasDragged()) {
+                // IMPORTANT: Replace with your actual Substack URL
+                window.open('https://your-username.substack.com', '_blank');
+            }
+        });
+        
+        klippLindingIcon.addEventListener('click', () => {
+            if (!klippLindingWasDragged()) {
+                window.open('https://klipp-linding.science/index.php/en/', '_blank');
+            }
+        });
+        // --- END NEW JAVASCRIPT ---
         
         // Fill CV window body (to keep HTML clean)
         cvWindow.querySelector('.window-body').innerHTML = `
