@@ -1,625 +1,265 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leonard Zirk | Creative Strategist</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <title>Nachtrag zum Praktikantenvertrag</title>
     <style>
+        /* Basic styles for the document body */
         body {
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
-            height: 100vh;
-            background-color: #000;
-            user-select: none;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
         }
-        #video-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-        }
-        .menu-bar {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-        .dock {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 1.5rem;
-            padding: 8px;
+
+        /* Container for each page */
+        .page {
+            background: white;
+            width: 8.5in;
+            min-height: 11in;
+            padding: 1in;
+            margin: 20px auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
             display: flex;
-            gap: 12px;
-            z-index: 1000;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex-direction: column;
         }
-        .dock-item {
-            width: 60px;
-            height: 60px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 1rem;
+
+        /* Header section with the logo */
+        .header {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s ease, margin-bottom 0.2s ease;
-            cursor: pointer;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
-        .dock-item img {
+
+        .header .logo {
+            font-weight: bold;
+            font-size: 24pt;
+        }
+
+        /* Main title of the document */
+        .title {
+            font-weight: bold;
+            font-size: 14pt;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Centered text for "and/und" */
+        .conjunction {
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        /* Main content area */
+        .content {
+            flex-grow: 1;
+        }
+
+        /* Table used for the two-column layout */
+        .column-table {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 1rem;
+            border-collapse: collapse;
         }
-        .dock-item:hover {
-            transform: scale(1.2);
+
+        .column-table td {
+            width: 50%;
+            vertical-align: top;
+            padding-right: 20px;
+        }
+
+        .column-table td:last-child {
+            padding-right: 0;
+            padding-left: 20px;
+        }
+        
+        /* Section headings */
+        h3 {
+            font-weight: bold;
+            font-size: 11pt;
+            margin-top: 20px;
             margin-bottom: 10px;
         }
 
-        /* --- Desktop-Only Icon Styles --- */
-        .desktop-icon {
-            color: white;
-            text-align: center;
-            width: 90px;
-            position: absolute;
-            cursor: grab;
-            z-index: 100;
+        /* Ordered list styling */
+        ol {
+            padding-left: 20px;
         }
-        .desktop-icon .icon-image {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto;
-            border-radius: 0.75rem;
+
+        li {
+            margin-bottom: 1em;
         }
-        .desktop-icon .fa-folder, .desktop-icon .fa-file-lines, .desktop-icon .fa-image {
-            font-size: 60px;
-            margin: 0 auto;
-            color: #60a5fa;
-        }
-        .desktop-icon p {
-            margin-top: 5px;
-            font-size: 13px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-            word-wrap: break-word;
+
+        /* Signature section styling */
+        .signatures {
+            margin-top: 80px;
         }
         
-        /* --- Mobile-First Window Styles --- */
-        .window {
-            position: fixed; /* Fullscreen on mobile */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(30, 30, 30, 0.8);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            z-index: 500;
-            display: flex;
-            flex-direction: column;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+        .signature-line {
+            border-bottom: 1px solid #333;
+            margin-top: 50px;
+            margin-bottom: 5px;
         }
 
-        /* --- Desktop Window Overrides (using Tailwind's lg prefix) --- */
-        .lg\:window-desktop {
-            position: absolute !important;
-            top: 100px !important;
-            left: 100px !important;
-            width: 600px !important;
-            height: 70vh !important;
-            border-radius: 12px !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-
-        .window-header {
+        /* Footer section */
+        .footer {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            padding: 8px;
-            background-color: rgba(60, 60, 60, 0.8);
-            cursor: default; /* Default cursor */
-            color: white;
-            font-size: 14px;
-            flex-shrink: 0;
-            position: relative;
-        }
-        .lg\:window-desktop .window-header {
-            cursor: move; /* Draggable cursor on desktop */
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-        }
-        .traffic-lights { display: flex; gap: 8px; margin-right: 8px; }
-        .traffic-light { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-        .close { background-color: #ff5f56; }
-        .minimize { background-color: #ffbd2e; }
-        .maximize { background-color: #27c93f; }
-
-        .window-content {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+            margin-top: auto; /* Pushes footer to the bottom */
+            font-size: 9pt;
         }
 
-        .window-body { padding: 20px; color: #e0e0e0; overflow-y: auto; flex-grow: 1; }
-        .window-body h2 { font-size: 1.2rem; font-weight: 600; color: white; margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.25rem; }
-        .window-body p { margin-bottom: 0.75rem; line-height: 1.6; }
-        
-        /* --- Mobile Icon Grid & Pages --- */
-        #mobile-view-wrapper {
-            padding-top: 5rem;
-            height: calc(100% - 90px);
-            display: flex;
-            flex-direction: column;
+        .footer .logo {
+            font-weight: bold;
+            font-size: 18pt;
         }
-        #mobile-icons-container {
-            flex-grow: 1;
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        #mobile-icons-container::-webkit-scrollbar { display: none; }
-        .mobile-page {
-            flex: 0 0 100%;
-            scroll-snap-align: start;
-            padding: 1.5rem 1.25rem;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 1.5rem 1rem;
-            align-content: start;
-        }
-        @media (min-width: 640px) {
-            .mobile-page { grid-template-columns: repeat(4, 1fr); }
-        }
-        .mobile-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            color: white;
-            text-align: center;
-            cursor: pointer;
-        }
-        .mobile-icon .icon-bg {
-            width: 64px;
-            height: 64px;
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(255,255,255,0.1);
-        }
-        .mobile-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 1rem;
-        }
-        .mobile-icon .fa-folder, .mobile-icon .fa-file-lines, .mobile-icon .fa-image {
-            font-size: 32px;
-            color: #60a5fa;
-        }
-        .mobile-icon p {
-            font-size: 12px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-            word-wrap: break-word;
-            width: 80px;
-        }
-        #pagination-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            padding: 1rem 0;
-        }
-        #pagination-dots { display: flex; justify-content: center; gap: 8px; }
-        .pagination-dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.4);
-            transition: background-color 0.3s ease;
-        }
-        .pagination-dot.active { background-color: rgba(255, 255, 255, 0.9); }
-        .pagination-arrow {
-            color: white; background: none; border: none; font-size: 1rem;
-            cursor: pointer; opacity: 0.7; transition: opacity 0.2s;
-        }
-        .pagination-arrow:hover { opacity: 1; }
-        .pagination-arrow.hidden { opacity: 0; pointer-events: none; }
-
-        /* --- Duolingo Window Styles --- */
-        .duolingo-body { background-color: #ffffff; color: #4c4c4c; display: flex; flex-direction: column; align-items: center; padding: 1.5rem; }
-        .duolingo-progress-bar { width: 100%; height: 16px; background-color: #e5e5e5; border-radius: 8px; overflow: hidden; border: 2px solid #e5e5e5; }
-        .duolingo-progress { width: 60%; height: 100%; background-color: #58cc02; border-radius: 6px; }
-        .duolingo-mascot-container { display: flex; align-items: center; gap: 1rem; margin-top: 2rem; width: 100%; }
-        .duolingo-speech-bubble { background-color: #ffffff; border: 2px solid #e5e5e5; border-radius: 1rem; padding: 1rem; font-weight: 700; font-size: 1.1rem; position: relative; }
-        .duolingo-speech-bubble::before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 10px solid #e5e5e5; }
-        .duolingo-options { width: 100%; margin-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
-        .duolingo-option { display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem; border: 2px solid #e5e5e5; border-bottom-width: 4px; border-radius: 1rem; font-weight: 700; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; }
-        .duolingo-option:hover { background-color: #f7f7f7; }
-        .duolingo-option.selected { background-color: #d7ffb8; border-color: #58cc02; }
-        .duolingo-option.correct { background-color: #d7ffb8; border-color: #58cc02; color: #58a700; }
-        .duolingo-option.incorrect { background-color: #ffdfe0; border-color: #ff4b4b; color: #ea2b2b; animation: shake 0.5s; }
-        .duolingo-continue-btn { width: 100%; margin-top: auto; padding: 1rem; background-color: #58cc02; color: white; font-weight: 700; text-transform: uppercase; border-radius: 1rem; border-bottom: 4px solid #58a700; cursor: pointer; opacity: 0.5; pointer-events: none; transition: opacity 0.2s; }
-        .duolingo-continue-btn.active { opacity: 1; pointer-events: auto; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        
-        /* --- Tinder Swipe App Styles --- */
-        .tinder-body { display: flex; flex-direction: column; height: 100%; padding: 0; background-color: #f7f7f7; overflow: hidden; }
-        .tinder-header { background-color: #fff; padding: 10px; text-align: center; border-bottom: 1px solid #e8e8e8; flex-shrink: 0; }
-        .tinder-header img { height: 30px; }
-        .tinder-stack { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; }
-        .tinder-card { background-color: #fff; width: 85%; height: 80%; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.12); position: absolute; display: flex; flex-direction: column; overflow: hidden; transition: transform 0.4s ease, opacity 0.4s ease; cursor: grab; }
-        .tinder-card.dragging { transition: none; }
-        .tinder-card-img { width: 100%; height: 70%; object-fit: cover; }
-        .tinder-card-info { padding: 15px; }
-        .tinder-card-info h3 { font-size: 1.5rem; font-weight: 700; color: #333; }
-        .tinder-card-info p { font-size: 1rem; color: #666; }
-        .tinder-controls { display: flex; justify-content: space-around; padding: 15px; flex-shrink: 0; }
-        .tinder-btn { background-color: #fff; border: 1px solid #e8e8e8; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; }
-        .tinder-btn.like { color: #4bde97; }
-        .tinder-btn.dislike { color: #fd5068; }
     </style>
 </head>
-<body class="bg-black">
+<body>
 
-    <video id="video-bg" autoplay loop muted playsinline>
-        <source src="https://ik.imagekit.io/ex6ksvxsvk/website%20background%20vid.mp4?updatedAt=1752664266524" type="video/mp4">
-    </video>
+    <!-- Page 1 of the Addendum -->
+    <div class="page">
+        <div class="header">
+            <div class="logo">Hive</div>
+        </div>
 
-    <!-- Menu Bar -->
-    <div class="menu-bar px-4 py-1 text-sm hidden lg:flex">
-        <div class="flex justify-between items-center w-full">
-            <div class="flex items-center gap-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-apple" viewBox="0 0 16 16"><path d="M11.182.008C10.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516s.579.09 1.672-.93c1.092-1.02 1.869-2.059 2.354-2.468C12.433.056 12.318 0 11.182.007Zm.622 1.422a3.48 3.48 0 0 0-2.233 2.233c.213.01.426.01.639.01.213 0 .426 0 .64-.01A3.48 3.48 0 0 0 11.804 1.43Z"/><path d="M8 1a2.5 2.5 0 0 1 2.5 2.5A2.5 2.5 0 0 1 8 6a2.5 2.5 0 0 1-2.5-2.5A2.5 2.5 0 0 1 8 1Zm0 9.5A2.5 2.5 0 0 1 5.5 13a2.5 2.5 0 0 1 2.5 2.5A2.5 2.5 0 0 1 8 13a2.5 2.5 0 0 1 2.5-2.5A2.5 2.5 0 0 1 8 10.5Z"/><path d="M4.176 5.633A6.5 6.5 0 0 0 8 15a6.5 6.5 0 0 0 3.824-9.367c.213.01.426.01.64.01.213 0 .426 0 .639-.01A6.5 6.5 0 0 0 16 8a6.5 6.5 0 0 0-6.5-6.5A6.5 6.5 0 0 0 3.176 8c0 .213.01.426.01.64 0 .213 0 .426-.01.639A6.5 6.5 0 0 0 4.176 5.633Z"/></svg>
-                <span class="font-bold hidden sm:inline">Finder</span>
-                <span class="hidden sm:inline">File</span>
-                <span class="hidden sm:inline">Edit</span>
-                <span class="hidden sm:inline">View</span>
-            </div>
-            <div id="time" class="font-medium"></div>
+        <div class="title">
+            Nachtrag zum Praktikantenvertrag<br>
+            <em>Addendum to the Internship Agreement</em>
+        </div>
+
+        <div class="content">
+            <table class="column-table">
+                <tr>
+                    <td>
+                        <strong>zwischen der</strong><br><br>
+                        <strong>Hive Technologies GmbH</strong><br>
+                        Rosenstrasse 16<br>
+                        10178 Berlin<br><br>
+                        - nachfolgend „Arbeitgeber" genannt -
+                    </td>
+                    <td>
+                        <strong>between</strong><br><br>
+                        <strong>Hive Technologies GmbH</strong><br>
+                        Rosenstrasse 16<br>
+                        10178 Berlin<br><br>
+                        - hereinafter referred to as "Employer" -
+                    </td>
+                </tr>
+            </table>
+
+            <div class="conjunction">und / <em>and</em></div>
+
+            <table class="column-table">
+                <tr>
+                    <td>
+                        <strong>Herrn Leonard Zirk</strong><br>
+                        Transvaalstraße 6<br>
+                        13351 Berlin<br><br>
+                        - nachfolgend „Praktikant" genannt -
+                    </td>
+                    <td>
+                        <strong>Mr. Leonard Zirk</strong><br>
+                        Transvaalstraße 6<br>
+                        13351 Berlin<br><br>
+                        - hereinafter referred to as "Trainee" -
+                    </td>
+                </tr>
+            </table>
+
+            <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ccc;">
+            
+            <p>Dieser Nachtrag bezieht sich auf den am 24. Juli 2025 unterzeichneten Praktikantenvertrag („Vertrag“).<br>
+            <em>This document serves as an addendum to the Internship Agreement signed on July 24, 2025 (the "Agreement").</em></p>
+
+            <table class="column-table">
+                <tr>
+                    <td>
+                        <h3>§ 1 Änderung des Beginns und des Enddatums</h3>
+                        <ol>
+                            <li>Das in § 1.1 des Vertrages genannte Beginndatum des Praktikums wird hiermit geändert. Der ursprüngliche Beginn am 1. August 2025 wird auf den <strong>[DATUM WÄHLEN: 14. August 2025 / 18. August 2025]</strong> verschoben.</li>
+                            <li>
+                                <strong>[OPTION A]</strong> Das in § 1.1 des Vertrages genannte Enddatum des Praktikums bleibt unverändert der 31. Januar 2026.
+                                <br><br>
+                                <strong>[OPTION B]</strong> Um die ursprüngliche Dauer des Praktikums von sechs Monaten beizubehalten, wird das in § 1.1 des Vertrages genannte Enddatum vom 31. Januar 2026 auf den <strong>[JE NACH STARTDATUM: 13. Februar 2026 / 17. Februar 2026]</strong> verschoben.
+                            </li>
+                        </ol>
+                        <h3>§ 2 Schlussbestimmungen</h3>
+                        <ol>
+                            <li>Alle anderen Bestimmungen des Praktikantenvertrages vom 24. Juli 2025 bleiben unverändert in vollem Umfang in Kraft.</li>
+                            <li>Änderungen und Ergänzungen dieses Nachtrags bedürfen zu ihrer Wirksamkeit der Schriftform. Das gilt auch für die Aufhebung dieses Schriftformerfordernisses.</li>
+                        </ol>
+                    </td>
+                    <td>
+                        <h3>§ 1 Amendment to the Start and End Date</h3>
+                        <ol>
+                            <li>The start date of the internship, as stated in § 1.1 of the Agreement, is hereby changed. The original start date of August 1, 2025, is moved to <strong>[CHOOSE DATE: August 14, 2025 / August 18, 2025]</strong>.</li>
+                            <li>
+                                <strong>[OPTION A]</strong> The end date of the internship, as stated in § 1.1 of the Agreement, remains unchanged as January 31, 2026.
+                                <br><br>
+                                <strong>[OPTION B]</strong> To maintain the original six-month duration of the internship, the end date stated in § 1.1 of the Agreement is moved from January 31, 2026, to <strong>[DEPENDING ON START DATE: February 13, 2026 / February 17, 2026]</strong>.
+                            </li>
+                        </ol>
+                        <h3>§ 2 Final Provisions</h3>
+                        <ol>
+                            <li>All other provisions, terms, and conditions of the Internship Agreement dated July 24, 2025, shall remain in full force and effect without modification.</li>
+                            <li>Amendments and supplements to this addendum must be made in writing to be effective. This also applies to its termination by means of a cancellation agreement.</li>
+                        </ol>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <span>Seite 1/2</span>
+            <span>Nachtrag zum Praktikantenvertrag</span>
+            <div class="logo">Hive</div>
         </div>
     </div>
 
-    <!-- Mobile View Wrapper (Hidden on desktop) -->
-    <div id="mobile-view-wrapper" class="lg:hidden">
-        <div id="mobile-icons-container">
-            <!-- Page 1 -->
-            <div class="mobile-page">
-                <div id="koplin-icon-mobile" class="mobile-icon"><div class="icon-bg"><i class="fas fa-folder"></i></div><p>Dr. Koplin</p></div>
-                <div id="tinder-icon-mobile" class="mobile-icon"><div class="icon-bg"><i class="fas fa-folder"></i></div><p>Tinder</p></div>
-                <div id="modulor-icon-mobile" class="mobile-icon"><div class="icon-bg"><i class="fas fa-folder"></i></div><p>Modulor</p></div>
-                <div id="duolingo-icon-mobile" class="mobile-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/duolingo.png?updatedAt=1753447361224" alt="Duolingo Icon"></div><p>Duolingo</p></div>
-                <div data-url="https://ik.imagekit.io/ex6ksvxsvk/CV%20Leonard%20Zirk%20Juli%202025.pdf?updatedAt=1753119910183" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/pdfdownload.png?updatedAt=1753096977321" alt="CV Icon"></div><p>CV Leonard Zirk</p></div>
-                <div data-url="https://www.linkedin.com/in/leonard-zirk-9687ba223/" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/linkedin.png?updatedAt=1752678709680" alt="LinkedIn Icon"></div><p>LinkedIn</p></div>
-                <div data-url="https://github.com/leonardzirk" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/github.png?updatedAt=1752679143531" alt="GitHub Icon" class="rounded-full"></div><p>GitHub</p></div>
-                <div data-url="https://www.instagram.com/leonardzirk_unoffical" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/instagramicon.webp?updatedAt=1752678971026" alt="Instagram Icon"></div><p>Instagram</p></div>
-                <div data-url="https://www.tiktok.com/@leonardzirk" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon"></div><p>TikTok</p></div>
-            </div>
-            <!-- Page 2 -->
-            <div class="mobile-page">
-                <div data-url="https://substack.com/@leonardzirk?utm_source=user-menu" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/substack.png?updatedAt=1752679004979" class="rounded-md" alt="Substack Icon"></div><p>Substack</p></div>
-                <div data-url="https://klipp-linding.science/index.php/en/" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/klipplindinglab_256.png?updatedAt=1752678845945" class="rounded-md" alt="Klipp Linding Lab Icon"></div><p>Klipp Linding Lab</p></div>
+    <!-- Page 2 of the Addendum (Signatures) -->
+    <div class="page">
+        <div class="header">
+            <div class="logo">Hive</div>
+        </div>
+
+        <div class="content">
+            <div class="signatures">
+                <p style="text-align: center;">- Unterschriftenseite / Signature Page -</p>
+                <table class="column-table" style="margin-top: 60px;">
+                    <tr>
+                        <td>
+                            Berlin, ___________________
+                            <div class="signature-line"></div>
+                            <strong>Hive Technologies GmbH</strong><br>
+                            (David Lagarde, COO & Managing Director)
+                        </td>
+                        <td>
+                            Berlin, ___________________
+                            <div class="signature-line"></div>
+                            <strong>Leonard Zirk</strong>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
-        <div id="pagination-container">
-            <button id="prev-page" class="pagination-arrow hidden"><i class="fas fa-chevron-left"></i></button>
-            <div id="pagination-dots"></div>
-            <button id="next-page" class="pagination-arrow"><i class="fas fa-chevron-right"></i></button>
+
+        <div class="footer">
+            <span>Seite 2/2</span>
+            <span>Nachtrag zum Praktikantenvertrag</span>
+            <div class="logo">Hive</div>
         </div>
     </div>
-
-    <!-- Windows -->
-    <div id="cv-window" class="window hidden"><div class="window-content"></div></div>
-    <div id="contact-window" class="window hidden"><div class="window-content"></div></div>
-    <div id="koplin-window" class="window hidden"><div class="window-content"></div></div>
-    <div id="readme-window" class="window hidden"><div class="window-content"></div></div>
-    <div id="readme-desktop-window" class="window hidden"><div class="window-content"></div></div>
-    <div id="duolingo-window" class="window hidden"><div class="window-content"></div></div>
-    <div id="tinder-window" class="window hidden"><div class="window-content"></div></div>
-    <div id="modulor-window" class="window hidden"><div class="window-content"></div></div>
-    <div id="tinder-party-window" class="window hidden"><div class="window-content"></div></div>
-    <div id="tinder-swipe-window" class="window hidden"><div class="window-content"></div></div>
-
-    <!-- Dock -->
-    <div class="dock">
-        <div id="cv-dock-icon" class="dock-item"><img src="https://ik.imagekit.io/ex6ksvxsvk/resume.png?updatedAt=1753120155625" alt="CV"></div>
-        <div id="contact-dock-icon" class="dock-item"><img src="https://ik.imagekit.io/ex6ksvxsvk/mailicon.png?updatedAt=1752667698506" alt="Mail"></div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const timeEl = document.getElementById('time');
-            let isDesktop = window.innerWidth >= 1024;
-
-            function updateTime() {
-                const now = new Date();
-                const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-                timeEl.textContent = now.toLocaleDateString('en-US', options).replace(',', '');
-            }
-            updateTime();
-            setInterval(updateTime, 1000 * 60);
-
-            const windows = document.querySelectorAll('.window');
-            function openWindow(windowEl) {
-                windows.forEach(w => w.style.zIndex = 500);
-                windowEl.classList.remove('hidden');
-                windowEl.style.zIndex = 501;
-                if (isDesktop) { windowEl.classList.add('lg:window-desktop'); } 
-                else { windowEl.classList.remove('lg:window-desktop'); }
-            }
-            function closeWindow(windowEl) { windowEl.classList.add('hidden'); }
-
-            function makeWindowDraggable(windowEl) {
-                const header = windowEl.querySelector('.window-header');
-                if (!header) return;
-                let isDragging = false, offsetX, offsetY;
-                const onMouseDown = (e) => {
-                    if (!isDesktop) return;
-                    isDragging = true;
-                    const rect = windowEl.getBoundingClientRect();
-                    offsetX = e.clientX - rect.left;
-                    offsetY = e.clientY - rect.top;
-                    header.style.cursor = 'grabbing';
-                    openWindow(windowEl);
-                };
-                const onMouseMove = (e) => {
-                    if (!isDragging || !isDesktop) return;
-                    windowEl.style.left = `${e.clientX - offsetX}px`;
-                    windowEl.style.top = `${e.clientY - offsetY}px`;
-                };
-                const onMouseUp = () => {
-                    isDragging = false;
-                    if (header) header.style.cursor = 'move';
-                };
-                header.addEventListener('mousedown', onMouseDown);
-                document.addEventListener('mousemove', onMouseMove);
-                document.addEventListener('mouseup', onMouseUp);
-            }
-
-            function makeIconDraggable(iconEl) {
-                let isDragging = false, hasDragged = false, offsetX, offsetY;
-                iconEl.addEventListener('mousedown', (e) => {
-                    if (!isDesktop) return;
-                    isDragging = true; hasDragged = false;
-                    offsetX = e.clientX - iconEl.getBoundingClientRect().left;
-                    offsetY = e.clientY - iconEl.getBoundingClientRect().top;
-                    iconEl.style.cursor = 'grabbing';
-                    iconEl.style.zIndex = 101;
-                });
-                document.addEventListener('mousemove', (e) => {
-                    if (!isDragging || !isDesktop) return;
-                    hasDragged = true;
-                    iconEl.style.left = `${e.clientX - offsetX}px`;
-                    iconEl.style.top = `${e.clientY - offsetY}px`;
-                });
-                document.addEventListener('mouseup', () => {
-                    if (!isDesktop) return;
-                    isDragging = false;
-                    iconEl.style.cursor = 'grab';
-                    iconEl.style.zIndex = 100;
-                    setTimeout(() => { hasDragged = false; }, 0);
-                });
-                return () => hasDragged;
-            }
-
-            function injectContent() {
-                const windowHeaderHTML = (title) => `<div class="window-header"><div class="traffic-lights"><div class="traffic-light close"></div></div><span class="flex-grow text-center pr-8">${title}</span></div>`;
-                document.getElementById('cv-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('CV - Leonard Zirk')}<div class="window-body"><div class="text-center mb-6"><h1 class="text-3xl font-bold text-white">Leonard Zirk</h1><p class="text-xl text-gray-300">Creative Strategist & Technologist</p></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center text-sm mb-6"><div><strong class="block text-gray-400">PHONE</strong>+491637150123</div><div><strong class="block text-gray-400">ADDRESS</strong>Transvaalstraße 6, 13351</div><div><strong class="block text-gray-400">EMAIL</strong>leonard.zirk@gmail.com</div></div><h2>About</h2><p class="italic">"I turn complex science into captivating stories. As a scientist, I'm trained in rigorous data analysis; as a creative marketer, I've built engaging social media campaigns for global brands. My passion is bridging the gap between the theoretical and the applicable, and I'm eager to bring my unique blend of analytical and creative skills to a dynamic team."</p><h2>Work Experience</h2><p><strong>Creative Strategist</strong> | Ozmoze Gmbh<br>Developed social media and event content strategies for clients including Telekom, Tinder, and Duolingo. Crafted pitch decks for potential clients like Funk, Huawei, and Spotify.</p><p><strong>Social Media Marketer</strong> | Modulor Gmbh<br>Successfully oversaw and enhanced the comprehensive management of the organization's social media channels.</p><p><strong>Researcher</strong> | Klipp Linding Science<br>Engineered a computational pipeline in Julia for system modeling in molecular science, integrating single-cell transcriptomic data with spatially-resolved validation from smFISH imaging.</p><h2>Education</h2><p><strong>Bachelor of Science - Biology</strong> (2020-2025)<br>Core coursework in molecular biology, genetics, and quantitative biophysics, with a focus on computational methods (R, Python).</p><p><strong>Bachelor of Science - Psychology</strong> (2020 - 2024)<br>Specialized in cognitive psychology and behavioral neuroscience, with an emphasis on quantitative research design and statistical analysis (SPSS, R).</p><p><strong>Thesis Project: Hybrid Model</strong><br>Developed a hybrid computational model integrating mechanistic differential equations with data-driven machine learning algorithms to predict cellular responses using Julia.</p><h2>Skills</h2><p>Adaptive, Communication, Teamwork, Responsibility, Creativity, Problem-solving</p><h2>Highlights</h2><p><strong>01</strong> Threw a Project X themed Party for 1500 People for Tinder.<br><strong>02</strong> Supported a Campaign reaching half of Germany.<br><strong>03</strong> Collaborated within 5 Research Groups.<br><strong>04</strong> Enjoyed the moment.</p></div>`;
-                document.getElementById('contact-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Contact Me')}<div class="window-body"><form><div class="mb-4"><label class="block mb-2 text-ccc" for="name">Name</label><input class="w-full bg-black/30 border border-white/20 rounded-lg p-2 text-white" type="text" id="name" required></div><div class="mb-4"><label class="block mb-2 text-ccc" for="email">Your Email</label><input class="w-full bg-black/30 border border-white/20 rounded-lg p-2 text-white" type="email" id="email" required></div><div class="mb-4"><label class="block mb-2 text-ccc" for="message">Message</label><textarea class="w-full bg-black/30 border border-white/20 rounded-lg p-2 text-white" id="message" rows="4" required></textarea></div><button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg font-medium">Send</button></form></div>`;
-                document.getElementById('koplin-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Dr. Koplin')}<div class="window-body p-4 flex gap-4 items-start"><div data-url="https://www.tiktok.com/@drkoplin" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon"></div><p>Dr. Koplin TikTok</p></div><div id="readme-file-icon" class="mobile-icon"><div class="icon-bg"><i class="fas fa-file-lines"></i></div><p>read me.txt</p></div></div>`;
-                document.getElementById('readme-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('read me.txt')}<div class="window-body"><p>This is the read me file for Dr. Koplin.</p></div>`;
-                document.getElementById('readme-desktop-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('read me.txt')}<div class="window-body"><h2>Welcome!</h2><p>This is an interactive portfolio. Drag the windows around on a desktop, or swipe through the icons on mobile.</p><p>Feel free to explore the different folders to learn more about my work and projects.</p></div>`;
-                document.getElementById('duolingo-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Duolingo')}<div class="window-body duolingo-body"><div class="duolingo-progress-bar"><div class="duolingo-progress"></div></div><div class="duolingo-mascot-container"><img src="https://ik.imagekit.io/ex6ksvxsvk/duo%20app.png?updatedAt=1753448064337" alt="Duo the Owl" class="w-20 h-auto"><div class="duolingo-speech-bubble">What did Leo do for Duolingo?</div></div><div class="duolingo-options"><button class="duolingo-option" data-correct="false"><span>🧠</span><span>Spend time productively</span></button><button class="duolingo-option" data-correct="false"><span>🚀</span><span>Boost my career</span></button><button class="duolingo-option" data-correct="true"><span>💡</span><span>I supported the conceptualization of Social Media Content during my Time at Ozmoze.</span></button><button class="duolingo-option" data-correct="false"><span>🎓</span><span>Support my education</span></button></div><button class="duolingo-continue-btn">Continue</button></div>`;
-                document.getElementById('tinder-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Tinder')}<div class="window-body p-4 flex flex-wrap gap-4 items-start"><div id="tinder-party-icon" class="mobile-icon"><div class="icon-bg"><i class="fas fa-folder"></i></div><p>Tinder Party</p></div><div id="tinder-swipe-icon" class="mobile-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tinder%20app.png?updatedAt=1753448867039" alt="Tinder App"></div><p>Tinder App</p></div></div>`;
-                document.getElementById('tinder-party-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Tinder Party')}<div class="window-body p-4 flex gap-4 items-start"><div class="mobile-icon"><div class="icon-bg"><i class="fas fa-image"></i></div><p>placeholder.png</p></div></div>`;
-                document.getElementById('tinder-swipe-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('')}<div class="window-body tinder-body"><div class="tinder-header"><img src="https://ik.imagekit.io/ex6ksvxsvk/tinder%20app.png?updatedAt=1753448867039" alt="Tinder Logo"></div><div class="tinder-stack"><div class="tinder-card"><img class="tinder-card-img" src="https://ik.imagekit.io/ex6ksvxsvk/tinder%20profile?updatedAt=1753448748949" alt="Profile Picture"><div class="tinder-card-info"><h3>Leonard Zirk</h3><p>Creative Strategist & Scientist</p></div></div></div><div class="tinder-controls"><button class="tinder-btn dislike" id="dislike-btn"><i class="fas fa-times"></i></button><button class="tinder-btn like" id="like-btn"><i class="fas fa-heart"></i></button></div></div>`;
-                document.getElementById('modulor-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Modulor')}<div class="window-body p-4 flex flex-wrap gap-4 items-start"><div data-url="https://www.instagram.com/modulorberlin" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/instagramicon.webp?updatedAt=1752678971026" alt="Instagram Icon"></div><p>Instagram</p></div><div data-url="https://www.tiktok.com/@modulorberlin" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon"></div><p>TikTok</p></div></div>`;
-            }
-
-            function setupPagination() {
-                const container = document.getElementById('mobile-icons-container');
-                const dotsContainer = document.getElementById('pagination-dots');
-                const prevBtn = document.getElementById('prev-page');
-                const nextBtn = document.getElementById('next-page');
-                const pages = container.querySelectorAll('.mobile-page');
-                if (pages.length <= 1) {
-                    document.getElementById('pagination-container').style.display = 'none';
-                    return;
-                }
-                dotsContainer.innerHTML = '';
-                pages.forEach(() => { dotsContainer.innerHTML += `<div class="pagination-dot"></div>`; });
-                const dots = dotsContainer.querySelectorAll('.pagination-dot');
-                const updatePaginationControls = () => {
-                    const pageIndex = Math.round(container.scrollLeft / container.clientWidth);
-                    dots.forEach((dot, index) => dot.classList.toggle('active', index === pageIndex));
-                    const scrollLeft = container.scrollLeft;
-                    const scrollWidth = container.scrollWidth;
-                    const clientWidth = container.clientWidth;
-                    prevBtn.classList.toggle('hidden', scrollLeft < 10);
-                    nextBtn.classList.toggle('hidden', scrollLeft + clientWidth >= scrollWidth - 10);
-                };
-                container.addEventListener('scroll', updatePaginationControls, { passive: true });
-                prevBtn.addEventListener('click', () => { container.scrollBy({ left: -container.clientWidth }); });
-                nextBtn.addEventListener('click', () => { container.scrollBy({ left: container.clientWidth }); });
-                updatePaginationControls();
-            }
-
-            function setupEventListeners() {
-                windows.forEach(w => {
-                    w.querySelectorAll('.close').forEach(btn => btn.addEventListener('click', () => closeWindow(w)));
-                });
-                document.querySelectorAll('.link-icon').forEach(icon => {
-                    const wasDragged = isDesktop && icon.classList.contains('desktop-icon') ? makeIconDraggable(icon) : () => false;
-                    icon.addEventListener('click', () => {
-                        if (!wasDragged()) { window.open(icon.dataset.url, '_blank'); }
-                    });
-                });
-                const iconWindowMap = {
-                    'cv-dock-icon': 'cv-window', 'contact-dock-icon': 'contact-window',
-                    'koplin-icon-desktop': 'koplin-window', 'koplin-icon-mobile': 'koplin-window',
-                    'readme-desktop-icon': 'readme-desktop-window',
-                    'duolingo-icon-desktop': 'duolingo-window', 'duolingo-icon-mobile': 'duolingo-window',
-                    'tinder-icon-desktop': 'tinder-window', 'tinder-icon-mobile': 'tinder-window',
-                    'modulor-icon-desktop': 'modulor-window', 'modulor-icon-mobile': 'modulor-window'
-                };
-                for (const [iconId, windowId] of Object.entries(iconWindowMap)) {
-                    const iconEl = document.getElementById(iconId);
-                    const windowEl = document.getElementById(windowId);
-                    if (iconEl && windowEl) {
-                        if (isDesktop && iconEl.classList.contains('desktop-icon')) {
-                            const wasDragged = makeIconDraggable(iconEl);
-                            iconEl.addEventListener('click', () => { if (!wasDragged()) openWindow(windowEl); });
-                        } else {
-                            iconEl.addEventListener('click', () => openWindow(windowEl));
-                        }
-                    }
-                }
-                const readmeWindow = document.getElementById('readme-window');
-                document.getElementById('koplin-window').querySelector('#readme-file-icon')?.addEventListener('click', () => openWindow(readmeWindow));
-                
-                const tinderPartyWindow = document.getElementById('tinder-party-window');
-                document.getElementById('tinder-window').querySelector('#tinder-party-icon')?.addEventListener('click', () => openWindow(tinderPartyWindow));
-                
-                const tinderSwipeWindow = document.getElementById('tinder-swipe-window');
-                document.getElementById('tinder-window').querySelector('#tinder-swipe-icon')?.addEventListener('click', () => openWindow(tinderSwipeWindow));
-
-                if (isDesktop) { windows.forEach(makeWindowDraggable); }
-                const contactForm = document.getElementById('contact-window').querySelector('form');
-                contactForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const name = contactForm.querySelector('#name').value;
-                    const email = contactForm.querySelector('#email').value;
-                    const message = contactForm.querySelector('#message').value;
-                    const mailtoLink = `mailto:leonard.zirk@gmail.com?subject=${encodeURIComponent(`Message from ${name}`)}&body=${encodeURIComponent(`From: ${name} <${email}>\n\n${message}`)}`;
-                    window.open(mailtoLink);
-                });
-                
-                const duoWindow = document.getElementById('duolingo-window');
-                const duoOptions = duoWindow.querySelectorAll('.duolingo-option');
-                const duoContinueBtn = duoWindow.querySelector('.duolingo-continue-btn');
-                let selectedOption = null;
-                duoOptions.forEach(option => {
-                    option.addEventListener('click', () => {
-                        duoOptions.forEach(opt => opt.classList.remove('selected', 'correct', 'incorrect'));
-                        option.classList.add('selected');
-                        selectedOption = option;
-                        duoContinueBtn.classList.add('active');
-                    });
-                });
-                duoContinueBtn.addEventListener('click', () => {
-                    if (!selectedOption) return;
-                    const isCorrect = selectedOption.dataset.correct === 'true';
-                    if (isCorrect) { selectedOption.classList.add('correct'); } 
-                    else {
-                        selectedOption.classList.add('incorrect');
-                        setTimeout(() => { selectedOption.classList.remove('incorrect'); }, 500);
-                    }
-                    duoContinueBtn.classList.remove('active');
-                });
-
-                // Tinder Swipe Logic
-                const tinderCard = document.querySelector('.tinder-card');
-                const likeBtn = document.getElementById('like-btn');
-                const dislikeBtn = document.getElementById('dislike-btn');
-                let isTinderDragging = false, startX, startY, tinderOffsetX, tinderOffsetY;
-
-                const onTinderPointerDown = (e) => {
-                    isTinderDragging = true;
-                    startX = e.clientX || e.touches[0].clientX;
-                    tinderCard.classList.add('dragging');
-                };
-
-                const onTinderPointerMove = (e) => {
-                    if (!isTinderDragging) return;
-                    const currentX = e.clientX || e.touches[0].clientX;
-                    tinderOffsetX = currentX - startX;
-                    const rotation = tinderOffsetX / 20;
-                    tinderCard.style.transform = `translateX(${tinderOffsetX}px) rotate(${rotation}deg)`;
-                };
-
-                const onTinderPointerUp = (e) => {
-                    isTinderDragging = false;
-                    tinderCard.classList.remove('dragging');
-                    if (Math.abs(tinderOffsetX) > 100) {
-                        const direction = tinderOffsetX > 0 ? 1 : -1;
-                        swipe(direction);
-                    } else {
-                        tinderCard.style.transform = '';
-                    }
-                };
-
-                tinderCard.addEventListener('mousedown', onTinderPointerDown);
-                document.addEventListener('mousemove', onTinderPointerMove);
-                document.addEventListener('mouseup', onTinderPointerUp);
-                tinderCard.addEventListener('touchstart', onTinderPointerDown, { passive: true });
-                document.addEventListener('touchmove', onTinderPointerMove, { passive: true });
-                document.addEventListener('touchend', onTinderPointerUp);
-
-                const swipe = (direction) => {
-                    const flyOutX = direction * window.innerWidth;
-                    tinderCard.style.transform = `translateX(${flyOutX}px) rotate(${direction * 30}deg)`;
-                    tinderCard.style.opacity = '0';
-                    if (direction === 1) { // Swiped right
-                        setTimeout(() => {
-                           openWindow(document.getElementById('contact-window'));
-                        }, 300);
-                    }
-                     setTimeout(() => {
-                        tinderCard.style.transform = '';
-                        tinderCard.style.opacity = '1';
-                    }, 500);
-                };
-
-                likeBtn.addEventListener('click', () => swipe(1));
-                dislikeBtn.addEventListener('click', () => swipe(-1));
-            }
-
-            function handleResize() {
-                isDesktop = window.innerWidth >= 1024;
-                const desktopIconContainer = document.getElementById('desktop-icons-container');
-                const mobileViewWrapper = document.getElementById('mobile-view-wrapper');
-                if (isDesktop) {
-                    desktopIconContainer.classList.remove('hidden');
-                    mobileViewWrapper.classList.add('lg:hidden');
-                } else {
-                    desktopIconContainer.classList.add('hidden');
-                    mobileViewWrapper.classList.remove('lg:hidden');
-                }
-                windows.forEach(w => {
-                    if (!w.classList.contains('hidden')) {
-                        if (isDesktop) { w.classList.add('lg:window-desktop'); } 
-                        else { w.classList.remove('lg:window-desktop'); }
-                    }
-                });
-            }
-
-            injectContent();
-            setupEventListeners();
-            setupPagination();
-            window.addEventListener('resize', handleResize);
-            handleResize();
-        });
-    </script>
 
 </body>
 </html>
-
