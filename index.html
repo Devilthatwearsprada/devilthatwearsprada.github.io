@@ -87,7 +87,7 @@
             margin: 0 auto;
             border-radius: 0.75rem;
         }
-        .desktop-icon .fa-folder, .desktop-icon .fa-file-lines {
+        .desktop-icon .fa-folder, .desktop-icon .fa-file-lines, .desktop-icon .fa-image {
             font-size: 60px;
             margin: 0 auto;
             color: #60a5fa;
@@ -214,7 +214,7 @@
             object-fit: cover;
             border-radius: 1rem;
         }
-        .mobile-icon .fa-folder, .mobile-icon .fa-file-lines {
+        .mobile-icon .fa-folder, .mobile-icon .fa-file-lines, .mobile-icon .fa-image {
             font-size: 32px;
             color: #60a5fa;
         }
@@ -246,116 +246,37 @@
         .pagination-arrow.hidden { opacity: 0; pointer-events: none; }
 
         /* --- Duolingo Window Styles --- */
-        .duolingo-body {
-            background-color: #ffffff;
-            color: #4c4c4c;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 1.5rem;
-        }
-        .duolingo-progress-bar {
-            width: 100%;
-            height: 16px;
-            background-color: #e5e5e5;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 2px solid #e5e5e5;
-        }
-        .duolingo-progress {
-            width: 60%;
-            height: 100%;
-            background-color: #58cc02;
-            border-radius: 6px;
-        }
-        .duolingo-mascot-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 2rem;
-            width: 100%;
-        }
-        .duolingo-speech-bubble {
-            background-color: #ffffff;
-            border: 2px solid #e5e5e5;
-            border-radius: 1rem;
-            padding: 1rem;
-            font-weight: 700;
-            font-size: 1.1rem;
-            position: relative;
-        }
-        .duolingo-speech-bubble::before {
-            content: '';
-            position: absolute;
-            left: -10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 0;
-            height: 0;
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-right: 10px solid #e5e5e5;
-        }
-        .duolingo-options {
-            width: 100%;
-            margin-top: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        .duolingo-option {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #e5e5e5;
-            border-bottom-width: 4px;
-            border-radius: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.2s, border-color 0.2s;
-        }
+        .duolingo-body { background-color: #ffffff; color: #4c4c4c; display: flex; flex-direction: column; align-items: center; padding: 1.5rem; }
+        .duolingo-progress-bar { width: 100%; height: 16px; background-color: #e5e5e5; border-radius: 8px; overflow: hidden; border: 2px solid #e5e5e5; }
+        .duolingo-progress { width: 60%; height: 100%; background-color: #58cc02; border-radius: 6px; }
+        .duolingo-mascot-container { display: flex; align-items: center; gap: 1rem; margin-top: 2rem; width: 100%; }
+        .duolingo-speech-bubble { background-color: #ffffff; border: 2px solid #e5e5e5; border-radius: 1rem; padding: 1rem; font-weight: 700; font-size: 1.1rem; position: relative; }
+        .duolingo-speech-bubble::before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 10px solid #e5e5e5; }
+        .duolingo-options { width: 100%; margin-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .duolingo-option { display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem; border: 2px solid #e5e5e5; border-bottom-width: 4px; border-radius: 1rem; font-weight: 700; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; }
         .duolingo-option:hover { background-color: #f7f7f7; }
-        .duolingo-option.selected {
-            background-color: #d7ffb8;
-            border-color: #58cc02;
-        }
-        .duolingo-option.correct {
-            background-color: #d7ffb8;
-            border-color: #58cc02;
-            color: #58a700;
-        }
-        .duolingo-option.incorrect {
-            background-color: #ffdfe0;
-            border-color: #ff4b4b;
-            color: #ea2b2b;
-            animation: shake 0.5s;
-        }
-        .duolingo-continue-btn {
-            width: 100%;
-            margin-top: auto;
-            padding: 1rem;
-            background-color: #58cc02;
-            color: white;
-            font-weight: 700;
-            text-transform: uppercase;
-            border-radius: 1rem;
-            border-bottom: 4px solid #58a700;
-            cursor: pointer;
-            opacity: 0.5;
-            pointer-events: none;
-            transition: opacity 0.2s;
-        }
-        .duolingo-continue-btn.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
+        .duolingo-option.selected { background-color: #d7ffb8; border-color: #58cc02; }
+        .duolingo-option.correct { background-color: #d7ffb8; border-color: #58cc02; color: #58a700; }
+        .duolingo-option.incorrect { background-color: #ffdfe0; border-color: #ff4b4b; color: #ea2b2b; animation: shake 0.5s; }
+        .duolingo-continue-btn { width: 100%; margin-top: auto; padding: 1rem; background-color: #58cc02; color: white; font-weight: 700; text-transform: uppercase; border-radius: 1rem; border-bottom: 4px solid #58a700; cursor: pointer; opacity: 0.5; pointer-events: none; transition: opacity 0.2s; }
+        .duolingo-continue-btn.active { opacity: 1; pointer-events: auto; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        
+        /* --- Tinder Swipe App Styles --- */
+        .tinder-body { display: flex; flex-direction: column; height: 100%; padding: 0; background-color: #f7f7f7; overflow: hidden; }
+        .tinder-header { background-color: #fff; padding: 10px; text-align: center; border-bottom: 1px solid #e8e8e8; flex-shrink: 0; }
+        .tinder-header img { height: 30px; }
+        .tinder-stack { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        .tinder-card { background-color: #fff; width: 85%; height: 80%; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.12); position: absolute; display: flex; flex-direction: column; overflow: hidden; transition: transform 0.4s ease, opacity 0.4s ease; cursor: grab; }
+        .tinder-card.dragging { transition: none; }
+        .tinder-card-img { width: 100%; height: 70%; object-fit: cover; }
+        .tinder-card-info { padding: 15px; }
+        .tinder-card-info h3 { font-size: 1.5rem; font-weight: 700; color: #333; }
+        .tinder-card-info p { font-size: 1rem; color: #666; }
+        .tinder-controls { display: flex; justify-content: space-around; padding: 15px; flex-shrink: 0; }
+        .tinder-btn { background-color: #fff; border: 1px solid #e8e8e8; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; }
+        .tinder-btn.like { color: #4bde97; }
+        .tinder-btn.dislike { color: #fd5068; }
     </style>
 </head>
 <body class="bg-black">
@@ -376,16 +297,6 @@
             </div>
             <div id="time" class="font-medium"></div>
         </div>
-    </div>
-
-    <!-- Desktop Icons (Hidden on mobile) -->
-    <div id="desktop-icons-container" class="hidden lg:block">
-        <div id="koplin-icon-desktop" class="desktop-icon" style="top: 50px; left: 30px;"><i class="fas fa-folder"></i><p>Dr. Koplin</p></div>
-        <div id="tinder-icon-desktop" class="desktop-icon" style="top: 170px; left: 30px;"><i class="fas fa-folder"></i><p>Tinder</p></div>
-        <div id="modulor-icon-desktop" class="desktop-icon" style="top: 290px; left: 30px;"><i class="fas fa-folder"></i><p>Modulor</p></div>
-        
-        <div id="readme-desktop-icon" class="desktop-icon" style="top: 50px; right: 30px;"><i class="fas fa-file-lines"></i><p>read me.txt</p></div>
-        <div id="duolingo-icon-desktop" class="desktop-icon" style="top: 170px; right: 30px;"><img class="icon-image" src="https://ik.imagekit.io/ex6ksvxsvk/duolingo_icon.png?updatedAt=1753434600000" alt="Duolingo"><p>Duolingo</p></div>
     </div>
 
     <!-- Mobile View Wrapper (Hidden on desktop) -->
@@ -425,6 +336,8 @@
     <div id="duolingo-window" class="window hidden"><div class="window-content"></div></div>
     <div id="tinder-window" class="window hidden"><div class="window-content"></div></div>
     <div id="modulor-window" class="window hidden"><div class="window-content"></div></div>
+    <div id="tinder-party-window" class="window hidden"><div class="window-content"></div></div>
+    <div id="tinder-swipe-window" class="window hidden"><div class="window-content"></div></div>
 
     <!-- Dock -->
     <div class="dock">
@@ -515,24 +428,11 @@
                 document.getElementById('koplin-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Dr. Koplin')}<div class="window-body p-4 flex gap-4 items-start"><div data-url="https://www.tiktok.com/@drkoplin" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon"></div><p>Dr. Koplin TikTok</p></div><div id="readme-file-icon" class="mobile-icon"><div class="icon-bg"><i class="fas fa-file-lines"></i></div><p>read me.txt</p></div></div>`;
                 document.getElementById('readme-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('read me.txt')}<div class="window-body"><p>This is the read me file for Dr. Koplin.</p></div>`;
                 document.getElementById('readme-desktop-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('read me.txt')}<div class="window-body"><h2>Welcome!</h2><p>This is an interactive portfolio. Drag the windows around on a desktop, or swipe through the icons on mobile.</p><p>Feel free to explore the different folders to learn more about my work and projects.</p></div>`;
-                document.getElementById('duolingo-window').querySelector('.window-content').innerHTML = `
-                    ${windowHeaderHTML('Duolingo')}
-                    <div class="window-body duolingo-body">
-                        <div class="duolingo-progress-bar"><div class="duolingo-progress"></div></div>
-                        <div class="duolingo-mascot-container">
-                            <img src="https://ik.imagekit.io/ex6ksvxsvk/duo%20app.png?updatedAt=1753448064337" alt="Duo the Owl" class="w-20 h-auto">
-                            <div class="duolingo-speech-bubble">What did Leo do for Duolingo?</div>
-                        </div>
-                        <div class="duolingo-options">
-                            <button class="duolingo-option" data-correct="false"><span>🧠</span><span>Spend time productively</span></button>
-                            <button class="duolingo-option" data-correct="false"><span>🚀</span><span>Boost my career</span></button>
-                            <button class="duolingo-option" data-correct="true"><span>💡</span><span>I supported the conceptualization of Social Media Content during my Time at Ozmoze.</span></button>
-                            <button class="duolingo-option" data-correct="false"><span>🎓</span><span>Support my education</span></button>
-                        </div>
-                        <button class="duolingo-continue-btn">Continue</button>
-                    </div>`;
-                document.getElementById('tinder-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Tinder')}<div class="window-body p-4"></div>`;
-                document.getElementById('modulor-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Modulor')}<div class="window-body p-4"></div>`;
+                document.getElementById('duolingo-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Duolingo')}<div class="window-body duolingo-body"><div class="duolingo-progress-bar"><div class="duolingo-progress"></div></div><div class="duolingo-mascot-container"><img src="https://ik.imagekit.io/ex6ksvxsvk/duo%20app.png?updatedAt=1753448064337" alt="Duo the Owl" class="w-20 h-auto"><div class="duolingo-speech-bubble">What did Leo do for Duolingo?</div></div><div class="duolingo-options"><button class="duolingo-option" data-correct="false"><span>🧠</span><span>Spend time productively</span></button><button class="duolingo-option" data-correct="false"><span>🚀</span><span>Boost my career</span></button><button class="duolingo-option" data-correct="true"><span>💡</span><span>I supported the conceptualization of Social Media Content during my Time at Ozmoze.</span></button><button class="duolingo-option" data-correct="false"><span>🎓</span><span>Support my education</span></button></div><button class="duolingo-continue-btn">Continue</button></div>`;
+                document.getElementById('tinder-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Tinder')}<div class="window-body p-4 flex flex-wrap gap-4 items-start"><div id="tinder-party-icon" class="mobile-icon"><div class="icon-bg"><i class="fas fa-folder"></i></div><p>Tinder Party</p></div><div id="tinder-swipe-icon" class="mobile-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tinder%20app.png?updatedAt=1753448867039" alt="Tinder App"></div><p>Tinder App</p></div></div>`;
+                document.getElementById('tinder-party-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Tinder Party')}<div class="window-body p-4 flex gap-4 items-start"><div class="mobile-icon"><div class="icon-bg"><i class="fas fa-image"></i></div><p>placeholder.png</p></div></div>`;
+                document.getElementById('tinder-swipe-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('')}<div class="window-body tinder-body"><div class="tinder-header"><img src="https://ik.imagekit.io/ex6ksvxsvk/tinder%20app.png?updatedAt=1753448867039" alt="Tinder Logo"></div><div class="tinder-stack"><div class="tinder-card"><img class="tinder-card-img" src="https://ik.imagekit.io/ex6ksvxsvk/tinder%20profile?updatedAt=1753448748949" alt="Profile Picture"><div class="tinder-card-info"><h3>Leonard Zirk</h3><p>Creative Strategist & Scientist</p></div></div></div><div class="tinder-controls"><button class="tinder-btn dislike" id="dislike-btn"><i class="fas fa-times"></i></button><button class="tinder-btn like" id="like-btn"><i class="fas fa-heart"></i></button></div></div>`;
+                document.getElementById('modulor-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Modulor')}<div class="window-body p-4 flex flex-wrap gap-4 items-start"><div data-url="https://www.instagram.com/modulorberlin" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/instagramicon.webp?updatedAt=1752678971026" alt="Instagram Icon"></div><p>Instagram</p></div><div data-url="https://www.tiktok.com/@modulorberlin" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon"></div><p>TikTok</p></div></div>`;
             }
 
             function setupPagination() {
@@ -595,6 +495,13 @@
                 }
                 const readmeWindow = document.getElementById('readme-window');
                 document.getElementById('koplin-window').querySelector('#readme-file-icon')?.addEventListener('click', () => openWindow(readmeWindow));
+                
+                const tinderPartyWindow = document.getElementById('tinder-party-window');
+                document.getElementById('tinder-window').querySelector('#tinder-party-icon')?.addEventListener('click', () => openWindow(tinderPartyWindow));
+                
+                const tinderSwipeWindow = document.getElementById('tinder-swipe-window');
+                document.getElementById('tinder-window').querySelector('#tinder-swipe-icon')?.addEventListener('click', () => openWindow(tinderSwipeWindow));
+
                 if (isDesktop) { windows.forEach(makeWindowDraggable); }
                 const contactForm = document.getElementById('contact-window').querySelector('form');
                 contactForm.addEventListener('submit', (e) => {
@@ -606,12 +513,10 @@
                     window.open(mailtoLink);
                 });
                 
-                // Duolingo interactivity
                 const duoWindow = document.getElementById('duolingo-window');
                 const duoOptions = duoWindow.querySelectorAll('.duolingo-option');
                 const duoContinueBtn = duoWindow.querySelector('.duolingo-continue-btn');
                 let selectedOption = null;
-
                 duoOptions.forEach(option => {
                     option.addEventListener('click', () => {
                         duoOptions.forEach(opt => opt.classList.remove('selected', 'correct', 'incorrect'));
@@ -620,21 +525,72 @@
                         duoContinueBtn.classList.add('active');
                     });
                 });
-
                 duoContinueBtn.addEventListener('click', () => {
                     if (!selectedOption) return;
-
                     const isCorrect = selectedOption.dataset.correct === 'true';
-                    if (isCorrect) {
-                        selectedOption.classList.add('correct');
-                    } else {
+                    if (isCorrect) { selectedOption.classList.add('correct'); } 
+                    else {
                         selectedOption.classList.add('incorrect');
-                        setTimeout(() => {
-                            selectedOption.classList.remove('incorrect');
-                        }, 500);
+                        setTimeout(() => { selectedOption.classList.remove('incorrect'); }, 500);
                     }
                     duoContinueBtn.classList.remove('active');
                 });
+
+                // Tinder Swipe Logic
+                const tinderCard = document.querySelector('.tinder-card');
+                const likeBtn = document.getElementById('like-btn');
+                const dislikeBtn = document.getElementById('dislike-btn');
+                let isTinderDragging = false, startX, startY, tinderOffsetX, tinderOffsetY;
+
+                const onTinderPointerDown = (e) => {
+                    isTinderDragging = true;
+                    startX = e.clientX || e.touches[0].clientX;
+                    tinderCard.classList.add('dragging');
+                };
+
+                const onTinderPointerMove = (e) => {
+                    if (!isTinderDragging) return;
+                    const currentX = e.clientX || e.touches[0].clientX;
+                    tinderOffsetX = currentX - startX;
+                    const rotation = tinderOffsetX / 20;
+                    tinderCard.style.transform = `translateX(${tinderOffsetX}px) rotate(${rotation}deg)`;
+                };
+
+                const onTinderPointerUp = (e) => {
+                    isTinderDragging = false;
+                    tinderCard.classList.remove('dragging');
+                    if (Math.abs(tinderOffsetX) > 100) {
+                        const direction = tinderOffsetX > 0 ? 1 : -1;
+                        swipe(direction);
+                    } else {
+                        tinderCard.style.transform = '';
+                    }
+                };
+
+                tinderCard.addEventListener('mousedown', onTinderPointerDown);
+                document.addEventListener('mousemove', onTinderPointerMove);
+                document.addEventListener('mouseup', onTinderPointerUp);
+                tinderCard.addEventListener('touchstart', onTinderPointerDown, { passive: true });
+                document.addEventListener('touchmove', onTinderPointerMove, { passive: true });
+                document.addEventListener('touchend', onTinderPointerUp);
+
+                const swipe = (direction) => {
+                    const flyOutX = direction * window.innerWidth;
+                    tinderCard.style.transform = `translateX(${flyOutX}px) rotate(${direction * 30}deg)`;
+                    tinderCard.style.opacity = '0';
+                    if (direction === 1) { // Swiped right
+                        setTimeout(() => {
+                           openWindow(document.getElementById('contact-window'));
+                        }, 300);
+                    }
+                     setTimeout(() => {
+                        tinderCard.style.transform = '';
+                        tinderCard.style.opacity = '1';
+                    }, 500);
+                };
+
+                likeBtn.addEventListener('click', () => swipe(1));
+                dislikeBtn.addEventListener('click', () => swipe(-1));
             }
 
             function handleResize() {
@@ -666,3 +622,4 @@
 
 </body>
 </html>
+
