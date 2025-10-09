@@ -1,265 +1,255 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nachtrag zum Praktikantenvertrag</title>
+    <title>AI Ed-Tech Activation - The Adventure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Basic styles for the document body */
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 10pt;
-            line-height: 1.4;
-            color: #333;
-            background-color: #f4f4f4;
+            background-color: #1a1a1a;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 20px;
-        }
-
-        /* Container for each page */
-        .page {
-            background: white;
-            width: 8.5in;
-            min-height: 11in;
-            padding: 1in;
-            margin: 20px auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-            display: flex;
+            overflow: hidden;
             flex-direction: column;
+            transition: background-color 0.5s ease;
         }
 
-        /* Header section with the logo */
-        .header {
+        body.light-mode {
+             background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            color: #1a1a1a;
+        }
+
+        #video-bg {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+            display: none;
+            transition: opacity 0.5s ease;
+            filter: blur(10px);
+            transform: scale(1.1); /* Ensure blur doesn't create hard edges */
+        }
+
+        .mode-switch-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            align-items: center;
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            padding: 5px 10px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        body.light-mode .mode-switch-container {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        .header .logo {
-            font-weight: bold;
-            font-size: 24pt;
+        .mode-switch-container label {
+            padding: 0 10px;
+            cursor: pointer;
+            color: #fff;
+        }
+        body.light-mode .mode-switch-container label {
+             color: #000;
+        }
+        .mode-switch {
+            display: none;
+        }
+        .switch-track {
+            width: 50px;
+            height: 25px;
+            background: #1a1a1a;
+            border-radius: 25px;
+            position: relative;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        .switch-thumb {
+            position: absolute;
+            width: 21px;
+            height: 21px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+        }
+        .mode-switch:checked + .switch-track .switch-thumb {
+            transform: translateX(25px);
+            background: #00ffff;
         }
 
-        /* Main title of the document */
-        .title {
-            font-weight: bold;
-            font-size: 14pt;
-            text-align: center;
-            margin-bottom: 30px;
+
+        .game-container {
+            border: 8px solid #444;
+            border-radius: 15px;
+            background-color: #000;
+            padding: 20px;
+            box-shadow: 0 0 25px #00ffff, 0 0 15px #ff00ff inset;
+            position: relative;
+            transition: opacity 0.4s ease-out;
         }
 
-        /* Centered text for "and/und" */
-        .conjunction {
-            text-align: center;
-            margin: 15px 0;
+        .game-container.hidden {
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        canvas {
+            background-color: #0d0d0d;
+            display: block;
+            border-radius: 5px;
+            border: 2px solid #333;
+            cursor: pointer;
         }
         
-        /* Main content area */
-        .content {
-            flex-grow: 1;
-        }
-
-        /* Table used for the two-column layout */
-        .column-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .column-table td {
-            width: 50%;
-            vertical-align: top;
-            padding-right: 20px;
-        }
-
-        .column-table td:last-child {
-            padding-right: 0;
-            padding-left: 20px;
+        .qa-container {
+            display: none;
+            opacity: 0;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 900px;
+            height: 80vh;
+            max-height: 700px;
+            padding: 20px 40px;
+            box-sizing: border-box;
+            text-align: left;
+            transition: opacity 0.5s ease-in;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            overflow-y: auto;
+            z-index: 500;
         }
         
-        /* Section headings */
-        h3 {
-            font-weight: bold;
-            font-size: 11pt;
-            margin-top: 20px;
+        .qa-container.visible {
+            display: block;
+            opacity: 1;
+        }
+        
+        /* Custom scrollbar for webkit browsers */
+        .qa-container::-webkit-scrollbar {
+            width: 12px;
+        }
+        .qa-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .qa-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+
+        .qa-container h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-top: 30px;
             margin-bottom: 10px;
         }
 
-        /* Ordered list styling */
-        ol {
-            padding-left: 20px;
-        }
-
-        li {
-            margin-bottom: 1em;
-        }
-
-        /* Signature section styling */
-        .signatures {
-            margin-top: 80px;
+        .qa-container p, .qa-container ul {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            color: #333;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            border-left: 3px solid rgba(0, 0, 0, 0.2);
         }
         
-        .signature-line {
-            border-bottom: 1px solid #333;
-            margin-top: 50px;
-            margin-bottom: 5px;
+        .qa-container ul {
+            list-style-type: disc;
+            padding-left: 40px;
+            border-left: none;
         }
 
-        /* Footer section */
-        .footer {
-            display: flex;
-            justify-content: space-between;
+        .message-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
             align-items: center;
-            border-top: 1px solid #ccc;
-            padding-top: 10px;
-            margin-top: auto; /* Pushes footer to the bottom */
-            font-size: 9pt;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .final-message {
+            font-size: 2rem;
+            color: #00ff00;
+            line-height: 1.6;
+            text-shadow: 2px 2px 0px #1a1a1a;
+            max-width: 90%;
         }
 
-        .footer .logo {
-            font-weight: bold;
-            font-size: 18pt;
+        .cta-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: #ffff00;
+            color: #1a1a1a;
+            padding: 15px 30px;
+            margin: 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            text-shadow: none;
+            border: 3px solid #1a1a1a;
+            box-shadow: 5px 5px 0px #00ffff;
+            transition: all 0.1s linear;
+        }
+
+        .cta-button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 3px 3px 0px #00ffff;
+        }
+        .cta-button:active {
+            transform: translate(5px, 5px);
+            box-shadow: 0 0 0 #00ffff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
 <body>
-
-    <!-- Page 1 of the Addendum -->
-    <div class="page">
-        <div class="header">
-            <div class="logo">Hive</div>
-        </div>
-
-        <div class="title">
-            Nachtrag zum Praktikantenvertrag<br>
-            <em>Addendum to the Internship Agreement</em>
-        </div>
-
-        <div class="content">
-            <table class="column-table">
-                <tr>
-                    <td>
-                        <strong>zwischen der</strong><br><br>
-                        <strong>Hive Technologies GmbH</strong><br>
-                        Rosenstrasse 16<br>
-                        10178 Berlin<br><br>
-                        - nachfolgend „Arbeitgeber" genannt -
-                    </td>
-                    <td>
-                        <strong>between</strong><br><br>
-                        <strong>Hive Technologies GmbH</strong><br>
-                        Rosenstrasse 16<br>
-                        10178 Berlin<br><br>
-                        - hereinafter referred to as "Employer" -
-                    </td>
-                </tr>
-            </table>
-
-            <div class="conjunction">und / <em>and</em></div>
-
-            <table class="column-table">
-                <tr>
-                    <td>
-                        <strong>Herrn Leonard Zirk</strong><br>
-                        Transvaalstraße 6<br>
-                        13351 Berlin<br><br>
-                        - nachfolgend „Praktikant" genannt -
-                    </td>
-                    <td>
-                        <strong>Mr. Leonard Zirk</strong><br>
-                        Transvaalstraße 6<br>
-                        13351 Berlin<br><br>
-                        - hereinafter referred to as "Trainee" -
-                    </td>
-                </tr>
-            </table>
-
-            <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ccc;">
-            
-            <p>Dieser Nachtrag bezieht sich auf den am 24. Juli 2025 unterzeichneten Praktikantenvertrag („Vertrag“).<br>
-            <em>This document serves as an addendum to the Internship Agreement signed on July 24, 2025 (the "Agreement").</em></p>
-
-            <table class="column-table">
-                <tr>
-                    <td>
-                        <h3>§ 1 Änderung des Beginns und des Enddatums</h3>
-                        <ol>
-                            <li>Das in § 1.1 des Vertrages genannte Beginndatum des Praktikums wird hiermit geändert. Der ursprüngliche Beginn am 1. August 2025 wird auf den <strong>[DATUM WÄHLEN: 14. August 2025 / 18. August 2025]</strong> verschoben.</li>
-                            <li>
-                                <strong>[OPTION A]</strong> Das in § 1.1 des Vertrages genannte Enddatum des Praktikums bleibt unverändert der 31. Januar 2026.
-                                <br><br>
-                                <strong>[OPTION B]</strong> Um die ursprüngliche Dauer des Praktikums von sechs Monaten beizubehalten, wird das in § 1.1 des Vertrages genannte Enddatum vom 31. Januar 2026 auf den <strong>[JE NACH STARTDATUM: 13. Februar 2026 / 17. Februar 2026]</strong> verschoben.
-                            </li>
-                        </ol>
-                        <h3>§ 2 Schlussbestimmungen</h3>
-                        <ol>
-                            <li>Alle anderen Bestimmungen des Praktikantenvertrages vom 24. Juli 2025 bleiben unverändert in vollem Umfang in Kraft.</li>
-                            <li>Änderungen und Ergänzungen dieses Nachtrags bedürfen zu ihrer Wirksamkeit der Schriftform. Das gilt auch für die Aufhebung dieses Schriftformerfordernisses.</li>
-                        </ol>
-                    </td>
-                    <td>
-                        <h3>§ 1 Amendment to the Start and End Date</h3>
-                        <ol>
-                            <li>The start date of the internship, as stated in § 1.1 of the Agreement, is hereby changed. The original start date of August 1, 2025, is moved to <strong>[CHOOSE DATE: August 14, 2025 / August 18, 2025]</strong>.</li>
-                            <li>
-                                <strong>[OPTION A]</strong> The end date of the internship, as stated in § 1.1 of the Agreement, remains unchanged as January 31, 2026.
-                                <br><br>
-                                <strong>[OPTION B]</strong> To maintain the original six-month duration of the internship, the end date stated in § 1.1 of the Agreement is moved from January 31, 2026, to <strong>[DEPENDING ON START DATE: February 13, 2026 / February 17, 2026]</strong>.
-                            </li>
-                        </ol>
-                        <h3>§ 2 Final Provisions</h3>
-                        <ol>
-                            <li>All other provisions, terms, and conditions of the Internship Agreement dated July 24, 2025, shall remain in full force and effect without modification.</li>
-                            <li>Amendments and supplements to this addendum must be made in writing to be effective. This also applies to its termination by means of a cancellation agreement.</li>
-                        </ol>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="footer">
-            <span>Seite 1/2</span>
-            <span>Nachtrag zum Praktikantenvertrag</span>
-            <div class="logo">Hive</div>
-        </div>
-    </div>
-
-    <!-- Page 2 of the Addendum (Signatures) -->
-    <div class="page">
-        <div class="header">
-            <div class="logo">Hive</div>
-        </div>
-
-        <div class="content">
-            <div class="signatures">
-                <p style="text-align: center;">- Unterschriftenseite / Signature Page -</p>
-                <table class="column-table" style="margin-top: 60px;">
-                    <tr>
-                        <td>
-                            Berlin, ___________________
-                            <div class="signature-line"></div>
-                            <strong>Hive Technologies GmbH</strong><br>
-                            (David Lagarde, COO & Managing Director)
-                        </td>
-                        <td>
-                            Berlin, ___________________
-                            <div class="signature-line"></div>
-                            <strong>Leonard Zirk</strong>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <div class="footer">
-            <span>Seite 2/2</span>
-            <span>Nachtrag zum Praktikantenvertrag</span>
-            <div class="logo">Hive</div>
-        </div>
-    </div>
-
-</body>
-</html>
+    <video autoplay muted loop id="video-bg">
