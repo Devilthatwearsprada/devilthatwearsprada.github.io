@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Ed-Tech Activation - The Adventure</title>
+    <title>AI Strategy & Activation - The Game</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -21,80 +21,10 @@
             flex-direction: column;
             transition: background-color 0.5s ease;
         }
-
         body.light-mode {
-             background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: #1a1a1a;
         }
-
-        #video-bg {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
-            z-index: -1;
-            display: none;
-            transition: opacity 0.5s ease;
-            filter: blur(10px);
-            transform: scale(1.1); /* Ensure blur doesn't create hard edges */
-        }
-
-        .mode-switch-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            font-size: 12px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(5px);
-            padding: 5px 10px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        body.light-mode .mode-switch-container {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-        }
-
-        .mode-switch-container label {
-            padding: 0 10px;
-            cursor: pointer;
-            color: #fff;
-        }
-        body.light-mode .mode-switch-container label {
-             color: #000;
-        }
-        .mode-switch {
-            display: none;
-        }
-        .switch-track {
-            width: 50px;
-            height: 25px;
-            background: #1a1a1a;
-            border-radius: 25px;
-            position: relative;
-            cursor: pointer;
-            margin: 0 10px;
-        }
-        .switch-thumb {
-            position: absolute;
-            width: 21px;
-            height: 21px;
-            background: #f0f0f0;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.3s ease;
-        }
-        .mode-switch:checked + .switch-track .switch-thumb {
-            transform: translateX(25px);
-            background: #00ffff;
-        }
-
-
         .game-container {
             border: 8px solid #444;
             border-radius: 15px;
@@ -103,98 +33,21 @@
             box-shadow: 0 0 25px #00ffff, 0 0 15px #ff00ff inset;
             position: relative;
             transition: opacity 0.4s ease-out;
+            max-width: 95%;
+            box-sizing: border-box;
         }
-
-        .game-container.hidden {
-            opacity: 0.1;
-            pointer-events: none;
-        }
-
         canvas {
             background-color: #0d0d0d;
             display: block;
             border-radius: 5px;
             border: 2px solid #333;
             cursor: pointer;
+            width: 100%;
+            height: auto;
         }
-        
-        .qa-container {
-            display: none;
-            opacity: 0;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 900px;
-            height: 80vh;
-            max-height: 700px;
-            padding: 20px 40px;
-            box-sizing: border-box;
-            text-align: left;
-            transition: opacity 0.5s ease-in;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            overflow-y: auto;
-            z-index: 500;
-        }
-        
-        .qa-container.visible {
-            display: block;
-            opacity: 1;
-        }
-        
-        /* Custom scrollbar for webkit browsers */
-        .qa-container::-webkit-scrollbar {
-            width: 12px;
-        }
-        .qa-container::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        .qa-container::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            border: 2px solid transparent;
-            background-clip: content-box;
-        }
-
-        .qa-container h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-top: 30px;
-            margin-bottom: 10px;
-        }
-
-        .qa-container p, .qa-container ul {
-            font-size: 1.1rem;
-            line-height: 1.7;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 400;
-            color: #333;
-            margin-bottom: 20px;
-            padding-left: 10px;
-            border-left: 3px solid rgba(0, 0, 0, 0.2);
-        }
-        
-        .qa-container ul {
-            list-style-type: disc;
-            padding-left: 40px;
-            border-left: none;
-        }
-
         .message-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.9);
             display: none;
             justify-content: center;
@@ -205,7 +58,6 @@
             box-sizing: border-box;
             animation: fadeIn 0.5s ease-in-out;
         }
-        
         .final-message {
             font-size: 2rem;
             color: #00ff00;
@@ -213,14 +65,12 @@
             text-shadow: 2px 2px 0px #1a1a1a;
             max-width: 90%;
         }
-
         .cta-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-top: 20px;
         }
-
         .cta-button {
             display: inline-block;
             background-color: #ffff00;
@@ -235,21 +85,391 @@
             box-shadow: 5px 5px 0px #00ffff;
             transition: all 0.1s linear;
         }
-
         .cta-button:hover {
             transform: translate(2px, 2px);
             box-shadow: 3px 3px 0px #00ffff;
         }
-        .cta-button:active {
-            transform: translate(5px, 5px);
-            box-shadow: 0 0 0 #00ffff;
+        .qa-container {
+            display: none; opacity: 0; position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%; max-width: 900px; height: 80vh; max-height: 700px;
+            padding: 20px 40px; box-sizing: border-box; text-align: left;
+            transition: opacity 0.5s ease-in;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            overflow-y: auto; z-index: 500;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
+        .qa-container.visible { display: block; opacity: 1; }
+        .qa-container h2 { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin-top: 30px; margin-bottom: 10px; font-family: 'Roboto', sans-serif; }
+        .qa-container p, .qa-container ul { font-size: 1.1rem; line-height: 1.7; font-family: 'Roboto', sans-serif; font-weight: 400; color: #333; margin-bottom: 20px; padding-left: 10px; border-left: 3px solid rgba(0, 0, 0, 0.2); }
+        .qa-container ul { list-style-type: disc; padding-left: 40px; border-left: none; }
+        .mode-switch-container { position: absolute; top: 20px; right: 20px; z-index: 1000; display: flex; align-items: center; font-size: 12px; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); padding: 5px 10px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2); }
+        body.light-mode .mode-switch-container { background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); }
+        .mode-switch-container label { padding: 0 10px; cursor: pointer; color: #fff; }
+        body.light-mode .mode-switch-container label { color: #000; }
+        .mode-switch { display: none; }
+        .switch-track { width: 50px; height: 25px; background: #1a1a1a; border-radius: 25px; position: relative; cursor: pointer; margin: 0 10px; }
+        .switch-thumb { position: absolute; width: 21px; height: 21px; background: #f0f0f0; border-radius: 50%; top: 2px; left: 2px; transition: transform 0.3s ease; }
+        .mode-switch:checked + .switch-track .switch-thumb { transform: translateX(25px); background: #00ffff; }
+        .game-container.hidden { opacity: 0.1; pointer-events: none; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
-    <video autoplay muted loop id="video-bg">
+
+    <div class="mode-switch-container">
+        <label for="mode-switch-checkbox">The Game</label>
+        <input type="checkbox" id="mode-switch-checkbox" class="mode-switch">
+        <label for="mode-switch-checkbox" class="switch-track"><div class="switch-thumb"></div></label>
+        <label for="mode-switch-checkbox">The Strategy</label>
+    </div>
+
+    <div class="game-container" id="game-container">
+        <canvas id="gameCanvas" width="1200" height="800"></canvas>
+        <div id="messageOverlay" class="message-overlay">
+            <div id="messageText" class="final-message"></div>
+        </div>
+    </div>
+    
+    <div class="qa-container" id="qa-container">
+        <h2>B2B: How do you communicate competence and reliability?</h2>
+        <p>In a B2B network, reputation is paramount. We build trust and demonstrate expertise through substantive proof, not just flashy ads. Our strategies include:</p>
+        <ul>
+            <li><b>Case Studies & Testimonials:</b> Developing detailed case studies that show our process and measurable results. A strong testimonial from an industry leader is our best asset.</li>
+            <li><b>Thought Leadership:</b> Regularly publishing insightful content (e.g., LinkedIn articles, white papers) that solves common industry problems, positioning us as experts.</li>
+            <li><b>Professional Networking:</b> Actively participating in the industry ecosystem by speaking at conferences and engaging in meaningful online conversations.</li>
+            <li><b>Radical Transparency:</b> Being clear about our process, pricing, and timelines, and communicating proactively to build a foundation of reliability.</li>
+        </ul>
+
+        <h2>B2C: How do you market a product effectively in 2025?</h2>
+        <p>The key to cutting through the noise is a blend of personalization, authenticity, and immersive experiences, all powered by AI. Our approach involves:</p>
+        <ul>
+            <li><b>AI-Powered Hyper-Personalization:</b> Using AI to analyze user data to deliver highly personalized content and product recommendations that resonate.</li>
+            <li><b>AI for Content Optimization:</b> Employing generative AI to create and test content variations, then using analytics to automatically shift budget to the top performers for maximum efficiency.</li>
+            <li><b>Immersive Experiences (AR):</b> Creating interactive AR filters and experiences that allow users to engage with the brand in a memorable, shareable way.</li>
+            <li><b>Authentic Creator Collaborations:</b> Partnering with niche creators who genuinely align with the brand, giving them creative freedom to foster trust with their audience.</li>
+            <li><b>Community Building:</b> Creating dedicated spaces (like Discord) for loyal fans to connect, offering them exclusive access and building a self-sustaining marketing engine.</li>
+        </ul>
+    </div>
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const messageOverlay = document.getElementById('messageOverlay');
+    const messageText = document.getElementById('messageText');
+    const modeSwitch = document.getElementById('mode-switch-checkbox');
+    const gameContainer = document.getElementById('game-container');
+    const qaContainer = document.getElementById('qa-container');
+
+    // --- GAME STATES & NARRATIVE SETUP ---
+    const GAME_STATES = {
+        CHOOSE_PATH: 'CHOOSE_PATH',
+
+        // B2B Path
+        B2B_CHOOSE_LEAD_GEN: 'B2B_CHOOSE_LEAD_GEN',
+        B2B_CHOOSE_TRUST: 'B2B_CHOOSE_TRUST',
+        B2B_CHOOSE_SALES_CYCLE: 'B2B_CHOOSE_SALES_CYCLE',
+        B2B_RESULT: 'B2B_RESULT',
+
+        // B2C Path
+        B2C_CHOOSE_ATTENTION: 'B2C_CHOOSE_ATTENTION',
+        B2C_CHOOSE_ENGAGEMENT: 'B2C_CHOOSE_ENGAGEMENT',
+        B2C_CHOOSE_CONVERSION: 'B2C_CHOOSE_CONVERSION',
+        B2C_RESULT: 'B2C_RESULT',
+
+        // Conclusion
+        SHOW_PITCH: 'SHOW_PITCH'
+    };
+    let gameState = GAME_STATES.CHOOSE_PATH;
+    let userChoices = {};
+    let hoverTarget = null;
+    let animationState = {};
+    let isTransitioning = false;
+
+    const b2bPitchText = `Navigating the B2B landscape is about trust and value, not just noise.
+
+You've seen how easy it is to chase dead-end leads and get stuck in endless sales cycles.
+
+I help build a reliable engine for high-value contracts through data-driven lead gen, compelling case studies, and a consultative sales approach.
+
+Let's secure those major partnerships.`;
+
+    const b2cPitchText = `Winning in B2C means capturing attention and building a loyal community, not just running ads.
+
+You've seen how quickly a launch can fizzle out with the wrong strategy, wasting time and money.
+
+I specialize in creating viral growth through authentic content, engaged communities, and conversion-focused funnels that top the charts.
+
+Let's make your app a viral hit.`;
+
+
+    function initializeGame() {
+        userChoices = {
+            path: null, // 'b2b' or 'b2c'
+            // B2B choices
+            leadGen: null,
+            trust: null,
+            salesCycle: null,
+            // B2C choices
+            attention: null,
+            engagement: null,
+            conversion: null,
+            score: 0 
+        };
+        animationState = { frame: 0, alpha: 0, text: "" };
+        gameState = GAME_STATES.CHOOSE_PATH;
+    }
+
+    // --- DRAWING & UI ---
+    function drawText(text, x, y, size = 32, color = '#fff', align = 'center', maxWidth) {
+        ctx.font = `${size}px "Press Start 2P"`;
+        ctx.fillStyle = color;
+        ctx.textAlign = align;
+        ctx.textBaseline = 'middle';
+        if (maxWidth) {
+            ctx.fillText(text, x, y, maxWidth);
+        } else {
+            ctx.fillText(text, x, y);
+        }
+    }
+
+    function drawButton(text, x, y, w, h, id) {
+        const isHovered = hoverTarget === id;
+        ctx.strokeStyle = '#fff';
+        ctx.fillStyle = isHovered ? '#ffff00' : '#555';
+        ctx.fillRect(x, y, w, h);
+        ctx.strokeRect(x, y, w, h);
+        drawText(text, x + w / 2, y + h / 2 + 4, 14, isHovered ? '#000' : '#fff', w - 20);
+    }
+    
+    function drawIcon(type, x, y) {
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        if (type === 'path') { // A branching path
+            ctx.moveTo(x, y); ctx.lineTo(x, y + 40);
+            ctx.moveTo(x, y + 20); ctx.lineTo(x - 20, y + 40);
+            ctx.moveTo(x, y + 20); ctx.lineTo(x + 20, y + 40);
+        } else if (type === 'lead-gen') { // Funnel
+            ctx.moveTo(x - 25, y); ctx.lineTo(x + 25, y); ctx.lineTo(x + 10, y + 25); ctx.lineTo(x + 10, y + 40); ctx.lineTo(x - 10, y + 40); ctx.lineTo(x - 10, y + 25); ctx.closePath();
+        } else if (type === 'trust') { // Shield
+            ctx.moveTo(x - 20, y); ctx.lineTo(x + 20, y); ctx.lineTo(x + 20, y + 25); ctx.arcTo(x, y + 45, x - 20, y + 25, 30); ctx.lineTo(x - 20, y);
+        } else if (type === 'sales-cycle') { // Clock
+            ctx.arc(x, y + 20, 20, 0, Math.PI * 2); ctx.moveTo(x, y + 20); ctx.lineTo(x, y + 5); ctx.moveTo(x, y + 20); ctx.lineTo(x + 15, y + 20);
+        } else if (type === 'attention') { // Exclamation
+             ctx.fillRect(x - 5, y, 10, 30); ctx.fillRect(x - 5, y + 35, 10, 10);
+        } else if (type === 'engagement') { // Speech bubbles
+            ctx.arc(x - 10, y + 15, 15, 0, Math.PI * 2); ctx.arc(x + 20, y + 30, 10, 0, Math.PI * 2);
+        } else if (type === 'conversion') { // Arrow down
+            ctx.moveTo(x, y); ctx.lineTo(x, y + 30); ctx.moveTo(x-15, y + 15); ctx.lineTo(x, y + 30); ctx.lineTo(x+15, y+15);
+        }
+        ctx.stroke();
+    }
+    
+    // --- STATE SCREENS ---
+    function drawChoiceScreen(title, question, option1, option2, iconType) {
+        drawText(title, canvas.width / 2, 100, 24, '#ff00ff', 'center', canvas.width - 40);
+        drawIcon(iconType, canvas.width / 2, 200);
+        drawText(question, canvas.width / 2, 350, 18, '#fff', canvas.width - 40);
+        drawButton(option1.text, 150, 500, 400, 100, option1.id);
+        drawButton(option2.text, 650, 500, 400, 100, option2.id);
+    }
+
+    function drawResultScreen(message, color, nextState) {
+        if (animationState.alpha < 1) {
+            animationState.alpha += 0.02;
+        }
+        ctx.globalAlpha = Math.min(animationState.alpha, 1);
+        drawText(message, canvas.width / 2, canvas.height / 2, 24, color, canvas.width - 40);
+        ctx.globalAlpha = 1.0;
+
+        if (animationState.alpha >= 1 && !isTransitioning) {
+            isTransitioning = true;
+            setTimeout(() => {
+                gameState = nextState;
+                animationState.alpha = 0;
+                isTransitioning = false;
+            }, 2000);
+        }
+    }
+
+    // --- MAIN GAME LOOP ---
+    function gameLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        animationState.frame++;
+
+        switch (gameState) {
+            case GAME_STATES.CHOOSE_PATH:
+                drawChoiceScreen("Welcome, Founder!", "What strategy do you need help with?",
+                {text: "B2B (Enterprise Contracts)", id: "b2b"},
+                {text: "B2C (Viral Growth)", id: "b2c"}, 'path');
+                break;
+
+            // --- B2B Path ---
+            case GAME_STATES.B2B_CHOOSE_LEAD_GEN:
+                drawChoiceScreen("Goal: Secure Enterprise Contracts", "How do you find leads?",
+                {text: "Inbound Content Strategy", id: "inbound"},
+                {text: "Aggressive Cold Outreach", id: "outbound"}, 'lead-gen');
+                break;
+            case GAME_STATES.B2B_CHOOSE_TRUST:
+                drawChoiceScreen("Goal: Secure Enterprise Contracts", "How do you build trust?",
+                {text: "Detailed Case Studies", id: "studies"},
+                {text: "Glossy Sales Decks", id: "decks"}, 'trust');
+                break;
+            case GAME_STATES.B2B_CHOOSE_SALES_CYCLE:
+                drawChoiceScreen("Goal: Secure Enterprise Contracts", "What's your sales approach?",
+                {text: "Consultative Partnership", id: "consultative"},
+                {text: "High-Pressure Tactics", id: "pressure"}, 'sales-cycle');
+                break;
+            case GAME_STATES.B2B_RESULT:
+                userChoices.score = (userChoices.leadGen === 'inbound' ? 33 : 5) +
+                                    (userChoices.trust === 'studies' ? 34 : 5) +
+                                    (userChoices.salesCycle === 'consultative' ? 33 : 5);
+                let b2bMessage = userChoices.score > 80 ? "Result: Major Partnerships Secured!" : "Result: Stuck with low-value clients.";
+                let b2bColor = userChoices.score > 80 ? "#00ff00" : "#ff4d4d";
+                drawResultScreen(b2bMessage, b2bColor, GAME_STATES.SHOW_PITCH);
+                break;
+
+            // --- B2C Path ---
+             case GAME_STATES.B2C_CHOOSE_ATTENTION:
+                drawChoiceScreen("Goal: Achieve Viral Growth", "How do you grab attention?",
+                {text: "Authentic Viral Content", id: "viral"},
+                {text: "Generic Banner Ads", id: "generic"}, 'attention');
+                break;
+            case GAME_STATES.B2C_CHOOSE_ENGAGEMENT:
+                drawChoiceScreen("Goal: Achieve Viral Growth", "How do you drive engagement?",
+                {text: "Build an Active Community", id: "community"},
+                {text: "Ignore Comments & DMs", id: "ignore"}, 'engagement');
+                break;
+            case GAME_STATES.B2C_CHOOSE_CONVERSION:
+                drawChoiceScreen("Goal: Achieve Viral Growth", "How do you convert users?",
+                {text: "Personalized Funnels", id: "funnels"},
+                {text: "Confusing Website", id: "confusing"}, 'conversion');
+                break;
+             case GAME_STATES.B2C_RESULT:
+                userChoices.score = (userChoices.attention === 'viral' ? 33 : 5) +
+                                    (userChoices.engagement === 'community' ? 34 : 5) +
+                                    (userChoices.conversion === 'funnels' ? 33 : 5);
+                let b2cMessage = userChoices.score > 80 ? "Result: Topping the App Store!" : "Result: Lost in the noise...";
+                let b2cColor = userChoices.score > 80 ? "#00ff00" : "#ff4d4d";
+                drawResultScreen(b2cMessage, b2cColor, GAME_STATES.SHOW_PITCH);
+                break;
+            
+            case GAME_STATES.SHOW_PITCH:
+                drawText(userChoices.score > 80 ? "Excellent Result!" : "It could have been better.", canvas.width / 2, 100, 20, "#ffff00");
+                const pitch = userChoices.path === 'b2b' ? b2bPitchText : b2cPitchText;
+                const lines = pitch.split('\n');
+                lines.forEach((line, i) => {
+                    drawText(line, canvas.width/2, 250 + i * 40, 16, '#fff', canvas.width - 40);
+                });
+                drawButton("Let's Talk Strategy", canvas.width / 2 - 200, 600, 400, 100, 'contact');
+                break;
+        }
+        requestAnimationFrame(gameLoop);
+    }
+    
+    // --- EVENT HANDLERS ---
+    let clickRegions = {};
+    function updateRegions() {
+        clickRegions = {};
+        if (gameState === GAME_STATES.SHOW_PITCH) {
+            clickRegions['contact'] = { x: canvas.width / 2 - 200, y: 600, w: 400, h: 100 };
+        } else if (gameState.includes("CHOOSE")) {
+             clickRegions['option1'] = { x: 150, y: 500, w: 400, h: 100 };
+             clickRegions['option2'] = { x: 650, y: 500, w: 400, h: 100 };
+        }
+    }
+
+    function handleClick(event) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        updateRegions();
+
+        for (const [id, region] of Object.entries(clickRegions)) {
+            if (mouseX >= region.x && mouseX <= region.x + region.w &&
+                mouseY >= region.y && mouseY <= region.y + region.h) {
+                
+                switch(gameState) {
+                    case GAME_STATES.CHOOSE_PATH:
+                        userChoices.path = id === 'option1' ? 'b2b' : 'b2c';
+                        gameState = userChoices.path === 'b2b' ? GAME_STATES.B2B_CHOOSE_LEAD_GEN : GAME_STATES.B2C_CHOOSE_ATTENTION;
+                        break;
+                    // B2B CHOICES
+                    case GAME_STATES.B2B_CHOOSE_LEAD_GEN:
+                        userChoices.leadGen = id === 'option1' ? 'inbound' : 'outbound';
+                        gameState = GAME_STATES.B2B_CHOOSE_TRUST;
+                        break;
+                    case GAME_STATES.B2B_CHOOSE_TRUST:
+                        userChoices.trust = id === 'option1' ? 'studies' : 'decks';
+                        gameState = GAME_STATES.B2B_CHOOSE_SALES_CYCLE;
+                        break;
+                    case GAME_STATES.B2B_CHOOSE_SALES_CYCLE:
+                        userChoices.salesCycle = id === 'option1' ? 'consultative' : 'pressure';
+                        gameState = GAME_STATES.B2B_RESULT;
+                        break;
+                    // B2C CHOICES
+                    case GAME_STATES.B2C_CHOOSE_ATTENTION:
+                        userChoices.attention = id === 'option1' ? 'viral' : 'generic';
+                        gameState = GAME_STATES.B2C_CHOOSE_ENGAGEMENT;
+                        break;
+                    case GAME_STATES.B2C_CHOOSE_ENGAGEMENT:
+                        userChoices.engagement = id === 'option1' ? 'community' : 'ignore';
+                        gameState = GAME_STATES.B2C_CHOOSE_CONVERSION;
+                        break;
+                    case GAME_STATES.B2C_CHOOSE_CONVERSION:
+                        userChoices.conversion = id === 'option1' ? 'funnels' : 'confusing';
+                        gameState = GAME_STATES.B2C_RESULT;
+                        break;
+                    // FINAL
+                    case GAME_STATES.SHOW_PITCH:
+                        if (id === 'contact') {
+                            window.open('mailto:your-email@example.com?subject=AI Strategy Inquiry');
+                        }
+                        break;
+                }
+                hoverTarget = null;
+                return;
+            }
+        }
+    }
+
+    function handleMouseMove(event) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        
+        updateRegions();
+        hoverTarget = null;
+        canvas.style.cursor = 'default';
+
+        for (const [id, region] of Object.entries(clickRegions)) {
+            if (mouseX >= region.x && mouseX <= region.x + region.w &&
+                mouseY >= region.y && mouseY <= region.y + region.h) {
+                hoverTarget = id;
+                canvas.style.cursor = 'pointer';
+                break;
+            }
+        }
+    }
+    
+    modeSwitch.addEventListener('change', () => {
+        const isProfessionalMode = modeSwitch.checked;
+        document.body.classList.toggle('light-mode', isProfessionalMode);
+        gameContainer.style.display = isProfessionalMode ? 'none' : 'flex';
+        qaContainer.classList.toggle('visible', isProfessionalMode);
+    });
+
+    canvas.addEventListener('click', handleClick);
+    canvas.addEventListener('mousemove', handleMouseMove);
+
+    initializeGame();
+    gameLoop();
+</script>
+</body>
+</html>
+
