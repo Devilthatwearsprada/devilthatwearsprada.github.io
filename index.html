@@ -54,7 +54,7 @@
             cursor: pointer;
             transition: all 0.2s;
             text-transform: uppercase;
-            width: 320px;
+            width: 380px;
             margin: 0 auto;
         }
 
@@ -174,7 +174,8 @@
         <button class="menu-btn" onclick="GameManager.load('snowstorm')">1. Chaos vs Order</button>
         <button class="menu-btn" onclick="GameManager.load('nutcracker')">2. Feedback Loops</button>
         <button class="menu-btn" onclick="GameManager.load('shutter')">3. Shutter Speed (Tau)</button>
-        <button class="menu-btn" onclick="GameManager.load('wanderer')">4. The Wanderer</button>
+        <button class="menu-btn" onclick="GameManager.load('wanderer')">4. The Wanderer (Linear)</button>
+        <button class="menu-btn" onclick="GameManager.load('chimney')">5. Ice Chimney (Non-Linear)</button>
     </div>
 
     <button id="back-btn" onclick="GameManager.exit()">EJECT CARTRIDGE</button>
@@ -505,13 +506,23 @@
                     const d2X = centerX + Math.cos(this.angle+Math.PI)*(radius*0.7);
                     const d2Y = centerY + Math.sin(this.angle+Math.PI)*(radius*0.35)+5;
                     
-                    const drawDancer = (x,y) => {
+                    const drawDancer = (x,y, frame) => {
                         ctx.fillStyle = '#f472b6'; ctx.fillRect(x-3, y+2, 7, 3); // Dress
+                        ctx.fillStyle = '#fdf2f8'; ctx.fillRect(x, y-1, 1, 3); // Pale pink body
                         ctx.fillStyle = '#ffe4e6'; ctx.fillRect(x, y-3, 2, 2); // Head
+                        
+                        // Legs
+                        ctx.fillStyle = '#ffe4e6';
+                        if (Math.floor(frame / 10) % 2 === 0) {
+                            ctx.fillRect(x, y+5, 1, 3); 
+                        } else {
+                            ctx.fillRect(x-1, y+4, 1, 2); 
+                            ctx.fillRect(x+1, y+5, 1, 3);
+                        }
                     };
                     
-                    if (Math.sin(this.angle) < 0) { drawDancer(d1X,d1Y); drawDancer(d2X,d2Y); }
-                    else { drawDancer(d2X,d2Y); drawDancer(d1X,d1Y); }
+                    if (Math.sin(this.angle) < 0) { drawDancer(d1X,d1Y, this.frameCount); drawDancer(d2X,d2Y, this.frameCount); }
+                    else { drawDancer(d2X,d2Y, this.frameCount); drawDancer(d1X,d1Y, this.frameCount); }
                     
                     ctx.strokeStyle = '#fbcfe8'; ctx.beginPath(); ctx.moveTo(d1X+1, d1Y+2); ctx.lineTo(d2X+1, d2Y+2); ctx.stroke();
 
@@ -532,13 +543,42 @@
 
                     entities.forEach(e => {
                         ctx.save(); ctx.translate(e.x, e.y); if(e.f) ctx.scale(-1,1);
+                        
+                        const march = Math.floor(this.frameCount / 8) % 2;
+                        const ox = -2;
+                        const oy = 0;
+
                         if(e.t==='s') {
-                            ctx.fillStyle = '#ef4444'; ctx.fillRect(-3, 2, 6, 6); // Coat
-                            ctx.fillStyle = '#000'; ctx.fillRect(-2, -6, 4, 5); // Hat
+                            // Soldier
+                            // Hat
+                            ctx.fillStyle = '#000'; ctx.fillRect(ox, oy-6, 4, 5);
+                            ctx.fillStyle = '#fbbf24'; ctx.fillRect(ox+1, oy-4, 2, 1);
+                            // Face
+                            ctx.fillStyle = '#fca5a5'; ctx.fillRect(ox, oy-1, 4, 3);
+                            ctx.fillStyle = '#000'; ctx.fillRect(ox+1, oy+1, 2, 1); // Mustache
+                            // Coat
+                            ctx.fillStyle = '#ef4444'; ctx.fillRect(ox-1, oy+2, 6, 6);
+                            // Belt
+                            ctx.fillStyle = '#fff'; 
+                            ctx.fillRect(ox, oy+2, 1, 1); ctx.fillRect(ox+1, oy+3, 1, 1);
+                            ctx.fillRect(ox+2, oy+4, 1, 1); ctx.fillRect(ox+3, oy+5, 1, 1);
+                            // Legs
+                            ctx.fillStyle = '#1e293b'; 
+                            if (march === 0) { ctx.fillRect(ox, oy+8, 1, 4); ctx.fillRect(ox+3, oy+8, 1, 4); }
+                            else { ctx.fillRect(ox, oy+7, 1, 3); ctx.fillRect(ox+3, oy+8, 1, 4); }
                         } else {
-                            ctx.fillStyle = '#fff'; ctx.fillRect(-2, 0, 5, 6); // Shirt
-                            ctx.fillStyle = '#334155'; ctx.fillRect(-2, 1, 5, 1); // Stripe
-                            ctx.fillStyle = '#000'; ctx.fillRect(-2, -5, 5, 2); // Beret
+                            // Mime
+                            // Beret
+                            ctx.fillStyle = '#000'; ctx.fillRect(ox, oy-5, 5, 2);
+                            // Face
+                            ctx.fillStyle = '#fff'; ctx.fillRect(ox+1, oy-3, 3, 3);
+                            // Shirt
+                            ctx.fillStyle = '#fff'; ctx.fillRect(ox, oy, 5, 6);
+                            ctx.fillStyle = '#334155'; ctx.fillRect(ox, oy+1, 5, 1); ctx.fillRect(ox, oy+3, 5, 1); ctx.fillRect(ox, oy+5, 5, 1);
+                            // Legs
+                            ctx.fillStyle = '#000';
+                            if (march === 0) { ctx.fillRect(ox+1, oy+6, 1, 4); ctx.fillRect(ox+3, oy+6, 1, 4); }
+                            else { ctx.fillRect(ox+1, oy+5, 1, 3); ctx.fillRect(ox+3, oy+6, 1, 4); }
                         }
                         ctx.restore();
                     });
@@ -808,6 +848,193 @@
                     ctx.fillStyle = '#f59e0b';
                     this.particles.forEach(p => { ctx.globalAlpha=p.life; ctx.fillRect(p.x, p.y, 2, 2); });
                     ctx.globalAlpha = 1;
+                }
+            },
+            
+            // --- GAME 5: ICE CHIMNEY (Non-Linear Model) ---
+            chimney: {
+                frameCount: 0, SCALE: 2,
+                wandererX: 320, sledX: 320,
+                targetWandererX: 320, wandererTimer: 0,
+                particles: [], totalHeat: 0,
+                stickiness: 2, wandererAmp: 1,
+
+                init: function() {
+                    canvas.height = 360;
+                    this.frameCount = 0;
+                    this.totalHeat = 0;
+                    this.particles = [];
+                    this.wandererX = 320;
+                    this.sledX = 320;
+                    this.stickiness = 2; // Threshold force to move
+                    this.wandererAmp = 1; // Range multiplier
+
+                    // UI
+                    uiLayer.innerHTML = `
+                        <div class="ui-label-top" style="color: #60a5fa;">
+                            <span>Wall (0%)</span>
+                            <span>The Ice Chimney</span>
+                            <span>Wall (100%)</span>
+                        </div>
+                        <div class="ui-label-bottom">
+                            <span id="chimney-status">Status: EQUILIBRIUM</span>
+                        </div>
+                    `;
+
+                    controlsArea.style.display = 'flex';
+                    controlsArea.innerHTML = `
+                        <div style="width:45%;">
+                            <label style="color:#94a3b8; font-size:10px;">Signal Strength (Range)</label>
+                            <input type="range" id="ampSlider" min="1" max="50" value="10">
+                        </div>
+                        <div style="width:45%;">
+                            <label style="color:#94a3b8; font-size:10px;">Snow Stickiness (Threshold)</label>
+                            <input type="range" id="stickSlider" min="0" max="10" value="2">
+                        </div>
+                    `;
+
+                    document.getElementById('ampSlider').addEventListener('input', e => this.wandererAmp = parseInt(e.target.value) / 10);
+                    document.getElementById('stickSlider').addEventListener('input', e => this.stickiness = parseInt(e.target.value));
+                },
+
+                update: function() {
+                    this.frameCount++;
+                    const WIDTH = canvas.width;
+                    const CENTER = WIDTH / 2;
+                    const CHIMNEY_WIDTH = 120;
+                    const WALL_L = CENTER - CHIMNEY_WIDTH/2;
+                    const WALL_R = CENTER + CHIMNEY_WIDTH/2;
+
+                    // 1. Update Wanderer (The Signal)
+                    // Random walk with drift based on slider amplitude
+                    if (this.frameCount > this.wandererTimer) {
+                        // Choose a new target way outside bounds to show blindness
+                        const range = 200 * this.wandererAmp; 
+                        this.targetWandererX = CENTER + (Math.random() - 0.5) * 2 * range;
+                        this.wandererTimer = this.frameCount + 60 + Math.random() * 60;
+                    }
+                    const dx = this.targetWandererX - this.wandererX;
+                    this.wandererX += dx * 0.02; // Smooth movement
+
+                    // 2. Physics: Rope Tension & Stickiness
+                    const tension = (this.wandererX - this.sledX) * 0.1; // Spring constant
+                    let velocity = 0;
+
+                    // Cooperativity / Sticky Snow Threshold
+                    if (Math.abs(tension) > this.stickiness) {
+                        // Apply movement only if force > threshold
+                        // Velocity proportional to excess force
+                        velocity = (Math.abs(tension) - this.stickiness) * Math.sign(tension);
+                    }
+
+                    // 3. Move Sled
+                    const prevSledX = this.sledX;
+                    this.sledX += velocity;
+
+                    // 4. Saturation (Walls)
+                    let hitWall = false;
+                    if (this.sledX <= WALL_L) { this.sledX = WALL_L; hitWall = true; }
+                    if (this.sledX >= WALL_R) { this.sledX = WALL_R; hitWall = true; }
+
+                    // 5. Thermodynamics (Heat Generation)
+                    // Heat is generated by work against friction (movement through snow)
+                    // If hit wall, no movement = no heat, even if tension is high
+                    const movedDist = Math.abs(this.sledX - prevSledX);
+                    let heatFrame = 0;
+                    
+                    if (movedDist > 0.1) {
+                         heatFrame = movedDist * 5; // Scaling factor
+                         // Spawn particles
+                         for(let i=0; i<Math.floor(heatFrame); i++) {
+                             this.particles.push({
+                                 x: this.sledX + (Math.random()-0.5)*20, 
+                                 y: 180 + (Math.random()-0.5)*20, // Center Y
+                                 vx: (Math.random()-0.5)*4, 
+                                 vy: (Math.random()-0.5)*4, 
+                                 life: 1.0, color: '#f59e0b'
+                             });
+                         }
+                    }
+
+                    // Update UI text based on state
+                    const statusLbl = document.getElementById('chimney-status');
+                    if (hitWall) {
+                        statusLbl.innerText = "Status: SATURATED (Blindness/Zero Heat)";
+                        statusLbl.style.color = "#ef4444";
+                    } else if (movedDist > 0.1) {
+                        statusLbl.innerText = "Status: DISSIPATING (Info Recorded)";
+                        statusLbl.style.color = "#fbbf24";
+                    } else {
+                        statusLbl.innerText = "Status: STUCK (Sub-Threshold)";
+                        statusLbl.style.color = "#64748b";
+                    }
+
+                    // Particles
+                    for(let i=this.particles.length-1; i>=0; i--) {
+                        let p = this.particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=0.05;
+                        if(p.life<=0) this.particles.splice(i,1);
+                    }
+                },
+
+                draw: function() {
+                    const WIDTH = canvas.width;
+                    const HEIGHT = canvas.height;
+                    const CENTER = WIDTH / 2;
+                    const CHIMNEY_WIDTH = 120;
+                    const WALL_L = CENTER - CHIMNEY_WIDTH/2;
+                    const WALL_R = CENTER + CHIMNEY_WIDTH/2;
+                    
+                    ctx.setTransform(1,0,0,1,0,0);
+                    ctx.clearRect(0,0,WIDTH,HEIGHT);
+                    
+                    // Background
+                    ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,WIDTH,HEIGHT); // Dark outside
+                    
+                    // The Chimney (Snow area)
+                    ctx.fillStyle = '#1e293b'; ctx.fillRect(WALL_L, 0, CHIMNEY_WIDTH, HEIGHT);
+                    
+                    // Draw Walls
+                    ctx.fillStyle = '#3b82f6'; 
+                    ctx.fillRect(WALL_L-5, 0, 5, HEIGHT); // Left Wall
+                    ctx.fillRect(WALL_R, 0, 5, HEIGHT);   // Right Wall
+
+                    // Draw Snow Texture inside chimney
+                    ctx.fillStyle = '#334155';
+                    for(let y=0; y<HEIGHT; y+=20) {
+                        for(let x=WALL_L+5; x<WALL_R; x+=20) {
+                            if ((x+y)%3===0) ctx.fillRect(x,y,2,2);
+                        }
+                    }
+
+                    // Draw Rope
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+                    ctx.moveTo(this.wandererX, 100); // Wanderer is "above" or at top
+                    ctx.lineTo(this.sledX, 180);     // Sled is in middle
+                    ctx.stroke();
+
+                    // Draw Wanderer (The Signal)
+                    // We draw him at Y=100 (Top area)
+                    ctx.fillStyle = '#ef4444'; 
+                    ctx.beginPath(); ctx.arc(this.wandererX, 100, 8, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = '#fff'; ctx.font = "10px monospace"; ctx.fillText("SIGNAL", this.wandererX-15, 85);
+
+                    // Draw Sled (The Response)
+                    // Fixed Y=180
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.fillRect(this.sledX - 10, 170, 20, 20);
+                    // Runners
+                    ctx.fillStyle = '#bfdbfe';
+                    ctx.fillRect(this.sledX - 10, 168, 20, 2);
+                    ctx.fillRect(this.sledX - 10, 190, 20, 2);
+
+                    // Draw Particles (Heat)
+                    this.particles.forEach(p => {
+                        ctx.fillStyle = p.color;
+                        ctx.globalAlpha = p.life;
+                        ctx.fillRect(p.x, p.y, 3, 3);
+                    });
+                    ctx.globalAlpha = 1.0;
                 }
             }
         };
