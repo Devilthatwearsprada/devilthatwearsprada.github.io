@@ -3,1045 +3,815 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Strategy & Activation</title>
-    
-    <!-- Fonts & Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    
-    <!-- Tailwind CSS (for Strategy Side) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
+    <title>80s Thermodynamics Arcade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        /* --- GLOBAL & TOGGLE STYLES --- */
+        :root {
+            --bg-color: #050510;
+            --text-color: #dbeafe;
+            --accent-color: #ff0055;
+            --crt-scanline: rgba(255, 255, 255, 0.1);
+        }
+
         body {
-            margin: 0;
-            overflow: hidden;
-            height: 100vh;
-            font-family: 'Press Start 2P', cursive; /* Default for Game */
-            transition: background-color 0.5s ease;
-        }
-
-        /* Toggle Switch */
-        .mode-switch-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            font-size: 12px;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
-            padding: 5px 10px;
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.2);
-            font-family: 'Roboto', sans-serif;
-            color: #fff;
-        }
-
-        .mode-switch { display: none; }
-        .switch-track {
-            width: 50px;
-            height: 25px;
-            background: #1a1a1a;
-            border-radius: 25px;
-            position: relative;
-            cursor: pointer;
-            margin: 0 10px;
-            border: 1px solid #555;
-        }
-        .switch-thumb {
-            position: absolute;
-            width: 21px;
-            height: 21px;
-            background: #f0f0f0;
-            border-radius: 50%;
-            top: 1px;
-            left: 2px;
-            transition: transform 0.3s ease;
-        }
-        .mode-switch:checked + .switch-track .switch-thumb {
-            transform: translateX(25px);
-            background: #00ffff;
-        }
-
-        /* View Containers */
-        #game-section {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #1a1a1a;
-            position: absolute;
-            top: 0;
-            left: 0;
-            transition: opacity 0.5s ease;
-        }
-        
-        #strategy-section {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-            font-family: 'Inter', sans-serif; /* Strategy Font */
-            color: white;
-        }
-
-        /* Visibility Classes */
-        body.show-strategy #game-section { opacity: 0; pointer-events: none; }
-        body.show-strategy #strategy-section { opacity: 1; pointer-events: auto; }
-        
-        /* ================= GAME STYLES ================= */
-        .game-container {
-            border: 8px solid #444;
-            border-radius: 15px;
-            background-color: #000;
-            padding: 20px;
-            box-shadow: 0 0 25px #00ffff, 0 0 15px #ff00ff inset;
-            position: relative;
-            max-width: 95%;
-            box-sizing: border-box;
-        }
-        canvas {
-            background-color: #0d0d0d;
-            display: block;
-            border-radius: 5px;
-            border: 2px solid #333;
-            cursor: pointer;
-            width: 100%;
-            height: auto;
-            max-height: 80vh;
-        }
-        .message-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        .final-message {
-            font-size: 1.5rem;
-            color: #00ff00;
-            line-height: 1.6;
-            text-shadow: 2px 2px 0px #1a1a1a;
-            max-width: 90%;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: 'Press Start 2P', cursive;
-        }
-
-        /* ================= STRATEGY OS STYLES ================= */
-        #video-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-        }
-        .menu-bar {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-        .dock {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 1.5rem;
-            padding: 8px;
+            margin: 0;
+            height: 100vh;
             display: flex;
-            gap: 12px;
-            z-index: 1000;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .dock.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: translateX(-50%) translateY(100px);
-        }
-        .dock-item {
-            width: 60px;
-            height: 60px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 1rem;
-            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s ease, margin-bottom 0.2s ease;
-            cursor: pointer;
+            overflow: hidden;
+            user-select: none;
         }
-        .dock-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 1rem;
-        }
-        .dock-item:hover {
-            transform: scale(1.2);
-            margin-bottom: 10px;
-        }
-        
-        /* Desktop Icons */
-        .desktop-icon {
-            color: white;
+
+        /* --- MENU STYLES --- */
+        #main-menu {
             text-align: center;
-            width: 90px;
-            position: absolute;
-            cursor: grab;
             z-index: 100;
             display: flex;
             flex-direction: column;
-            align-items: center;
-        }
-        .desktop-icon .icon-bg {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto;
-            border-radius: 0.75rem;
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            background: rgba(255,255,255,0.1);
-        }
-        .desktop-icon img {
-            width: 100%; height: 100%; border-radius: 0.75rem; object-fit: cover;
-        }
-        .desktop-icon .fa-folder, .desktop-icon .fa-file-lines, .desktop-icon .fa-image {
-            font-size: 30px;
-            color: #60a5fa;
-        }
-        .desktop-icon p {
-            margin-top: 5px;
-            font-size: 13px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-            word-wrap: break-word;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
+            gap: 20px;
         }
 
-        /* Window Styles */
-        .window {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(30, 30, 30, 0.85);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            z-index: 500;
-            display: flex;
-            flex-direction: column;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+        h1 {
+            color: #fbbf24;
+            text-shadow: 4px 4px #be123c;
+            font-size: 24px;
+            margin-bottom: 40px;
+            line-height: 1.5;
         }
-        /* Desktop Window Overrides */
-        .lg\:window-desktop {
-            position: absolute !important;
-            top: 100px !important;
-            left: 100px !important;
-            width: 600px !important;
-            height: 70vh !important;
-            border-radius: 12px !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-        .window-header {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            background-color: rgba(50, 50, 50, 0.9);
-            cursor: default;
-            color: white;
-            font-size: 14px;
-            flex-shrink: 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .lg\:window-desktop .window-header {
-            cursor: move;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-        }
-        .traffic-lights { display: flex; gap: 8px; margin-right: 12px; }
-        .traffic-light { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-        .close { background-color: #ff5f56; }
-        .minimize { background-color: #ffbd2e; }
-        .maximize { background-color: #27c93f; }
-        
-        .window-content { display: flex; flex-direction: column; width: 100%; height: 100%; overflow: hidden; }
-        .window-body { padding: 20px; color: #e0e0e0; overflow-y: auto; flex-grow: 1; }
-        .window-body h2 { font-size: 1.2rem; font-weight: 600; color: white; margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.25rem; }
-        .window-body p { margin-bottom: 0.75rem; line-height: 1.6; }
 
-        /* Mobile View Styles */
-        #mobile-view-wrapper {
-            padding-top: 5rem;
-            height: calc(100% - 90px);
-            display: flex;
-            flex-direction: column;
-        }
-        #mobile-icons-container {
-            flex-grow: 1;
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        #mobile-icons-container::-webkit-scrollbar { display: none; }
-        .mobile-page {
-            flex: 0 0 100%;
-            scroll-snap-align: start;
-            padding: 1.5rem 1.25rem;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(4, auto);
-            gap: 1.5rem 1rem;
-            align-content: start;
-        }
-        @media (min-width: 640px) { .mobile-page { grid-template-columns: repeat(4, 1fr); } }
-        
-        .mobile-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            color: white;
-            text-align: center;
+        .menu-btn {
+            background: transparent;
+            border: 2px solid #334155;
+            color: #94a3b8;
+            padding: 15px 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
             cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            width: 320px;
+            margin: 0 auto;
         }
-        .mobile-icon .icon-bg {
-            width: 64px;
-            height: 64px;
-            border-radius: 1rem;
-            display: flex;
+
+        .menu-btn:hover {
+            border-color: #38bdf8;
+            color: #fff;
+            background: rgba(56, 189, 248, 0.1);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        /* --- GAME CONTAINER --- */
+        #game-wrapper {
+            display: none; /* Hidden by default */
+            position: relative;
+            border: 16px solid #2a2a3a;
+            border-radius: 4px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            background: #000;
+        }
+
+        canvas {
+            display: block;
+            image-rendering: pixelated;
+        }
+
+        /* --- SHARED UI OVERLAYS --- */
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 50;
+            animation: flicker 0.15s infinite;
+        }
+        
+        .screen-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,20,50,0.3) 100%);
+            pointer-events: none;
+            z-index: 51;
+        }
+
+        #game-ui {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 52;
+        }
+
+        /* Dynamic UI Control Panel (Below Canvas) */
+        #controls-area {
+            display: none;
+            margin-top: 20px;
+            width: 640px;
+            background: #111;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            gap: 15px;
             align-items: center;
             justify-content: center;
-            background-color: rgba(255,255,255,0.1);
         }
-        .mobile-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 1rem; }
-        .mobile-icon .fa-folder, .mobile-icon .fa-file-lines, .mobile-icon .fa-image { font-size: 32px; color: #60a5fa; }
-        .mobile-icon p { font-size: 12px; text-shadow: 1px 1px 2px rgba(0,0,0,0.7); word-wrap: break-word; width: 80px; }
 
-        /* Pagination */
-        #pagination-container { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1rem 0; margin-bottom: 80px;}
-        #pagination-dots { display: flex; justify-content: center; gap: 8px; }
-        .pagination-dot { width: 8px; height: 8px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.4); transition: background-color 0.3s ease; }
-        .pagination-dot.active { background-color: rgba(255, 255, 255, 0.9); }
-        .pagination-arrow { color: white; background: none; border: none; font-size: 1rem; cursor: pointer; opacity: 0.7; transition: opacity 0.2s; }
-        .pagination-arrow.hidden { opacity: 0; pointer-events: none; }
-
-        /* App Specifics: Duolingo */
-        .duolingo-body { background-color: #ffffff; color: #4c4c4c; display: flex; flex-direction: column; align-items: center; padding: 1.5rem; height: 100%;}
-        .duolingo-progress-bar { width: 100%; height: 16px; background-color: #e5e5e5; border-radius: 8px; overflow: hidden; border: 2px solid #e5e5e5; }
-        .duolingo-progress { width: 60%; height: 100%; background-color: #58cc02; border-radius: 6px; }
-        .duolingo-mascot-container { display: flex; align-items: center; gap: 1rem; margin-top: 2rem; width: 100%; }
-        .duolingo-speech-bubble { background-color: #ffffff; border: 2px solid #e5e5e5; border-radius: 1rem; padding: 1rem; font-weight: 700; font-size: 1.1rem; position: relative; }
-        .duolingo-speech-bubble::before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 10px solid #e5e5e5; }
-        .duolingo-options { width: 100%; margin-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
-        .duolingo-option { display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem; border: 2px solid #e5e5e5; border-bottom-width: 4px; border-radius: 1rem; font-weight: 700; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; color: #333;}
-        .duolingo-option:hover { background-color: #f7f7f7; }
-        .duolingo-option.selected { background-color: #d7ffb8; border-color: #58cc02; }
-        .duolingo-option.correct { background-color: #d7ffb8; border-color: #58cc02; color: #58a700; }
-        .duolingo-option.incorrect { background-color: #ffdfe0; border-color: #ff4b4b; color: #ea2b2b; animation: shake 0.5s; }
-        .duolingo-continue-btn { width: 100%; margin-top: auto; padding: 1rem; background-color: #58cc02; color: white; font-weight: 700; text-transform: uppercase; border-radius: 1rem; border-bottom: 4px solid #58a700; cursor: pointer; opacity: 0.5; pointer-events: none; transition: opacity 0.2s; }
-        .duolingo-continue-btn.active { opacity: 1; pointer-events: auto; }
+        #back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #be123c;
+            border: none;
+            color: white;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 10px;
+            cursor: pointer;
+            z-index: 200;
+            display: none;
+        }
         
-        /* App Specifics: Tinder */
-        .tinder-body { display: flex; flex-direction: column; height: 100%; padding: 0; background-color: #f7f7f7; overflow: hidden; }
-        .tinder-header { background-color: #fff; padding: 10px; text-align: center; border-bottom: 1px solid #e8e8e8; flex-shrink: 0; }
-        .tinder-header img { height: 30px; }
-        .tinder-stack { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; }
-        .tinder-card { background-color: #fff; width: 85%; height: 80%; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.12); position: absolute; display: flex; flex-direction: column; overflow: hidden; transition: transform 0.4s ease, opacity 0.4s ease; cursor: grab; }
-        .tinder-card.dragging { transition: none; }
-        .tinder-card-img { width: 100%; height: 70%; object-fit: cover; }
-        .tinder-card-info { padding: 15px; }
-        .tinder-card-info h3 { font-size: 1.5rem; font-weight: 700; color: #333; }
-        .tinder-card-info p { font-size: 1rem; color: #666; }
-        .tinder-controls { display: flex; justify-content: space-around; padding: 15px; flex-shrink: 0; }
-        .tinder-btn { background-color: #fff; border: 1px solid #e8e8e8; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; }
-        .tinder-btn.like { color: #4bde97; }
-        .tinder-btn.dislike { color: #fd5068; }
+        #back-btn:hover { background: #e11d48; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes flicker {
+            0% { opacity: 0.9; }
+            50% { opacity: 1.0; }
+            100% { opacity: 0.9; }
+        }
+
+        /* Helper for injected UI elements */
+        .ui-label-top {
+            position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-around;
+            text-shadow: 2px 2px #000; font-size: 12px; text-transform: uppercase;
+        }
+        .ui-label-bottom {
+            position: absolute; bottom: 10px; width: 100%; display: flex; justify-content: space-around;
+            text-shadow: 2px 2px #000; font-size: 10px; color: #94a3b8;
+        }
+        
+        /* Range Slider Styling */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 16px; width: 16px; background: #3b82f6;
+            cursor: pointer; margin-top: -6px; box-shadow: 0 0 5px #3b82f6; border: 2px solid #fff;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px; cursor: pointer; background: #333; border: 1px solid #555;
+        }
+
     </style>
 </head>
-<body class="bg-black">
+<body>
 
-    <!-- Toggle Switch -->
-    <div class="mode-switch-container">
-        <label for="mode-switch-checkbox">The Game</label>
-        <input type="checkbox" id="mode-switch-checkbox" class="mode-switch">
-        <label for="mode-switch-checkbox" class="switch-track"><div class="switch-thumb"></div></label>
-        <label for="mode-switch-checkbox">The Strategy</label>
+    <!-- MAIN MENU -->
+    <div id="main-menu">
+        <h1>THERMODYNAMICS<br>ARCADE</h1>
+        <button class="menu-btn" onclick="GameManager.load('snowstorm')">1. Chaos vs Order</button>
+        <button class="menu-btn" onclick="GameManager.load('nutcracker')">2. Feedback Loops</button>
+        <button class="menu-btn" onclick="GameManager.load('shutter')">3. Shutter Speed (Tau)</button>
+        <button class="menu-btn" onclick="GameManager.load('wanderer')">4. The Wanderer</button>
     </div>
 
-    <!-- SECTION 1: THE GAME -->
-    <div id="game-section">
-        <div class="game-container" id="game-container-inner">
-            <canvas id="gameCanvas" width="1200" height="800"></canvas>
-            <div id="messageOverlay" class="message-overlay">
-                <div id="messageText" class="final-message"></div>
-            </div>
-        </div>
+    <button id="back-btn" onclick="GameManager.exit()">EJECT CARTRIDGE</button>
+
+    <!-- GAME AREA -->
+    <div id="game-wrapper">
+        <canvas id="gameCanvas" width="640" height="320"></canvas>
+        <div id="game-ui"></div> <!-- Injected UI Labels -->
+        <div class="scanlines"></div>
+        <div class="screen-overlay"></div>
     </div>
 
-    <!-- SECTION 2: THE STRATEGY (OS INTERFACE) -->
-    <div id="strategy-section">
-        <video id="video-bg" autoplay loop muted playsinline>
-            <source src="https://ik.imagekit.io/ex6ksvxsvk/website%20background%20vid.mp4?updatedAt=1752664266524" type="video/mp4">
-        </video>
+    <!-- CONTROLS AREA (Below Canvas) -->
+    <div id="controls-area"></div>
 
-        <!-- Menu Bar -->
-        <div class="menu-bar px-4 py-1 text-sm hidden lg:flex">
-            <div class="flex justify-between items-center w-full">
-                <div class="flex items-center gap-4">
-                    <i class="fab fa-apple text-lg"></i>
-                    <span class="font-bold hidden sm:inline">Finder</span>
-                    <span class="hidden sm:inline">File</span>
-                    <span class="hidden sm:inline">Edit</span>
-                    <span class="hidden sm:inline">View</span>
-                </div>
-                <div id="time" class="font-medium"></div>
-            </div>
-        </div>
-
-        <!-- Desktop Icons (Visible on large screens) -->
-        <div id="desktop-icons-container" class="hidden lg:block w-full h-full pt-12 pl-4">
-            <!-- Icons populated dynamically or hardcoded here to mirror mobile structure -->
-            <div id="readme-desktop-icon" class="desktop-icon" style="top: 40px; right: 20px;">
-                <div class="icon-bg"><i class="fas fa-file-lines"></i></div>
-                <p>read me.txt</p>
-            </div>
-            <div id="koplin-icon-desktop" class="desktop-icon" style="top: 150px; right: 20px;">
-                <div class="icon-bg"><i class="fas fa-folder"></i></div>
-                <p>Dr. Koplin</p>
-            </div>
-             <div id="tinder-icon-desktop" class="desktop-icon" style="top: 260px; right: 20px;">
-                <div class="icon-bg"><i class="fas fa-folder"></i></div>
-                <p>Tinder</p>
-            </div>
-            <div id="modulor-icon-desktop" class="desktop-icon" style="top: 370px; right: 20px;">
-                <div class="icon-bg"><i class="fas fa-folder"></i></div>
-                <p>Modulor</p>
-            </div>
-            <div id="duolingo-icon-desktop" class="desktop-icon" style="top: 480px; right: 20px;">
-                <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/duolingo.png?updatedAt=1753447361224" alt="Duolingo"></div>
-                <p>Duolingo</p>
-            </div>
-        </div>
-
-        <!-- Mobile View Wrapper (Hidden on desktop) -->
-        <div id="mobile-view-wrapper" class="lg:hidden">
-            <div id="mobile-icons-container">
-                <!-- Page 1 -->
-                <div class="mobile-page">
-                    <div id="koplin-icon-mobile" class="mobile-icon"><div class="icon-bg"><i class="fas fa-folder"></i></div><p>Dr. Koplin</p></div>
-                    <div id="tinder-icon-mobile" class="mobile-icon"><div class="icon-bg"><i class="fas fa-folder"></i></div><p>Tinder</p></div>
-                    <div id="modulor-icon-mobile" class="mobile-icon"><div class="icon-bg"><i class="fas fa-folder"></i></div><p>Modulor</p></div>
-                    <div id="duolingo-icon-mobile" class="mobile-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/duolingo.png?updatedAt=1753447361224" alt="Duolingo Icon"></div><p>Duolingo</p></div>
-                    <div data-url="https://ik.imagekit.io/ex6ksvxsvk/CV%20Leonard%20Zirk%20Juli%202025.pdf?updatedAt=1753119910183" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/pdfdownload.png?updatedAt=1753096977321" alt="CV Icon"></div><p>CV</p></div>
-                    <div data-url="https://www.linkedin.com/in/leonard-zirk-9687ba223/" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/linkedin.png?updatedAt=1752678709680" alt="LinkedIn Icon"></div><p>LinkedIn</p></div>
-                    <div data-url="https://github.com/leonardzirk" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/github.png?updatedAt=1752679143531" alt="GitHub Icon" class="rounded-full"></div><p>GitHub</p></div>
-                    <div data-url="https://www.instagram.com/leonardzirk_unoffical" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/instagramicon.webp?updatedAt=1752678971026" alt="Instagram Icon"></div><p>Instagram</p></div>
-                    <div data-url="https://www.tiktok.com/@leonardzirk" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon"></div><p>TikTok</p></div>
-                </div>
-                <!-- Page 2 -->
-                <div class="mobile-page">
-                    <div data-url="https://substack.com/@leonardzirk?utm_source=user-menu" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/substack.png?updatedAt=1752679004979" class="rounded-md" alt="Substack Icon"></div><p>Substack</p></div>
-                    <div data-url="https://klipp-linding.science/index.php/en/" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/klipplindinglab_256.png?updatedAt=1752678845945" class="rounded-md" alt="Klipp Linding Lab Icon"></div><p>Klipp Linding Lab</p></div>
-                </div>
-            </div>
-            <div id="pagination-container">
-                <button id="prev-page" class="pagination-arrow hidden"><i class="fas fa-chevron-left"></i></button>
-                <div id="pagination-dots"></div>
-                <button id="next-page" class="pagination-arrow"><i class="fas fa-chevron-right"></i></button>
-            </div>
-        </div>
-
-        <!-- Windows -->
-        <div id="cv-window" class="window hidden"><div class="window-content"></div></div>
-        <div id="contact-window" class="window hidden"><div class="window-content"></div></div>
-        <div id="koplin-window" class="window hidden"><div class="window-content"></div></div>
-        <div id="readme-window" class="window hidden"><div class="window-content"></div></div>
-        <div id="readme-desktop-window" class="window hidden"><div class="window-content"></div></div>
-        <div id="duolingo-window" class="window hidden"><div class="window-content"></div></div>
-        <div id="tinder-window" class="window hidden"><div class="window-content"></div></div>
-        <div id="modulor-window" class="window hidden"><div class="window-content"></div></div>
-        <div id="tinder-party-window" class="window hidden"><div class="window-content"></div></div>
-        <div id="tinder-swipe-window" class="window hidden"><div class="window-content"></div></div>
-
-        <!-- Dock -->
-        <div class="dock">
-            <div id="cv-dock-icon" class="dock-item"><img src="https://ik.imagekit.io/ex6ksvxsvk/resume.png?updatedAt=1753120155625" alt="CV"></div>
-            <div id="contact-dock-icon" class="dock-item"><img src="https://ik.imagekit.io/ex6ksvxsvk/mailicon.png?updatedAt=1752667698506" alt="Mail"></div>
-        </div>
-    </div>
-
-<script>
-    // ==========================================
-    // LOGIC: GLOBAL & TOGGLE
-    // ==========================================
-    const modeSwitch = document.getElementById('mode-switch-checkbox');
-    const body = document.body;
-
-    modeSwitch.addEventListener('change', () => {
-        if (modeSwitch.checked) {
-            // Strategy Mode
-            body.classList.add('show-strategy');
-            // We can pause game loop here if needed, but for simplicity we let it run
-        } else {
-            // Game Mode
-            body.classList.remove('show-strategy');
-        }
-    });
-
-    // ==========================================
-    // LOGIC: THE GAME
-    // ==========================================
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const messageOverlay = document.getElementById('messageOverlay');
-    const messageText = document.getElementById('messageText');
-
-    // Game Constants & State
-    const GAME_STATES = {
-        CHOOSE_PATH: 'CHOOSE_PATH',
-        B2B_CHOOSE_LEAD_GEN: 'B2B_CHOOSE_LEAD_GEN',
-        B2B_CHOOSE_TRUST: 'B2B_CHOOSE_TRUST',
-        B2B_CHOOSE_SALES_CYCLE: 'B2B_CHOOSE_SALES_CYCLE',
-        B2B_RESULT: 'B2B_RESULT',
-        B2C_CHOOSE_ATTENTION: 'B2C_CHOOSE_ATTENTION',
-        B2C_CHOOSE_ENGAGEMENT: 'B2C_CHOOSE_ENGAGEMENT',
-        B2C_CHOOSE_CONVERSION: 'B2C_CHOOSE_CONVERSION',
-        B2C_RESULT: 'B2C_RESULT',
-        SHOW_PITCH: 'SHOW_PITCH'
-    };
-
-    let gameState = GAME_STATES.CHOOSE_PATH;
-    let userChoices = {};
-    let hoverTarget = null;
-    let animationState = { frame: 0, alpha: 0 };
-    let isTransitioning = false;
-
-    // Content
-    const b2bPitchText = `Navigating the B2B landscape is about trust and value, not just noise.
-    
-    You've seen how easy it is to chase dead-end leads.
-    
-    I help build a reliable engine for high-value contracts.
-    
-    Let's secure those major partnerships.`;
-
-    const b2cPitchText = `Winning in B2C means capturing attention, not just running ads.
-    
-    You've seen how quickly a launch can fizzle out.
-    
-    I specialize in creating viral growth through authentic content.
-    
-    Let's make your app a viral hit.`;
-
-    function initializeGame() {
-        userChoices = { path: null, score: 0 };
-        animationState = { frame: 0, alpha: 0 };
-        gameState = GAME_STATES.CHOOSE_PATH;
-    }
-
-    // Helper: Draw Text
-    function drawText(text, x, y, size = 32, color = '#fff', align = 'center', maxWidth) {
-        ctx.font = `${size}px "Press Start 2P"`;
-        ctx.fillStyle = color;
-        ctx.textAlign = align;
-        ctx.textBaseline = 'middle';
-        if (maxWidth) {
-            // Simple word wrap
-            const words = text.split(' ');
-            let line = '';
-            let lineY = y;
-            for(let n = 0; n < words.length; n++) {
-                let testLine = line + words[n] + ' ';
-                let metrics = ctx.measureText(testLine);
-                let testWidth = metrics.width;
-                if (testWidth > maxWidth && n > 0) {
-                    ctx.fillText(line, x, lineY);
-                    line = words[n] + ' ';
-                    lineY += size + 10;
-                } else {
-                    line = testLine;
-                }
-            }
-            ctx.fillText(line, x, lineY);
-        } else {
-            ctx.fillText(text, x, y);
-        }
-    }
-
-    // Helper: Draw Button
-    function drawButton(text, x, y, w, h, id) {
-        const isHovered = hoverTarget === id;
-        ctx.strokeStyle = '#fff';
-        ctx.fillStyle = isHovered ? '#ffff00' : '#555';
-        ctx.fillRect(x, y, w, h);
-        ctx.strokeRect(x, y, w, h);
-        ctx.lineWidth = 4;
-        drawText(text, x + w / 2, y + h / 2 + 4, 14, isHovered ? '#000' : '#fff', 'center', w - 20);
-    }
-
-    // Helper: Draw Icon
-    function drawIcon(type, x, y) {
-        ctx.strokeStyle = '#00ffff';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        if (type === 'path') {
-            ctx.moveTo(x, y); ctx.lineTo(x, y + 40);
-            ctx.moveTo(x, y + 20); ctx.lineTo(x - 20, y + 40);
-            ctx.moveTo(x, y + 20); ctx.lineTo(x + 20, y + 40);
-        } else if (type === 'lead-gen') {
-            ctx.moveTo(x - 25, y); ctx.lineTo(x + 25, y); ctx.lineTo(x + 10, y + 25); ctx.lineTo(x + 10, y + 40); ctx.lineTo(x - 10, y + 40); ctx.lineTo(x - 10, y + 25); ctx.closePath();
-        } else if (type === 'trust') {
-            ctx.moveTo(x - 20, y); ctx.lineTo(x + 20, y); ctx.lineTo(x + 20, y + 25); ctx.arcTo(x, y + 45, x - 20, y + 25, 30); ctx.lineTo(x - 20, y);
-        } else if (type === 'sales-cycle') {
-            ctx.arc(x, y + 20, 20, 0, Math.PI * 2); ctx.moveTo(x, y + 20); ctx.lineTo(x, y + 5);
-        } else if (type === 'attention') {
-             ctx.fillRect(x - 5, y, 10, 30); ctx.fillRect(x - 5, y + 35, 10, 10);
-        } else if (type === 'engagement') {
-            ctx.arc(x - 10, y + 15, 15, 0, Math.PI * 2); ctx.arc(x + 20, y + 30, 10, 0, Math.PI * 2);
-        } else if (type === 'conversion') {
-            ctx.moveTo(x, y); ctx.lineTo(x, y + 30); ctx.moveTo(x-15, y + 15); ctx.lineTo(x, y + 30); ctx.lineTo(x+15, y+15);
-        }
-        ctx.stroke();
-    }
-
-    // Screens
-    function drawChoiceScreen(title, question, option1, option2, iconType) {
-        drawText(title, canvas.width / 2, 100, 24, '#ff00ff', 'center');
-        drawIcon(iconType, canvas.width / 2, 200);
-        drawText(question, canvas.width / 2, 350, 18, '#fff');
-        drawButton(option1.text, 150, 500, 400, 100, option1.id);
-        drawButton(option2.text, 650, 500, 400, 100, option2.id);
-    }
-
-    function drawResultScreen(message, color, nextState) {
-        if (animationState.alpha < 1) animationState.alpha += 0.02;
-        ctx.globalAlpha = Math.min(animationState.alpha, 1);
-        drawText(message, canvas.width / 2, canvas.height / 2, 24, color);
-        ctx.globalAlpha = 1.0;
-
-        if (animationState.alpha >= 1 && !isTransitioning) {
-            isTransitioning = true;
-            setTimeout(() => {
-                gameState = nextState;
-                animationState.alpha = 0;
-                isTransitioning = false;
-            }, 2000);
-        }
-    }
-
-    // Game Loop
-    function gameLoop() {
-        // If strategy mode is active, we can skip drawing to save resources, but keeping it running ensures state is preserved
-        if (body.classList.contains('show-strategy')) {
-             requestAnimationFrame(gameLoop);
-             return;
-        }
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    <script>
+        // --- GAME ENGINE & STATE MANAGEMENT ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const uiLayer = document.getElementById('game-ui');
+        const controlsArea = document.getElementById('controls-area');
         
-        switch (gameState) {
-            case GAME_STATES.CHOOSE_PATH:
-                drawChoiceScreen("Welcome, Founder!", "What strategy do you need?", {text: "B2B (Enterprise)", id: "b2b"}, {text: "B2C (Viral Growth)", id: "b2c"}, 'path');
-                break;
-            
-            // B2B
-            case GAME_STATES.B2B_CHOOSE_LEAD_GEN:
-                drawChoiceScreen("Goal: Enterprise Contracts", "How do you find leads?", {text: "Inbound Content", id: "inbound"}, {text: "Cold Outreach", id: "outbound"}, 'lead-gen');
-                break;
-            case GAME_STATES.B2B_CHOOSE_TRUST:
-                drawChoiceScreen("Goal: Enterprise Contracts", "How do you build trust?", {text: "Case Studies", id: "studies"}, {text: "Sales Decks", id: "decks"}, 'trust');
-                break;
-            case GAME_STATES.B2B_CHOOSE_SALES_CYCLE:
-                drawChoiceScreen("Goal: Enterprise Contracts", "Your sales approach?", {text: "Consultative", id: "consultative"}, {text: "High Pressure", id: "pressure"}, 'sales-cycle');
-                break;
-            case GAME_STATES.B2B_RESULT:
-                let b2bScore = (userChoices.leadGen === 'inbound' ? 33 : 5) + (userChoices.trust === 'studies' ? 34 : 5) + (userChoices.salesCycle === 'consultative' ? 33 : 5);
-                userChoices.score = b2bScore;
-                drawResultScreen(b2bScore > 80 ? "Result: Major Partnerships Secured!" : "Result: Stuck with low-value clients.", b2bScore > 80 ? "#00ff00" : "#ff4d4d", GAME_STATES.SHOW_PITCH);
-                break;
+        let animationId = null;
 
-            // B2C
-            case GAME_STATES.B2C_CHOOSE_ATTENTION:
-                drawChoiceScreen("Goal: Viral Growth", "How do you grab attention?", {text: "Viral Content", id: "viral"}, {text: "Banner Ads", id: "generic"}, 'attention');
-                break;
-            case GAME_STATES.B2C_CHOOSE_ENGAGEMENT:
-                drawChoiceScreen("Goal: Viral Growth", "How do you drive engagement?", {text: "Community", id: "community"}, {text: "Ignore DMs", id: "ignore"}, 'engagement');
-                break;
-            case GAME_STATES.B2C_CHOOSE_CONVERSION:
-                drawChoiceScreen("Goal: Viral Growth", "How do you convert users?", {text: "Funnels", id: "funnels"}, {text: "Bad UX", id: "confusing"}, 'conversion');
-                break;
-            case GAME_STATES.B2C_RESULT:
-                let b2cScore = (userChoices.attention === 'viral' ? 33 : 5) + (userChoices.engagement === 'community' ? 34 : 5) + (userChoices.conversion === 'funnels' ? 33 : 5);
-                userChoices.score = b2cScore;
-                drawResultScreen(b2cScore > 80 ? "Result: Topping the App Store!" : "Result: Lost in the noise...", b2cScore > 80 ? "#00ff00" : "#ff4d4d", GAME_STATES.SHOW_PITCH);
-                break;
+        const GameManager = {
+            activeGame: null,
 
-            // Final
-            case GAME_STATES.SHOW_PITCH:
-                drawText(userChoices.score > 80 ? "Excellent Result!" : "It could have been better.", canvas.width / 2, 100, 20, "#ffff00");
-                const pitch = userChoices.path === 'b2b' ? b2bPitchText : b2cPitchText;
-                const lines = pitch.split('\n');
-                lines.forEach((line, i) => {
-                    drawText(line.trim(), canvas.width/2, 200 + i * 40, 16, '#fff', 'center');
-                });
-                drawButton("Contact Me", canvas.width / 2 - 200, 600, 400, 100, 'contact');
-                break;
-        }
-        requestAnimationFrame(gameLoop);
-    }
-
-    // Input Handling
-    let clickRegions = {};
-    function updateRegions() {
-        clickRegions = {};
-        if (gameState === GAME_STATES.SHOW_PITCH) {
-            clickRegions['contact'] = { x: canvas.width / 2 - 200, y: 600, w: 400, h: 100 };
-        } else if (gameState.toString().includes("CHOOSE")) {
-             clickRegions['option1'] = { x: 150, y: 500, w: 400, h: 100 };
-             clickRegions['option2'] = { x: 650, y: 500, w: 400, h: 100 };
-        }
-    }
-
-    canvas.addEventListener('mousemove', (e) => {
-        if(body.classList.contains('show-strategy')) return;
-        const rect = canvas.getBoundingClientRect();
-        // Scale mouse coordinates to canvas resolution
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const mouseX = (e.clientX - rect.left) * scaleX;
-        const mouseY = (e.clientY - rect.top) * scaleY;
-        
-        updateRegions();
-        hoverTarget = null;
-        canvas.style.cursor = 'default';
-
-        for (const [id, region] of Object.entries(clickRegions)) {
-            if (mouseX >= region.x && mouseX <= region.x + region.w &&
-                mouseY >= region.y && mouseY <= region.y + region.h) {
-                hoverTarget = id;
-                canvas.style.cursor = 'pointer';
-                break;
-            }
-        }
-    });
-
-    canvas.addEventListener('click', (e) => {
-        if(body.classList.contains('show-strategy')) return;
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const mouseX = (e.clientX - rect.left) * scaleX;
-        const mouseY = (e.clientY - rect.top) * scaleY;
-        
-        updateRegions();
-
-        for (const [id, region] of Object.entries(clickRegions)) {
-            if (mouseX >= region.x && mouseX <= region.x + region.w &&
-                mouseY >= region.y && mouseY <= region.y + region.h) {
+            load: function(gameKey) {
+                // Hide Menu, Show Game
+                document.getElementById('main-menu').style.display = 'none';
+                document.getElementById('game-wrapper').style.display = 'block';
+                document.getElementById('back-btn').style.display = 'block';
                 
-                // Logic Flow
-                if (gameState === GAME_STATES.CHOOSE_PATH) {
-                    userChoices.path = id === 'option1' ? 'b2b' : 'b2c';
-                    gameState = userChoices.path === 'b2b' ? GAME_STATES.B2B_CHOOSE_LEAD_GEN : GAME_STATES.B2C_CHOOSE_ATTENTION;
+                // Clear previous state
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                uiLayer.innerHTML = '';
+                controlsArea.innerHTML = '';
+                controlsArea.style.display = 'none';
+
+                // Initialize specific game
+                if (games[gameKey]) {
+                    this.activeGame = games[gameKey];
+                    this.activeGame.init();
+                    this.loop();
                 }
-                // B2B
-                else if (gameState === GAME_STATES.B2B_CHOOSE_LEAD_GEN) {
-                    userChoices.leadGen = id === 'option1' ? 'inbound' : 'outbound';
-                    gameState = GAME_STATES.B2B_CHOOSE_TRUST;
-                } else if (gameState === GAME_STATES.B2B_CHOOSE_TRUST) {
-                    userChoices.trust = id === 'option1' ? 'studies' : 'decks';
-                    gameState = GAME_STATES.B2B_CHOOSE_SALES_CYCLE;
-                } else if (gameState === GAME_STATES.B2B_CHOOSE_SALES_CYCLE) {
-                    userChoices.salesCycle = id === 'option1' ? 'consultative' : 'pressure';
-                    gameState = GAME_STATES.B2B_RESULT;
-                }
-                // B2C
-                else if (gameState === GAME_STATES.B2C_CHOOSE_ATTENTION) {
-                    userChoices.attention = id === 'option1' ? 'viral' : 'generic';
-                    gameState = GAME_STATES.B2C_CHOOSE_ENGAGEMENT;
-                } else if (gameState === GAME_STATES.B2C_CHOOSE_ENGAGEMENT) {
-                    userChoices.engagement = id === 'option1' ? 'community' : 'ignore';
-                    gameState = GAME_STATES.B2C_CHOOSE_CONVERSION;
-                } else if (gameState === GAME_STATES.B2C_CHOOSE_CONVERSION) {
-                    userChoices.conversion = id === 'option1' ? 'funnels' : 'confusing';
-                    gameState = GAME_STATES.B2C_RESULT;
-                }
-                // Final
-                else if (gameState === GAME_STATES.SHOW_PITCH) {
-                    if (id === 'contact') {
-                        // Switch to Strategy mode and open contact window
-                        modeSwitch.checked = true;
-                        modeSwitch.dispatchEvent(new Event('change'));
-                        setTimeout(() => {
-                           const contactWin = document.getElementById('contact-window');
-                           if(contactWin) {
-                               contactWin.classList.remove('hidden');
-                               if(window.innerWidth >= 1024) contactWin.classList.add('lg:window-desktop');
-                           }
-                        }, 500);
-                    }
-                }
-                return;
+            },
+
+            exit: function() {
+                if (animationId) cancelAnimationFrame(animationId);
+                
+                // Show Menu, Hide Game
+                document.getElementById('main-menu').style.display = 'flex';
+                document.getElementById('game-wrapper').style.display = 'none';
+                document.getElementById('back-btn').style.display = 'none';
+                controlsArea.style.display = 'none';
+                
+                // Cleanup
+                this.activeGame = null;
+                uiLayer.innerHTML = '';
+                controlsArea.innerHTML = '';
+            },
+
+            loop: function() {
+                if (!this.activeGame) return;
+                this.activeGame.update();
+                this.activeGame.draw();
+                animationId = requestAnimationFrame(() => this.loop());
             }
-        }
-    });
-
-    initializeGame();
-    gameLoop();
-
-
-    // ==========================================
-    // LOGIC: THE STRATEGY (OS)
-    // ==========================================
-    document.addEventListener('DOMContentLoaded', () => {
-        const timeEl = document.getElementById('time');
-        const dock = document.querySelector('.dock');
-        let isDesktop = window.innerWidth >= 1024;
-        const windows = document.querySelectorAll('.window');
-
-        // Clock
-        function updateTime() {
-            const now = new Date();
-            const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            timeEl.textContent = now.toLocaleDateString('en-US', options).replace(',', '');
-        }
-        updateTime();
-        setInterval(updateTime, 1000 * 60);
-
-        // Window Management
-        function openWindow(windowEl) {
-            windows.forEach(w => w.style.zIndex = 500);
-            windowEl.classList.remove('hidden');
-            windowEl.style.zIndex = 501;
-            if (isDesktop) {
-                windowEl.classList.add('lg:window-desktop');
-            } else {
-                windowEl.classList.remove('lg:window-desktop');
-                if (dock) dock.classList.add('hidden');
-            }
-        }
-
-        function closeWindow(windowEl) {
-            windowEl.classList.add('hidden');
-            const anyWindowOpen = Array.from(windows).some(w => !w.classList.contains('hidden'));
-            if (!isDesktop && !anyWindowOpen) {
-                if (dock) dock.classList.remove('hidden');
-            }
-        }
-
-        // Draggable Logic (Desktop Only)
-        function makeWindowDraggable(windowEl) {
-            const header = windowEl.querySelector('.window-header');
-            if (!header) return;
-            let isDragging = false, offsetX, offsetY;
-            
-            header.addEventListener('mousedown', (e) => {
-                if (!isDesktop) return;
-                isDragging = true;
-                const rect = windowEl.getBoundingClientRect();
-                offsetX = e.clientX - rect.left;
-                offsetY = e.clientY - rect.top;
-                header.style.cursor = 'grabbing';
-                openWindow(windowEl); // Bring to front
-            });
-
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging || !isDesktop) return;
-                windowEl.style.left = `${e.clientX - offsetX}px`;
-                windowEl.style.top = `${e.clientY - offsetY}px`;
-            });
-
-            document.addEventListener('mouseup', () => {
-                isDragging = false;
-                if (header) header.style.cursor = 'move';
-            });
-        }
-
-        // Draggable Icons
-        function makeIconDraggable(iconEl) {
-            let isDragging = false, hasDragged = false, offsetX, offsetY;
-            iconEl.addEventListener('mousedown', (e) => {
-                if (!isDesktop) return;
-                isDragging = true; hasDragged = false;
-                offsetX = e.clientX - iconEl.getBoundingClientRect().left;
-                offsetY = e.clientY - iconEl.getBoundingClientRect().top;
-                iconEl.style.cursor = 'grabbing';
-                iconEl.style.zIndex = 600;
-            });
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging || !isDesktop) return;
-                hasDragged = true;
-                iconEl.style.left = `${e.clientX - offsetX}px`;
-                iconEl.style.top = `${e.clientY - offsetY}px`;
-            });
-            document.addEventListener('mouseup', () => {
-                if (!isDesktop) return;
-                isDragging = false;
-                iconEl.style.cursor = 'grab';
-                iconEl.style.zIndex = 100;
-                setTimeout(() => { hasDragged = false; }, 0);
-            });
-            return () => hasDragged;
-        }
-
-        // Inject HTML Content into Windows
-        const windowHeaderHTML = (title) => `<div class="window-header"><div class="traffic-lights"><div class="traffic-light close"></div><div class="traffic-light minimize"></div><div class="traffic-light maximize"></div></div><span class="flex-grow text-center pr-8">${title}</span></div>`;
-
-        // CV Window
-        document.getElementById('cv-window').querySelector('.window-content').innerHTML = `
-            ${windowHeaderHTML('CV - Leonard Zirk')}
-            <div class="window-body">
-                <div class="text-center mb-6"><h1 class="text-3xl font-bold text-white">Leonard Zirk</h1><p class="text-xl text-gray-300">Creative Strategist & Technologist</p></div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center text-sm mb-6">
-                    <div><strong class="block text-gray-400">PHONE</strong>+491637150123</div>
-                    <div><strong class="block text-gray-400">ADDRESS</strong>Transvaalstraße 6, 13351</div>
-                    <div><strong class="block text-gray-400">EMAIL</strong>leonard.zirk@gmail.com</div>
-                </div>
-                <h2>About</h2><p class="italic">"I turn complex science into captivating stories."</p>
-                <h2>Work Experience</h2><p><strong>Creative Strategist</strong> | Ozmoze Gmbh<br>Clients: Telekom, Tinder, Duolingo.</p>
-                <h2>Education</h2><p><strong>BS Biology</strong> (2020-2025)<br><strong>BS Psychology</strong> (2020-2024)</p>
-            </div>`;
-        
-        // Contact Window
-        document.getElementById('contact-window').querySelector('.window-content').innerHTML = `
-            ${windowHeaderHTML('Contact Me')}
-            <div class="window-body">
-                <form id="contact-form">
-                    <div class="mb-4"><label class="block mb-2 text-gray-300">Name</label><input class="w-full bg-gray-800 border border-gray-600 rounded-lg p-2 text-white" type="text" id="name" required></div>
-                    <div class="mb-4"><label class="block mb-2 text-gray-300">Email</label><input class="w-full bg-gray-800 border border-gray-600 rounded-lg p-2 text-white" type="email" id="email" required></div>
-                    <div class="mb-4"><label class="block mb-2 text-gray-300">Message</label><textarea class="w-full bg-gray-800 border border-gray-600 rounded-lg p-2 text-white" id="message" rows="4" required></textarea></div>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded-lg font-medium">Send</button>
-                </form>
-            </div>`;
-
-        // Other Windows
-        document.getElementById('koplin-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Dr. Koplin')}<div class="window-body p-4 flex gap-4 items-start"><div data-url="https://www.tiktok.com/@drkoplin" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon"></div><p>TikTok</p></div></div>`;
-        document.getElementById('readme-desktop-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('read me.txt')}<div class="window-body"><h2>Welcome!</h2><p>Double click icons or swipe on mobile.</p></div>`;
-        document.getElementById('duolingo-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Duolingo')}<div class="window-body duolingo-body"><div class="duolingo-progress-bar"><div class="duolingo-progress"></div></div><div class="duolingo-mascot-container"><img src="https://ik.imagekit.io/ex6ksvxsvk/duo%20app.png?updatedAt=1753448064337" alt="Duo" class="w-20"><div class="duolingo-speech-bubble">What did Leo do?</div></div><div class="duolingo-options"><button class="duolingo-option" data-correct="true"><span>💡</span><span>Social Media Strategy</span></button><button class="duolingo-option" data-correct="false"><span>🚀</span><span>Rocket Science</span></button></div><button class="duolingo-continue-btn">Check</button></div>`;
-        
-        document.getElementById('tinder-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Tinder')}<div class="window-body p-4 flex flex-wrap gap-4"><div id="tinder-swipe-icon" class="mobile-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tinder%20app.png?updatedAt=1753448867039"></div><p>Swipe</p></div></div>`;
-        document.getElementById('tinder-swipe-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Swipe')}<div class="window-body tinder-body"><div class="tinder-header"><img src="https://ik.imagekit.io/ex6ksvxsvk/tinder%20app.png?updatedAt=1753448867039"></div><div class="tinder-stack"><div class="tinder-card"><img class="tinder-card-img" src="https://ik.imagekit.io/ex6ksvxsvk/d81839c1-024b-4f7a-b037-472795553a6a.JPG"><div class="tinder-card-info"><h3>Leonard</h3><p>Strategist</p></div></div></div><div class="tinder-controls"><button class="tinder-btn dislike"><i class="fas fa-times"></i></button><button class="tinder-btn like"><i class="fas fa-heart"></i></button></div></div>`;
-        document.getElementById('modulor-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Modulor')}<div class="window-body p-4 flex gap-4"><div data-url="https://www.instagram.com/modulorberlin" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/instagramicon.webp?updatedAt=1752678971026"></div><p>Insta</p></div></div>`;
-
-        // Event Listeners for OS
-        windows.forEach(w => {
-            w.querySelectorAll('.close').forEach(btn => btn.addEventListener('click', () => closeWindow(w)));
-            if(isDesktop) makeWindowDraggable(w);
-        });
-
-        // Icon Mapping
-        const iconWindowMap = {
-            'cv-dock-icon': 'cv-window', 
-            'contact-dock-icon': 'contact-window',
-            'koplin-icon-mobile': 'koplin-window', 'koplin-icon-desktop': 'koplin-window',
-            'readme-desktop-icon': 'readme-desktop-window',
-            'duolingo-icon-mobile': 'duolingo-window', 'duolingo-icon-desktop': 'duolingo-window',
-            'tinder-icon-mobile': 'tinder-window', 'tinder-icon-desktop': 'tinder-window',
-            'modulor-icon-mobile': 'modulor-window', 'modulor-icon-desktop': 'modulor-window'
         };
 
-        for (const [iconId, windowId] of Object.entries(iconWindowMap)) {
-            const iconEl = document.getElementById(iconId);
-            const windowEl = document.getElementById(windowId);
-            if (iconEl && windowEl) {
-                if (isDesktop && iconEl.classList.contains('desktop-icon')) {
-                    const wasDragged = makeIconDraggable(iconEl);
-                    iconEl.addEventListener('click', () => { if (!wasDragged()) openWindow(windowEl); });
-                } else {
-                    iconEl.addEventListener('click', () => openWindow(windowEl));
+        // --- GAME LIBRARIES ---
+
+        const games = {
+            
+            // --- GAME 1: SNOWSTORM (Chaos vs Order) ---
+            snowstorm: {
+                entities: [],
+                snow: [],
+                frameCount: 0,
+                towerDirection: 0,
+                lastShoutTime: 0,
+                SCALE: 4,
+
+                init: function() {
+                    canvas.height = 320;
+                    this.frameCount = 0;
+                    this.entities = [];
+                    this.snow = [];
+                    
+                    const WIDTH = canvas.width / this.SCALE;
+                    const HEIGHT = canvas.height / this.SCALE;
+                    const HALF_W = WIDTH / 2;
+
+                    // UI
+                    uiLayer.innerHTML = `
+                        <div class="ui-label-top" style="color: #fff;">
+                            <span>Scenario A: Chaos</span>
+                            <span>Scenario B: Order</span>
+                        </div>
+                    `;
+
+                    // Init Walkers
+                    // Sim 1: Random
+                    this.entities.push(this.createWalker((HALF_W/2)-2, HEIGHT/2, 'random'));
+                    this.entities.push(this.createWalker((HALF_W/2)+2, HEIGHT/2, 'random'));
+                    // Sim 2: Directed
+                    this.entities.push(this.createWalker(HALF_W + (HALF_W/2), HEIGHT/2, 'directed'));
+
+                    // Init Snow
+                    for(let i=0; i<50; i++) {
+                        this.snow.push({
+                            x: Math.random() * WIDTH,
+                            y: Math.random() * HEIGHT,
+                            speed: 0.2 + Math.random() * 0.5
+                        });
+                    }
+                },
+
+                createWalker: function(x, y, type) {
+                    return { x, y, type, update: function(frame, tDir, w, h, hw) {
+                        if (frame % 10 !== 0) return;
+                        let dx = 0, dy = 0, step = 2;
+                        
+                        if (this.type === 'random') {
+                            const r = Math.floor(Math.random() * 4);
+                            if (r===0) dy=-step; if (r===1) dx=step; if (r===2) dy=step; if (r===3) dx=-step;
+                        } else {
+                            if (tDir===0) dy=-step; if (tDir===1) dx=step; if (tDir===2) dy=step; if (tDir===3) dx=-step;
+                        }
+                        this.x += dx; this.y += dy;
+                        
+                        // Bounds
+                        const margin = 2;
+                        if (this.type === 'random') {
+                            this.x = Math.max(margin, Math.min(hw-margin, this.x));
+                        } else {
+                            this.x = Math.max(hw+margin, Math.min(w-margin, this.x));
+                        }
+                        this.y = Math.max(margin, Math.min(h-margin, this.y));
+                    }};
+                },
+
+                update: function() {
+                    const WIDTH = canvas.width / this.SCALE;
+                    const HEIGHT = canvas.height / this.SCALE;
+                    const HALF_W = WIDTH / 2;
+                    
+                    this.frameCount++;
+
+                    if (this.frameCount - this.lastShoutTime > 60) {
+                        this.towerDirection = Math.floor(Math.random() * 4);
+                        this.lastShoutTime = this.frameCount;
+                    }
+
+                    this.entities.forEach(e => e.update(this.frameCount, this.towerDirection, WIDTH, HEIGHT, HALF_W));
+                    
+                    // Snow
+                    this.snow.forEach(p => {
+                        p.y += p.speed;
+                        p.x += Math.sin(this.frameCount * 0.05) * 0.5;
+                        if(p.y > HEIGHT) p.y = 0;
+                        if(p.x > WIDTH) p.x = 0;
+                    });
+                },
+
+                draw: function() {
+                    const WIDTH = canvas.width / this.SCALE;
+                    const HEIGHT = canvas.height / this.SCALE;
+                    const HALF_W = WIDTH / 2;
+
+                    ctx.setTransform(1,0,0,1,0,0);
+                    ctx.clearRect(0,0,canvas.width, canvas.height);
+                    ctx.scale(this.SCALE, this.SCALE);
+
+                    // Backgrounds
+                    ctx.fillStyle = '#F0E68C'; ctx.fillRect(0,0,HALF_W, HEIGHT); // Left
+                    ctx.fillRect(HALF_W,0,HALF_W, HEIGHT); // Right
+                    
+                    // Safe Zones
+                    ctx.fillStyle = '#32CD32';
+                    const sz = 40;
+                    ctx.fillRect((HALF_W/2)-sz/2, (HEIGHT/2)-sz/2, sz, sz);
+                    ctx.fillRect(HALF_W+(HALF_W/2)-sz/2, (HEIGHT/2)-sz/2, sz, sz);
+
+                    // Divider
+                    ctx.fillStyle = '#000'; ctx.fillRect(HALF_W-1, 0, 2, HEIGHT);
+
+                    // Snow
+                    ctx.fillStyle = '#FFF';
+                    this.snow.forEach(p => ctx.fillRect(Math.floor(p.x), Math.floor(p.y), 1, 1));
+
+                    // Tower (Right Side)
+                    const tx = WIDTH - 20, ty = 20;
+                    ctx.fillStyle = '#8B4513'; ctx.fillRect(tx, ty, 8, 12); // Base
+                    ctx.fillRect(tx-1, ty, 10, 2); // Top
+                    ctx.fillStyle = '#1E90FF'; ctx.fillRect(tx+2, ty-3, 4, 4); // Hood
+
+                    // Bubble
+                    this.drawBubble(tx-14, ty-8, this.towerDirection);
+
+                    // Walkers
+                    ctx.fillStyle = '#000';
+                    this.entities.forEach(e => {
+                        ctx.fillRect(e.x, e.y, 3, 3);
+                        ctx.fillRect(e.x+1, e.y-1, 1, 1);
+                    });
+                },
+
+                drawBubble: function(x, y, dir) {
+                    ctx.fillStyle = '#FFF'; ctx.strokeStyle='#000'; ctx.lineWidth=1;
+                    ctx.fillRect(x,y,12,11); ctx.strokeRect(x,y,12,11);
+                    // Arrow
+                    ctx.fillStyle = '#000';
+                    const cx = x+6, cy=y+5.5;
+                    ctx.beginPath();
+                    if(dir===0) { ctx.moveTo(cx,cy-3); ctx.lineTo(cx-2,cy); ctx.lineTo(cx+2,cy); }
+                    else if(dir===1) { ctx.moveTo(cx+3,cy); ctx.lineTo(cx,cy-2); ctx.lineTo(cx,cy+2); }
+                    else if(dir===2) { ctx.moveTo(cx,cy+3); ctx.lineTo(cx-2,cy); ctx.lineTo(cx+2,cy); }
+                    else { ctx.moveTo(cx-3,cy); ctx.lineTo(cx,cy-2); ctx.lineTo(cx,cy+2); }
+                    ctx.fill();
+                }
+            },
+
+
+            // --- GAME 2: NUTCRACKER (Feedback) ---
+            nutcracker: {
+                frameCount: 0,
+                SCALE: 4,
+                angle: 0, soldierAngle: 0,
+                history: [],
+                sweat: [], snow: [],
+
+                init: function() {
+                    canvas.height = 320;
+                    this.frameCount = 0;
+                    this.angle = 0;
+                    this.soldierAngle = 0;
+                    this.history = [];
+                    this.sweat = [];
+                    this.snow = [];
+                    
+                    const WIDTH = canvas.width/this.SCALE;
+                    const HEIGHT = canvas.height/this.SCALE;
+
+                    // UI
+                    uiLayer.innerHTML = `
+                        <div class="ui-label-top" style="color: #fbbf24;">
+                            <span>Feedback Loop</span>
+                            <span>Zero Feedback</span>
+                        </div>
+                        <div class="ui-label-bottom">
+                            <span>Shared Energy</span>
+                            <span>Heat &Phi; = Cost</span>
+                        </div>
+                    `;
+
+                    for(let i=0; i<40; i++) {
+                        this.snow.push({ x: Math.random()*WIDTH, y: Math.random()*HEIGHT, speed: 0.1+Math.random()*0.4});
+                    }
+                },
+
+                update: function() {
+                    this.frameCount++;
+                    const WIDTH = canvas.width/this.SCALE;
+                    const HEIGHT = canvas.height/this.SCALE;
+                    
+                    // Logic Left (Dancers)
+                    this.angle += 0.05;
+
+                    // Logic Right (Soldier/Mime)
+                    const radius = 20;
+                    const center2X = (WIDTH/2) + (WIDTH/4);
+                    const center2Y = HEIGHT/2 + 10;
+                    
+                    this.soldierAngle += 0.04;
+                    const sX = center2X + Math.cos(this.soldierAngle) * (radius*0.8);
+                    const sY = center2Y + Math.sin(this.soldierAngle) * (radius*0.4) + 5;
+                    const sFlip = Math.sin(this.soldierAngle) > 0;
+
+                    this.history.push({x:sX, y:sY, flip:sFlip});
+                    if(this.history.length > 26) this.history.shift();
+
+                    // Sweat
+                    if(this.history.length >= 25 && this.frameCount % 10 === 0) {
+                        const past = this.history[0];
+                        this.sweat.push({ x: past.x, y: past.y-8, vx: (Math.random()-0.5), vy: -0.5-Math.random() });
+                    }
+                    for(let i=this.sweat.length-1; i>=0; i--) {
+                        this.sweat[i].x += this.sweat[i].vx;
+                        this.sweat[i].y += this.sweat[i].vy;
+                        this.sweat[i].vy += 0.05;
+                        if(this.sweat[i].y > HEIGHT) this.sweat.splice(i,1);
+                    }
+
+                    // Snow
+                    this.snow.forEach(p => {
+                        p.y += p.speed; p.x += Math.sin(this.frameCount*0.02)*0.2;
+                        if(p.y>HEIGHT) p.y=0; if(p.x>WIDTH) p.x=0;
+                    });
+                },
+
+                draw: function() {
+                    const WIDTH = canvas.width/this.SCALE;
+                    const HEIGHT = canvas.height/this.SCALE;
+                    const HALF_W = WIDTH/2;
+                    const centerX = HALF_W/2;
+                    const centerY = HEIGHT/2 + 10;
+                    const radius = 20;
+
+                    ctx.setTransform(1,0,0,1,0,0);
+                    ctx.clearRect(0,0,canvas.width, canvas.height);
+                    ctx.scale(this.SCALE, this.SCALE);
+
+                    // BG Left
+                    ctx.fillStyle = '#1e293b'; ctx.fillRect(0,0,HALF_W, HEIGHT);
+                    ctx.fillStyle = '#e0f2fe'; ctx.beginPath(); ctx.ellipse(centerX, centerY+8, 28, 13, 0, 0, Math.PI*2); ctx.fill();
+                    
+                    // BG Right
+                    ctx.fillStyle = '#0f172a'; ctx.fillRect(HALF_W,0,HALF_W, HEIGHT);
+                    ctx.fillStyle = '#e2e8f0'; ctx.beginPath(); ctx.ellipse(centerX+HALF_W, centerY+8, 28, 13, 0, 0, Math.PI*2); ctx.fill();
+                    
+                    // Divider
+                    ctx.fillStyle = '#000'; ctx.fillRect(HALF_W-1, 0, 2, HEIGHT);
+
+                    // --- Left Dancers ---
+                    const d1X = centerX + Math.cos(this.angle)*(radius*0.7);
+                    const d1Y = centerY + Math.sin(this.angle)*(radius*0.35)+5;
+                    const d2X = centerX + Math.cos(this.angle+Math.PI)*(radius*0.7);
+                    const d2Y = centerY + Math.sin(this.angle+Math.PI)*(radius*0.35)+5;
+                    
+                    const drawDancer = (x,y) => {
+                        ctx.fillStyle = '#f472b6'; ctx.fillRect(x-3, y+2, 7, 3); // Dress
+                        ctx.fillStyle = '#ffe4e6'; ctx.fillRect(x, y-3, 2, 2); // Head
+                    };
+                    
+                    if (Math.sin(this.angle) < 0) { drawDancer(d1X,d1Y); drawDancer(d2X,d2Y); }
+                    else { drawDancer(d2X,d2Y); drawDancer(d1X,d1Y); }
+                    
+                    ctx.strokeStyle = '#fbcfe8'; ctx.beginPath(); ctx.moveTo(d1X+1, d1Y+2); ctx.lineTo(d2X+1, d2Y+2); ctx.stroke();
+
+                    // --- Right Soldier/Mime ---
+                    // Current Pos
+                    const center2X = centerX+HALF_W;
+                    const center2Y = centerY;
+                    const sX = center2X + Math.cos(this.soldierAngle) * (radius*0.8);
+                    const sY = center2Y + Math.sin(this.soldierAngle) * (radius*0.4) + 5;
+                    const sFlip = Math.sin(this.soldierAngle) > 0;
+                    
+                    const entities = [{t:'s', x:sX, y:sY, f:sFlip}];
+                    if(this.history.length >= 25) {
+                         const h = this.history[0];
+                         entities.push({t:'m', x:h.x, y:h.y, f:h.f});
+                    }
+                    entities.sort((a,b)=>a.y-b.y);
+
+                    entities.forEach(e => {
+                        ctx.save(); ctx.translate(e.x, e.y); if(e.f) ctx.scale(-1,1);
+                        if(e.t==='s') {
+                            ctx.fillStyle = '#ef4444'; ctx.fillRect(-3, 2, 6, 6); // Coat
+                            ctx.fillStyle = '#000'; ctx.fillRect(-2, -6, 4, 5); // Hat
+                        } else {
+                            ctx.fillStyle = '#fff'; ctx.fillRect(-2, 0, 5, 6); // Shirt
+                            ctx.fillStyle = '#334155'; ctx.fillRect(-2, 1, 5, 1); // Stripe
+                            ctx.fillStyle = '#000'; ctx.fillRect(-2, -5, 5, 2); // Beret
+                        }
+                        ctx.restore();
+                    });
+
+                    // Sweat
+                    ctx.fillStyle = '#0ea5e9';
+                    this.sweat.forEach(p => ctx.fillRect(p.x, p.y, 1, 1));
+                    
+                    // Global Snow
+                    ctx.fillStyle = '#fff';
+                    this.snow.forEach(p => ctx.fillRect(Math.floor(p.x), Math.floor(p.y), 1, 1));
+                }
+            },
+
+
+            // --- GAME 3: SHUTTER SPEED (Tau) ---
+            shutter: {
+                frameCount: 0, SCALE: 4, tau: 0.5,
+                
+                init: function() {
+                    canvas.height = 320;
+                    this.frameCount = 0;
+                    this.tau = 0.5;
+
+                    // UI
+                    uiLayer.innerHTML = `
+                        <div class="ui-label-top" style="color: #ff0055; text-align: left; padding-left: 10px;">TARGET: SPEEDING CAR</div>
+                        <div id="status-label" style="position:absolute; bottom:20px; width:100%; text-align:center; color:#fff; font-size:12px; text-shadow:2px 2px #000;">WAITING...</div>
+                    `;
+
+                    controlsArea.style.display = 'flex';
+                    controlsArea.innerHTML = `
+                         <div style="display:flex; flex-direction:column; width:100%; align-items:center;">
+                            <div style="display:flex; justify-content:space-between; width:100%; color:#94a3b8; font-size:10px; margin-bottom:5px;">
+                                <span>Noise (&tau;&rarr;0)</span>
+                                <span>Causal Peak</span>
+                                <span>Memory Loss (&tau;&rarr;&infin;)</span>
+                            </div>
+                            <input type="range" id="shutterSlider" min="0" max="100" value="50">
+                            <div style="font-size:10px; color:#666; margin-top:5px;">ADJUST OBSERVATION TIME (&tau;)</div>
+                         </div>
+                    `;
+                    
+                    document.getElementById('shutterSlider').addEventListener('input', (e) => {
+                        this.tau = parseInt(e.target.value) / 100;
+                    });
+                },
+
+                update: function() {
+                    this.frameCount++;
+                    const lbl = document.getElementById('status-label');
+                    if(this.tau < 0.2) { lbl.innerText = "NOISE DOMINANCE (Zoomed, High Entropy)"; lbl.style.color="#ef4444"; }
+                    else if(this.tau > 0.8) { lbl.innerText = "MEMORY LOSS (Signal Departed)"; lbl.style.color="#64748b"; }
+                    else { lbl.innerText = "CAUSAL PEAK (Signal Captured)"; lbl.style.color="#32CD32"; }
+                },
+
+                draw: function() {
+                    const WIDTH = canvas.width/this.SCALE;
+                    const HEIGHT = canvas.height/this.SCALE;
+                    
+                    ctx.setTransform(1,0,0,1,0,0);
+                    ctx.clearRect(0,0,canvas.width,canvas.height);
+                    
+                    // 1. Scene (Low Res)
+                    ctx.scale(this.SCALE, this.SCALE);
+                    
+                    // BG
+                    ctx.fillStyle = '#111'; ctx.fillRect(0,0,WIDTH,HEIGHT);
+                    ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,WIDTH,HEIGHT/2); // Sky
+                    ctx.fillStyle = '#333'; ctx.fillRect(0,HEIGHT/2,WIDTH,HEIGHT/2); // Ground
+                    
+                    // Road
+                    ctx.fillStyle = '#555';
+                    const speed = (this.frameCount*4)%40;
+                    for(let i=-40; i<WIDTH; i+=40) ctx.fillRect(i-speed, HEIGHT/2+20, 20, 2);
+
+                    // Car Logic
+                    const cx = (WIDTH/2)-15, cy = (HEIGHT/2)+10;
+                    let zoom=1, blur=0, opacity=1;
+                    
+                    if(this.tau < 0.5) {
+                        zoom = 1 + (1-(this.tau*2))*11;
+                    } else {
+                        const f = (this.tau-0.5)*2;
+                        opacity = 1-f; blur = f*5;
+                    }
+
+                    // Draw Car
+                    ctx.save();
+                    if(zoom>1) {
+                         ctx.translate(cx+10, cy+10); ctx.scale(zoom, zoom); ctx.translate(-(cx+10), -(cy+10));
+                    }
+                    const layers = 1+Math.floor(blur*10);
+                    const step = blur*2;
+                    for(let i=0; i<layers; i++) {
+                        ctx.globalAlpha = opacity * (1-(i/layers));
+                        const dx = cx - (i*step);
+                        ctx.fillStyle = '#ef4444'; ctx.fillRect(dx, cy, 30, 10); // Body
+                        ctx.fillStyle = '#7f1d1d'; ctx.fillRect(dx+5, cy-6, 18, 6); // Cabin
+                        ctx.fillStyle = '#93c5fd'; ctx.fillRect(dx+16, cy-5, 6, 4); // Glass
+                        ctx.fillStyle = '#fbbf24'; ctx.fillRect(dx, cy+4, 30, 2); // Stripe
+                        ctx.fillStyle = '#111'; ctx.fillRect(dx+4, cy+8, 6,6); ctx.fillRect(dx+20, cy+8, 6,6); // Wheels
+                    }
+                    ctx.restore();
+                    
+                    // 2. Noise (High Res)
+                    ctx.setTransform(1,0,0,1,0,0);
+                    if(this.tau < 0.5) {
+                        const amount = (0.5-this.tau)*0.6; // max 30%
+                        const id = ctx.getImageData(0,0,canvas.width,canvas.height);
+                        const d = id.data;
+                        for(let i=0; i<d.length; i+=4) {
+                            if(Math.random()<amount) {
+                                const v = Math.random()*255; d[i]=v; d[i+1]=v; d[i+2]=v;
+                            }
+                        }
+                        ctx.putImageData(id, 0,0);
+                    }
+                }
+            },
+
+
+            // --- GAME 4: THE WANDERER (Rope Physics) ---
+            wanderer: {
+                frameCount:0, SCALE:2,
+                ropeLen: 40, wSpeed: 2,
+                wanderer: {x:0, y:0, a:0, ta:0, t:0},
+                sled: {x:0, y:0, a:0},
+                particles: [], totalHeat: 0,
+                snowCanvas: null, snowCtx: null,
+
+                init: function() {
+                    canvas.height = 360; // Larger height for this one
+                    this.frameCount = 0;
+                    this.totalHeat = 0;
+                    this.particles = [];
+                    this.ropeLen = 40;
+                    this.wSpeed = 2;
+
+                    const WIDTH = canvas.width; 
+                    const HEIGHT = canvas.height; 
+
+                    this.wanderer = {x:WIDTH/2, y:HEIGHT/2, a:0, ta:0, t:0};
+                    this.sled = {x:WIDTH/2, y:HEIGHT/2+40, a:0};
+
+                    // UI
+                    uiLayer.innerHTML = `
+                        <div class="ui-label-top" style="color: #1e3a8a;">
+                            <span>Signal (x): Wanderer</span>
+                            <span>Response (y): Sled</span>
+                        </div>
+                        <div class="ui-label-bottom">
+                            <span id="wand-math">Heat &Phi; &ge; Info T</span>
+                        </div>
+                    `;
+
+                    controlsArea.style.display = 'flex';
+                    controlsArea.innerHTML = `
+                         <div style="width:45%;">
+                            <label style="color:#94a3b8; font-size:10px;">Rope Length (Lag)</label>
+                            <input type="range" id="ropeSlider" min="10" max="100" value="40">
+                         </div>
+                         <div style="width:45%;">
+                            <label style="color:#94a3b8; font-size:10px;">Wanderer Speed</label>
+                            <input type="range" id="speedSlider" min="1" max="10" value="3">
+                         </div>
+                    `;
+
+                    document.getElementById('ropeSlider').addEventListener('input', e => this.ropeLen=parseInt(e.target.value));
+                    document.getElementById('speedSlider').addEventListener('input', e => this.wSpeed=parseInt(e.target.value));
+                    
+                    // Create an offscreen canvas for persistent tracks
+                    this.snowCanvas = document.createElement('canvas');
+                    this.snowCanvas.width = WIDTH;
+                    this.snowCanvas.height = HEIGHT;
+                    this.snowCtx = this.snowCanvas.getContext('2d');
+                    this.snowCtx.fillStyle = '#f0f9ff';
+                    this.snowCtx.fillRect(0,0,WIDTH,HEIGHT);
+                },
+
+                update: function() {
+                    this.frameCount++;
+                    const WIDTH = canvas.width;
+                    const HEIGHT = canvas.height;
+
+                    // Wanderer
+                    if(this.frameCount > this.wanderer.t) {
+                        this.wanderer.ta = Math.random()*Math.PI*2;
+                        this.wanderer.t = this.frameCount + 30 + Math.random()*60;
+                    }
+                    const diff = this.wanderer.ta - this.wanderer.a;
+                    this.wanderer.a += diff*0.05;
+                    this.wanderer.x += Math.cos(this.wanderer.a)*this.wSpeed;
+                    this.wanderer.y += Math.sin(this.wanderer.a)*this.wSpeed;
+                    
+                    // Bounds
+                    if(this.wanderer.x < 20 || this.wanderer.x > WIDTH-20) { this.wanderer.a = Math.PI - this.wanderer.a; this.wanderer.x = Math.max(20, Math.min(WIDTH-20, this.wanderer.x)); }
+                    if(this.wanderer.y < 20 || this.wanderer.y > HEIGHT-20) { this.wanderer.a = -this.wanderer.a; this.wanderer.y = Math.max(20, Math.min(HEIGHT-20, this.wanderer.y)); }
+
+                    // Sled
+                    const dx = this.wanderer.x - this.sled.x;
+                    const dy = this.wanderer.y - this.sled.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    let heatGen = 0;
+
+                    if(dist > this.ropeLen) {
+                        const angle = Math.atan2(dy, dx);
+                        const tx = this.wanderer.x - Math.cos(angle)*this.ropeLen;
+                        const ty = this.wanderer.y - Math.sin(angle)*this.ropeLen;
+                        
+                        const mx = (tx - this.sled.x)*0.1;
+                        const my = (ty - this.sled.y)*0.1;
+                        
+                        const prevX = this.sled.x;
+                        const prevY = this.sled.y;
+                        this.sled.x += mx; this.sled.y += my;
+                        this.sled.a = Math.atan2(my, mx);
+
+                        // Tracks
+                        this.snowCtx.strokeStyle = '#cbd5e1'; this.snowCtx.lineWidth=6; this.snowCtx.lineCap='round';
+                        this.snowCtx.beginPath(); this.snowCtx.moveTo(prevX, prevY); this.snowCtx.lineTo(this.sled.x, this.sled.y); this.snowCtx.stroke();
+
+                        // Heat
+                        const moved = Math.sqrt(mx*mx+my*my);
+                        heatGen = moved * 2;
+                        if(moved > 0.5) {
+                            for(let i=0; i<Math.floor(moved); i++) {
+                                this.particles.push({x:this.sled.x, y:this.sled.y, vx:(Math.random()-0.5)*2, vy:(Math.random()-0.5)*2, life:1});
+                            }
+                        }
+                    }
+
+                    this.totalHeat += heatGen;
+                    document.getElementById('wand-math').innerText = `Entropy Generated (\u03A6): ${Math.floor(this.totalHeat)}`;
+
+                    // Particles
+                    for(let i=this.particles.length-1; i>=0; i--) {
+                        let p = this.particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=0.05;
+                        if(p.life<=0) this.particles.splice(i,1);
+                    }
+                },
+
+                draw: function() {
+                    ctx.setTransform(1,0,0,1,0,0);
+                    ctx.drawImage(this.snowCanvas, 0, 0);
+
+                    // Rope
+                    ctx.strokeStyle = '#0f172a'; ctx.lineWidth=2; ctx.setLineDash([4,4]);
+                    ctx.beginPath(); ctx.moveTo(this.wanderer.x, this.wanderer.y); ctx.lineTo(this.sled.x, this.sled.y); ctx.stroke(); ctx.setLineDash([]);
+
+                    // Sled
+                    ctx.save(); ctx.translate(this.sled.x, this.sled.y); ctx.rotate(this.sled.a);
+                    ctx.fillStyle = '#0284c7'; ctx.fillRect(-10,-5,20,10);
+                    ctx.fillStyle = '#0c4a6e'; ctx.fillRect(-10,-8,20,2); ctx.fillRect(-10,6,20,2);
+                    ctx.restore();
+
+                    // Wanderer
+                    ctx.save(); ctx.translate(this.wanderer.x, this.wanderer.y);
+                    const bob = Math.sin(this.frameCount*0.2)*2;
+                    ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.beginPath(); ctx.ellipse(0,10,8,4,0,0,Math.PI*2); ctx.fill(); // Shadow
+                    ctx.fillStyle = '#dc2626'; ctx.fillRect(-6, -10+bob, 12, 14); // Body
+                    ctx.fillStyle = '#fecaca'; ctx.fillRect(-4, -18+bob, 8, 8); // Head
+                    ctx.fillStyle = '#991b1b'; ctx.fillRect(-5, -20+bob, 10, 4); // Hat
+                    ctx.restore();
+
+                    // Heat
+                    ctx.fillStyle = '#f59e0b';
+                    this.particles.forEach(p => { ctx.globalAlpha=p.life; ctx.fillRect(p.x, p.y, 2, 2); });
+                    ctx.globalAlpha = 1;
                 }
             }
-        }
-        
-        // External Links
-        document.querySelectorAll('.link-icon').forEach(icon => {
-            icon.addEventListener('click', () => window.open(icon.dataset.url, '_blank'));
-        });
+        };
 
-        // Nested Tinder Icons
-        document.getElementById('tinder-swipe-icon')?.addEventListener('click', () => openWindow(document.getElementById('tinder-swipe-window')));
-
-        // Contact Form
-        document.getElementById('contact-form')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            window.open(`mailto:leonard.zirk@gmail.com?subject=Contact&body=${document.getElementById('message').value}`);
-        });
-
-        // Duolingo Logic
-        const duoBtn = document.querySelector('.duolingo-continue-btn');
-        const duoOptions = document.querySelectorAll('.duolingo-option');
-        duoOptions.forEach(opt => opt.addEventListener('click', () => {
-            duoOptions.forEach(o => o.classList.remove('selected', 'correct', 'incorrect'));
-            opt.classList.add('selected');
-            duoBtn.classList.add('active');
-            
-            duoBtn.onclick = () => {
-                if(opt.dataset.correct === 'true') opt.classList.add('correct');
-                else opt.classList.add('incorrect');
-            };
-        }));
-
-        // Resize Handler
-        function handleResize() {
-            isDesktop = window.innerWidth >= 1024;
-            const desktopIcons = document.getElementById('desktop-icons-container');
-            const mobileView = document.getElementById('mobile-view-wrapper');
-            
-            if(desktopIcons && mobileView) {
-                if (isDesktop) {
-                    desktopIcons.classList.remove('hidden');
-                    mobileView.classList.add('hidden');
-                    mobileView.classList.remove('lg:hidden'); // Tailwind override logic
-                } else {
-                    desktopIcons.classList.add('hidden');
-                    mobileView.classList.remove('hidden');
-                }
-            }
-        }
-        window.addEventListener('resize', handleResize);
-        handleResize(); // Init
-        
-        // Tinder Swipe (Simple)
-        document.querySelector('.tinder-btn.like')?.addEventListener('click', () => {
-             document.querySelector('.tinder-card').style.transform = 'translateX(500px) rotate(30deg)';
-             setTimeout(() => openWindow(document.getElementById('contact-window')), 300);
-        });
-        document.querySelector('.tinder-btn.dislike')?.addEventListener('click', () => {
-             document.querySelector('.tinder-card').style.transform = 'translateX(-500px) rotate(-30deg)';
-             setTimeout(() => { document.querySelector('.tinder-card').style.transform = ''; }, 500);
-        });
-    });
-</script>
+    </script>
 </body>
 </html>
