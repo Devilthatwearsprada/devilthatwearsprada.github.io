@@ -3,28 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Strategy & Activation - The Game</title>
+    <title>AI Strategy & Activation</title>
+    
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- Tailwind CSS (for Strategy Side) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
+        /* --- GLOBAL & TOGGLE STYLES --- */
         body {
-            background-color: #1a1a1a;
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            font-family: 'Press Start 2P', cursive; /* Default for Game */
+            transition: background-color 0.5s ease;
+        }
+
+        /* Toggle Switch */
+        .mode-switch-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            padding: 5px 10px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-family: 'Roboto', sans-serif;
             color: #fff;
-            font-family: 'Press Start 2P', cursive;
+        }
+
+        .mode-switch { display: none; }
+        .switch-track {
+            width: 50px;
+            height: 25px;
+            background: #1a1a1a;
+            border-radius: 25px;
+            position: relative;
+            cursor: pointer;
+            margin: 0 10px;
+            border: 1px solid #555;
+        }
+        .switch-thumb {
+            position: absolute;
+            width: 21px;
+            height: 21px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            top: 1px;
+            left: 2px;
+            transition: transform 0.3s ease;
+        }
+        .mode-switch:checked + .switch-track .switch-thumb {
+            transform: translateX(25px);
+            background: #00ffff;
+        }
+
+        /* View Containers */
+        #game-section {
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            flex-direction: column;
-            transition: background-color 0.5s ease;
+            background-color: #1a1a1a;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.5s ease;
         }
-        body.light-mode {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #1a1a1a;
+        
+        #strategy-section {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            font-family: 'Inter', sans-serif; /* Strategy Font */
+            color: white;
         }
+
+        /* Visibility Classes */
+        body.show-strategy #game-section { opacity: 0; pointer-events: none; }
+        body.show-strategy #strategy-section { opacity: 1; pointer-events: auto; }
+        
+        /* ================= GAME STYLES ================= */
         .game-container {
             border: 8px solid #444;
             border-radius: 15px;
@@ -32,7 +107,6 @@
             padding: 20px;
             box-shadow: 0 0 25px #00ffff, 0 0 15px #ff00ff inset;
             position: relative;
-            transition: opacity 0.4s ease-out;
             max-width: 95%;
             box-sizing: border-box;
         }
@@ -44,6 +118,7 @@
             cursor: pointer;
             width: 100%;
             height: auto;
+            max-height: 80vh;
         }
         .message-overlay {
             position: absolute;
@@ -59,69 +134,264 @@
             animation: fadeIn 0.5s ease-in-out;
         }
         .final-message {
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: #00ff00;
             line-height: 1.6;
             text-shadow: 2px 2px 0px #1a1a1a;
             max-width: 90%;
+            font-family: 'Press Start 2P', cursive;
         }
-        .cta-container {
+
+        /* ================= STRATEGY OS STYLES ================= */
+        #video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        .menu-bar {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        .dock {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 1.5rem;
+            padding: 8px;
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .dock.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-50%) translateY(100px);
+        }
+        .dock-item {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, margin-bottom 0.2s ease;
+            cursor: pointer;
+        }
+        .dock-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 1rem;
+        }
+        .dock-item:hover {
+            transform: scale(1.2);
+            margin-bottom: 10px;
+        }
+        
+        /* Desktop Icons */
+        .desktop-icon {
+            color: white;
+            text-align: center;
+            width: 90px;
+            position: absolute;
+            cursor: grab;
+            z-index: 100;
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 20px;
         }
-        .cta-button {
-            display: inline-block;
-            background-color: #ffff00;
-            color: #1a1a1a;
-            padding: 15px 30px;
-            margin: 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 1.2rem;
-            text-shadow: none;
-            border: 3px solid #1a1a1a;
-            box-shadow: 5px 5px 0px #00ffff;
-            transition: all 0.1s linear;
+        .desktop-icon .icon-bg {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto;
+            border-radius: 0.75rem;
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            background: rgba(255,255,255,0.1);
         }
-        .cta-button:hover {
-            transform: translate(2px, 2px);
-            box-shadow: 3px 3px 0px #00ffff;
+        .desktop-icon img {
+            width: 100%; height: 100%; border-radius: 0.75rem; object-fit: cover;
         }
-        .qa-container {
-            display: none; opacity: 0; position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%; max-width: 900px; height: 80vh; max-height: 700px;
-            padding: 20px 40px; box-sizing: border-box; text-align: left;
-            transition: opacity 0.5s ease-in;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background: rgba(255, 255, 255, 0.15);
+        .desktop-icon .fa-folder, .desktop-icon .fa-file-lines, .desktop-icon .fa-image {
+            font-size: 30px;
+            color: #60a5fa;
+        }
+        .desktop-icon p {
+            margin-top: 5px;
+            font-size: 13px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            word-wrap: break-word;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+
+        /* Window Styles */
+        .window {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(30, 30, 30, 0.85);
             backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            overflow-y: auto; z-index: 500;
+            -webkit-backdrop-filter: blur(30px);
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
-        .qa-container.visible { display: block; opacity: 1; }
-        .qa-container h2 { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin-top: 30px; margin-bottom: 10px; font-family: 'Roboto', sans-serif; }
-        .qa-container p, .qa-container ul { font-size: 1.1rem; line-height: 1.7; font-family: 'Roboto', sans-serif; font-weight: 400; color: #333; margin-bottom: 20px; padding-left: 10px; border-left: 3px solid rgba(0, 0, 0, 0.2); }
-        .qa-container ul { list-style-type: disc; padding-left: 40px; border-left: none; }
-        .mode-switch-container { position: absolute; top: 20px; right: 20px; z-index: 1000; display: flex; align-items: center; font-size: 12px; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); padding: 5px 10px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2); }
-        body.light-mode .mode-switch-container { background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); }
-        .mode-switch-container label { padding: 0 10px; cursor: pointer; color: #fff; }
-        body.light-mode .mode-switch-container label { color: #000; }
-        .mode-switch { display: none; }
-        .switch-track { width: 50px; height: 25px; background: #1a1a1a; border-radius: 25px; position: relative; cursor: pointer; margin: 0 10px; }
-        .switch-thumb { position: absolute; width: 21px; height: 21px; background: #f0f0f0; border-radius: 50%; top: 2px; left: 2px; transition: transform 0.3s ease; }
-        .mode-switch:checked + .switch-track .switch-thumb { transform: translateX(25px); background: #00ffff; }
-        .game-container.hidden { opacity: 0.1; pointer-events: none; }
+        /* Desktop Window Overrides */
+        .lg\:window-desktop {
+            position: absolute !important;
+            top: 100px !important;
+            left: 100px !important;
+            width: 600px !important;
+            height: 70vh !important;
+            border-radius: 12px !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        .window-header {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background-color: rgba(50, 50, 50, 0.9);
+            cursor: default;
+            color: white;
+            font-size: 14px;
+            flex-shrink: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .lg\:window-desktop .window-header {
+            cursor: move;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        .traffic-lights { display: flex; gap: 8px; margin-right: 12px; }
+        .traffic-light { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
+        .close { background-color: #ff5f56; }
+        .minimize { background-color: #ffbd2e; }
+        .maximize { background-color: #27c93f; }
+        
+        .window-content { display: flex; flex-direction: column; width: 100%; height: 100%; overflow: hidden; }
+        .window-body { padding: 20px; color: #e0e0e0; overflow-y: auto; flex-grow: 1; }
+        .window-body h2 { font-size: 1.2rem; font-weight: 600; color: white; margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.25rem; }
+        .window-body p { margin-bottom: 0.75rem; line-height: 1.6; }
+
+        /* Mobile View Styles */
+        #mobile-view-wrapper {
+            padding-top: 5rem;
+            height: calc(100% - 90px);
+            display: flex;
+            flex-direction: column;
+        }
+        #mobile-icons-container {
+            flex-grow: 1;
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        #mobile-icons-container::-webkit-scrollbar { display: none; }
+        .mobile-page {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
+            padding: 1.5rem 1.25rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(4, auto);
+            gap: 1.5rem 1rem;
+            align-content: start;
+        }
+        @media (min-width: 640px) { .mobile-page { grid-template-columns: repeat(4, 1fr); } }
+        
+        .mobile-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+        }
+        .mobile-icon .icon-bg {
+            width: 64px;
+            height: 64px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .mobile-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 1rem; }
+        .mobile-icon .fa-folder, .mobile-icon .fa-file-lines, .mobile-icon .fa-image { font-size: 32px; color: #60a5fa; }
+        .mobile-icon p { font-size: 12px; text-shadow: 1px 1px 2px rgba(0,0,0,0.7); word-wrap: break-word; width: 80px; }
+
+        /* Pagination */
+        #pagination-container { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1rem 0; margin-bottom: 80px;}
+        #pagination-dots { display: flex; justify-content: center; gap: 8px; }
+        .pagination-dot { width: 8px; height: 8px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.4); transition: background-color 0.3s ease; }
+        .pagination-dot.active { background-color: rgba(255, 255, 255, 0.9); }
+        .pagination-arrow { color: white; background: none; border: none; font-size: 1rem; cursor: pointer; opacity: 0.7; transition: opacity 0.2s; }
+        .pagination-arrow.hidden { opacity: 0; pointer-events: none; }
+
+        /* App Specifics: Duolingo */
+        .duolingo-body { background-color: #ffffff; color: #4c4c4c; display: flex; flex-direction: column; align-items: center; padding: 1.5rem; height: 100%;}
+        .duolingo-progress-bar { width: 100%; height: 16px; background-color: #e5e5e5; border-radius: 8px; overflow: hidden; border: 2px solid #e5e5e5; }
+        .duolingo-progress { width: 60%; height: 100%; background-color: #58cc02; border-radius: 6px; }
+        .duolingo-mascot-container { display: flex; align-items: center; gap: 1rem; margin-top: 2rem; width: 100%; }
+        .duolingo-speech-bubble { background-color: #ffffff; border: 2px solid #e5e5e5; border-radius: 1rem; padding: 1rem; font-weight: 700; font-size: 1.1rem; position: relative; }
+        .duolingo-speech-bubble::before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 10px solid #e5e5e5; }
+        .duolingo-options { width: 100%; margin-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .duolingo-option { display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem; border: 2px solid #e5e5e5; border-bottom-width: 4px; border-radius: 1rem; font-weight: 700; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; color: #333;}
+        .duolingo-option:hover { background-color: #f7f7f7; }
+        .duolingo-option.selected { background-color: #d7ffb8; border-color: #58cc02; }
+        .duolingo-option.correct { background-color: #d7ffb8; border-color: #58cc02; color: #58a700; }
+        .duolingo-option.incorrect { background-color: #ffdfe0; border-color: #ff4b4b; color: #ea2b2b; animation: shake 0.5s; }
+        .duolingo-continue-btn { width: 100%; margin-top: auto; padding: 1rem; background-color: #58cc02; color: white; font-weight: 700; text-transform: uppercase; border-radius: 1rem; border-bottom: 4px solid #58a700; cursor: pointer; opacity: 0.5; pointer-events: none; transition: opacity 0.2s; }
+        .duolingo-continue-btn.active { opacity: 1; pointer-events: auto; }
+        
+        /* App Specifics: Tinder */
+        .tinder-body { display: flex; flex-direction: column; height: 100%; padding: 0; background-color: #f7f7f7; overflow: hidden; }
+        .tinder-header { background-color: #fff; padding: 10px; text-align: center; border-bottom: 1px solid #e8e8e8; flex-shrink: 0; }
+        .tinder-header img { height: 30px; }
+        .tinder-stack { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        .tinder-card { background-color: #fff; width: 85%; height: 80%; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.12); position: absolute; display: flex; flex-direction: column; overflow: hidden; transition: transform 0.4s ease, opacity 0.4s ease; cursor: grab; }
+        .tinder-card.dragging { transition: none; }
+        .tinder-card-img { width: 100%; height: 70%; object-fit: cover; }
+        .tinder-card-info { padding: 15px; }
+        .tinder-card-info h3 { font-size: 1.5rem; font-weight: 700; color: #333; }
+        .tinder-card-info p { font-size: 1rem; color: #666; }
+        .tinder-controls { display: flex; justify-content: space-around; padding: 15px; flex-shrink: 0; }
+        .tinder-btn { background-color: #fff; border: 1px solid #e8e8e8; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; }
+        .tinder-btn.like { color: #4bde97; }
+        .tinder-btn.dislike { color: #fd5068; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
     </style>
 </head>
-<body>
+<body class="bg-black">
 
+    <!-- Toggle Switch -->
     <div class="mode-switch-container">
         <label for="mode-switch-checkbox">The Game</label>
         <input type="checkbox" id="mode-switch-checkbox" class="mode-switch">
@@ -129,162 +399,255 @@
         <label for="mode-switch-checkbox">The Strategy</label>
     </div>
 
-    <div class="game-container" id="game-container">
-        <canvas id="gameCanvas" width="1200" height="800"></canvas>
-        <div id="messageOverlay" class="message-overlay">
-            <div id="messageText" class="final-message"></div>
+    <!-- SECTION 1: THE GAME -->
+    <div id="game-section">
+        <div class="game-container" id="game-container-inner">
+            <canvas id="gameCanvas" width="1200" height="800"></canvas>
+            <div id="messageOverlay" class="message-overlay">
+                <div id="messageText" class="final-message"></div>
+            </div>
         </div>
     </div>
-    
-    <div class="qa-container" id="qa-container">
-        <h2>B2B: How do you communicate competence and reliability?</h2>
-        <p>In a B2B network, reputation is paramount. We build trust and demonstrate expertise through substantive proof, not just flashy ads. Our strategies include:</p>
-        <ul>
-            <li><b>Case Studies & Testimonials:</b> Developing detailed case studies that show our process and measurable results. A strong testimonial from an industry leader is our best asset.</li>
-            <li><b>Thought Leadership:</b> Regularly publishing insightful content (e.g., LinkedIn articles, white papers) that solves common industry problems, positioning us as experts.</li>
-            <li><b>Professional Networking:</b> Actively participating in the industry ecosystem by speaking at conferences and engaging in meaningful online conversations.</li>
-            <li><b>Radical Transparency:</b> Being clear about our process, pricing, and timelines, and communicating proactively to build a foundation of reliability.</li>
-        </ul>
 
-        <h2>B2C: How do you market a product effectively in 2025?</h2>
-        <p>The key to cutting through the noise is a blend of personalization, authenticity, and immersive experiences, all powered by AI. Our approach involves:</p>
-        <ul>
-            <li><b>AI-Powered Hyper-Personalization:</b> Using AI to analyze user data to deliver highly personalized content and product recommendations that resonate.</li>
-            <li><b>AI for Content Optimization:</b> Employing generative AI to create and test content variations, then using analytics to automatically shift budget to the top performers for maximum efficiency.</li>
-            <li><b>Immersive Experiences (AR):</b> Creating interactive AR filters and experiences that allow users to engage with the brand in a memorable, shareable way.</li>
-            <li><b>Authentic Creator Collaborations:</b> Partnering with niche creators who genuinely align with the brand, giving them creative freedom to foster trust with their audience.</li>
-            <li><b>Community Building:</b> Creating dedicated spaces (like Discord) for loyal fans to connect, offering them exclusive access and building a self-sustaining marketing engine.</li>
-        </ul>
+    <!-- SECTION 2: THE STRATEGY (OS INTERFACE) -->
+    <div id="strategy-section">
+        <video id="video-bg" autoplay loop muted playsinline>
+            <source src="https://ik.imagekit.io/ex6ksvxsvk/website%20background%20vid.mp4?updatedAt=1752664266524" type="video/mp4">
+        </video>
+
+        <!-- Menu Bar -->
+        <div class="menu-bar px-4 py-1 text-sm hidden lg:flex">
+            <div class="flex justify-between items-center w-full">
+                <div class="flex items-center gap-4">
+                    <i class="fab fa-apple text-lg"></i>
+                    <span class="font-bold hidden sm:inline">Finder</span>
+                    <span class="hidden sm:inline">File</span>
+                    <span class="hidden sm:inline">Edit</span>
+                    <span class="hidden sm:inline">View</span>
+                </div>
+                <div id="time" class="font-medium"></div>
+            </div>
+        </div>
+
+        <!-- Desktop Icons (Visible on large screens) -->
+        <div id="desktop-icons-container" class="hidden lg:block w-full h-full pt-12 pl-4">
+            <!-- Icons populated dynamically or hardcoded here to mirror mobile structure -->
+            <div id="readme-desktop-icon" class="desktop-icon" style="top: 40px; right: 20px;">
+                <div class="icon-bg"><i class="fas fa-file-lines"></i></div>
+                <p>read me.txt</p>
+            </div>
+            <div id="koplin-icon-desktop" class="desktop-icon" style="top: 150px; right: 20px;">
+                <div class="icon-bg"><i class="fas fa-folder"></i></div>
+                <p>Dr. Koplin</p>
+            </div>
+             <div id="tinder-icon-desktop" class="desktop-icon" style="top: 260px; right: 20px;">
+                <div class="icon-bg"><i class="fas fa-folder"></i></div>
+                <p>Tinder</p>
+            </div>
+            <div id="modulor-icon-desktop" class="desktop-icon" style="top: 370px; right: 20px;">
+                <div class="icon-bg"><i class="fas fa-folder"></i></div>
+                <p>Modulor</p>
+            </div>
+            <div id="duolingo-icon-desktop" class="desktop-icon" style="top: 480px; right: 20px;">
+                <div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/duolingo.png?updatedAt=1753447361224" alt="Duolingo"></div>
+                <p>Duolingo</p>
+            </div>
+        </div>
+
+        <!-- Mobile View Wrapper (Hidden on desktop) -->
+        <div id="mobile-view-wrapper" class="lg:hidden">
+            <div id="mobile-icons-container">
+                <!-- Page 1 -->
+                <div class="mobile-page">
+                    <div id="koplin-icon-mobile" class="mobile-icon"><div class="icon-bg"><i class="fas fa-folder"></i></div><p>Dr. Koplin</p></div>
+                    <div id="tinder-icon-mobile" class="mobile-icon"><div class="icon-bg"><i class="fas fa-folder"></i></div><p>Tinder</p></div>
+                    <div id="modulor-icon-mobile" class="mobile-icon"><div class="icon-bg"><i class="fas fa-folder"></i></div><p>Modulor</p></div>
+                    <div id="duolingo-icon-mobile" class="mobile-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/duolingo.png?updatedAt=1753447361224" alt="Duolingo Icon"></div><p>Duolingo</p></div>
+                    <div data-url="https://ik.imagekit.io/ex6ksvxsvk/CV%20Leonard%20Zirk%20Juli%202025.pdf?updatedAt=1753119910183" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/pdfdownload.png?updatedAt=1753096977321" alt="CV Icon"></div><p>CV</p></div>
+                    <div data-url="https://www.linkedin.com/in/leonard-zirk-9687ba223/" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/linkedin.png?updatedAt=1752678709680" alt="LinkedIn Icon"></div><p>LinkedIn</p></div>
+                    <div data-url="https://github.com/leonardzirk" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/github.png?updatedAt=1752679143531" alt="GitHub Icon" class="rounded-full"></div><p>GitHub</p></div>
+                    <div data-url="https://www.instagram.com/leonardzirk_unoffical" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/instagramicon.webp?updatedAt=1752678971026" alt="Instagram Icon"></div><p>Instagram</p></div>
+                    <div data-url="https://www.tiktok.com/@leonardzirk" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon"></div><p>TikTok</p></div>
+                </div>
+                <!-- Page 2 -->
+                <div class="mobile-page">
+                    <div data-url="https://substack.com/@leonardzirk?utm_source=user-menu" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/substack.png?updatedAt=1752679004979" class="rounded-md" alt="Substack Icon"></div><p>Substack</p></div>
+                    <div data-url="https://klipp-linding.science/index.php/en/" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/klipplindinglab_256.png?updatedAt=1752678845945" class="rounded-md" alt="Klipp Linding Lab Icon"></div><p>Klipp Linding Lab</p></div>
+                </div>
+            </div>
+            <div id="pagination-container">
+                <button id="prev-page" class="pagination-arrow hidden"><i class="fas fa-chevron-left"></i></button>
+                <div id="pagination-dots"></div>
+                <button id="next-page" class="pagination-arrow"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Windows -->
+        <div id="cv-window" class="window hidden"><div class="window-content"></div></div>
+        <div id="contact-window" class="window hidden"><div class="window-content"></div></div>
+        <div id="koplin-window" class="window hidden"><div class="window-content"></div></div>
+        <div id="readme-window" class="window hidden"><div class="window-content"></div></div>
+        <div id="readme-desktop-window" class="window hidden"><div class="window-content"></div></div>
+        <div id="duolingo-window" class="window hidden"><div class="window-content"></div></div>
+        <div id="tinder-window" class="window hidden"><div class="window-content"></div></div>
+        <div id="modulor-window" class="window hidden"><div class="window-content"></div></div>
+        <div id="tinder-party-window" class="window hidden"><div class="window-content"></div></div>
+        <div id="tinder-swipe-window" class="window hidden"><div class="window-content"></div></div>
+
+        <!-- Dock -->
+        <div class="dock">
+            <div id="cv-dock-icon" class="dock-item"><img src="https://ik.imagekit.io/ex6ksvxsvk/resume.png?updatedAt=1753120155625" alt="CV"></div>
+            <div id="contact-dock-icon" class="dock-item"><img src="https://ik.imagekit.io/ex6ksvxsvk/mailicon.png?updatedAt=1752667698506" alt="Mail"></div>
+        </div>
     </div>
+
 <script>
+    // ==========================================
+    // LOGIC: GLOBAL & TOGGLE
+    // ==========================================
+    const modeSwitch = document.getElementById('mode-switch-checkbox');
+    const body = document.body;
+
+    modeSwitch.addEventListener('change', () => {
+        if (modeSwitch.checked) {
+            // Strategy Mode
+            body.classList.add('show-strategy');
+            // We can pause game loop here if needed, but for simplicity we let it run
+        } else {
+            // Game Mode
+            body.classList.remove('show-strategy');
+        }
+    });
+
+    // ==========================================
+    // LOGIC: THE GAME
+    // ==========================================
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const messageOverlay = document.getElementById('messageOverlay');
     const messageText = document.getElementById('messageText');
-    const modeSwitch = document.getElementById('mode-switch-checkbox');
-    const gameContainer = document.getElementById('game-container');
-    const qaContainer = document.getElementById('qa-container');
 
-    // --- GAME STATES & NARRATIVE SETUP ---
+    // Game Constants & State
     const GAME_STATES = {
         CHOOSE_PATH: 'CHOOSE_PATH',
-
-        // B2B Path
         B2B_CHOOSE_LEAD_GEN: 'B2B_CHOOSE_LEAD_GEN',
         B2B_CHOOSE_TRUST: 'B2B_CHOOSE_TRUST',
         B2B_CHOOSE_SALES_CYCLE: 'B2B_CHOOSE_SALES_CYCLE',
         B2B_RESULT: 'B2B_RESULT',
-
-        // B2C Path
         B2C_CHOOSE_ATTENTION: 'B2C_CHOOSE_ATTENTION',
         B2C_CHOOSE_ENGAGEMENT: 'B2C_CHOOSE_ENGAGEMENT',
         B2C_CHOOSE_CONVERSION: 'B2C_CHOOSE_CONVERSION',
         B2C_RESULT: 'B2C_RESULT',
-
-        // Conclusion
         SHOW_PITCH: 'SHOW_PITCH'
     };
+
     let gameState = GAME_STATES.CHOOSE_PATH;
     let userChoices = {};
     let hoverTarget = null;
-    let animationState = {};
+    let animationState = { frame: 0, alpha: 0 };
     let isTransitioning = false;
 
+    // Content
     const b2bPitchText = `Navigating the B2B landscape is about trust and value, not just noise.
+    
+    You've seen how easy it is to chase dead-end leads.
+    
+    I help build a reliable engine for high-value contracts.
+    
+    Let's secure those major partnerships.`;
 
-You've seen how easy it is to chase dead-end leads and get stuck in endless sales cycles.
-
-I help build a reliable engine for high-value contracts through data-driven lead gen, compelling case studies, and a consultative sales approach.
-
-Let's secure those major partnerships.`;
-
-    const b2cPitchText = `Winning in B2C means capturing attention and building a loyal community, not just running ads.
-
-You've seen how quickly a launch can fizzle out with the wrong strategy, wasting time and money.
-
-I specialize in creating viral growth through authentic content, engaged communities, and conversion-focused funnels that top the charts.
-
-Let's make your app a viral hit.`;
-
+    const b2cPitchText = `Winning in B2C means capturing attention, not just running ads.
+    
+    You've seen how quickly a launch can fizzle out.
+    
+    I specialize in creating viral growth through authentic content.
+    
+    Let's make your app a viral hit.`;
 
     function initializeGame() {
-        userChoices = {
-            path: null, // 'b2b' or 'b2c'
-            // B2B choices
-            leadGen: null,
-            trust: null,
-            salesCycle: null,
-            // B2C choices
-            attention: null,
-            engagement: null,
-            conversion: null,
-            score: 0 
-        };
-        animationState = { frame: 0, alpha: 0, text: "" };
+        userChoices = { path: null, score: 0 };
+        animationState = { frame: 0, alpha: 0 };
         gameState = GAME_STATES.CHOOSE_PATH;
     }
 
-    // --- DRAWING & UI ---
+    // Helper: Draw Text
     function drawText(text, x, y, size = 32, color = '#fff', align = 'center', maxWidth) {
         ctx.font = `${size}px "Press Start 2P"`;
         ctx.fillStyle = color;
         ctx.textAlign = align;
         ctx.textBaseline = 'middle';
         if (maxWidth) {
-            ctx.fillText(text, x, y, maxWidth);
+            // Simple word wrap
+            const words = text.split(' ');
+            let line = '';
+            let lineY = y;
+            for(let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                let metrics = ctx.measureText(testLine);
+                let testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    ctx.fillText(line, x, lineY);
+                    line = words[n] + ' ';
+                    lineY += size + 10;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, x, lineY);
         } else {
             ctx.fillText(text, x, y);
         }
     }
 
+    // Helper: Draw Button
     function drawButton(text, x, y, w, h, id) {
         const isHovered = hoverTarget === id;
         ctx.strokeStyle = '#fff';
         ctx.fillStyle = isHovered ? '#ffff00' : '#555';
         ctx.fillRect(x, y, w, h);
         ctx.strokeRect(x, y, w, h);
-        drawText(text, x + w / 2, y + h / 2 + 4, 14, isHovered ? '#000' : '#fff', w - 20);
+        ctx.lineWidth = 4;
+        drawText(text, x + w / 2, y + h / 2 + 4, 14, isHovered ? '#000' : '#fff', 'center', w - 20);
     }
-    
+
+    // Helper: Draw Icon
     function drawIcon(type, x, y) {
         ctx.strokeStyle = '#00ffff';
         ctx.lineWidth = 4;
         ctx.beginPath();
-        if (type === 'path') { // A branching path
+        if (type === 'path') {
             ctx.moveTo(x, y); ctx.lineTo(x, y + 40);
             ctx.moveTo(x, y + 20); ctx.lineTo(x - 20, y + 40);
             ctx.moveTo(x, y + 20); ctx.lineTo(x + 20, y + 40);
-        } else if (type === 'lead-gen') { // Funnel
+        } else if (type === 'lead-gen') {
             ctx.moveTo(x - 25, y); ctx.lineTo(x + 25, y); ctx.lineTo(x + 10, y + 25); ctx.lineTo(x + 10, y + 40); ctx.lineTo(x - 10, y + 40); ctx.lineTo(x - 10, y + 25); ctx.closePath();
-        } else if (type === 'trust') { // Shield
+        } else if (type === 'trust') {
             ctx.moveTo(x - 20, y); ctx.lineTo(x + 20, y); ctx.lineTo(x + 20, y + 25); ctx.arcTo(x, y + 45, x - 20, y + 25, 30); ctx.lineTo(x - 20, y);
-        } else if (type === 'sales-cycle') { // Clock
-            ctx.arc(x, y + 20, 20, 0, Math.PI * 2); ctx.moveTo(x, y + 20); ctx.lineTo(x, y + 5); ctx.moveTo(x, y + 20); ctx.lineTo(x + 15, y + 20);
-        } else if (type === 'attention') { // Exclamation
+        } else if (type === 'sales-cycle') {
+            ctx.arc(x, y + 20, 20, 0, Math.PI * 2); ctx.moveTo(x, y + 20); ctx.lineTo(x, y + 5);
+        } else if (type === 'attention') {
              ctx.fillRect(x - 5, y, 10, 30); ctx.fillRect(x - 5, y + 35, 10, 10);
-        } else if (type === 'engagement') { // Speech bubbles
+        } else if (type === 'engagement') {
             ctx.arc(x - 10, y + 15, 15, 0, Math.PI * 2); ctx.arc(x + 20, y + 30, 10, 0, Math.PI * 2);
-        } else if (type === 'conversion') { // Arrow down
+        } else if (type === 'conversion') {
             ctx.moveTo(x, y); ctx.lineTo(x, y + 30); ctx.moveTo(x-15, y + 15); ctx.lineTo(x, y + 30); ctx.lineTo(x+15, y+15);
         }
         ctx.stroke();
     }
-    
-    // --- STATE SCREENS ---
+
+    // Screens
     function drawChoiceScreen(title, question, option1, option2, iconType) {
-        drawText(title, canvas.width / 2, 100, 24, '#ff00ff', 'center', canvas.width - 40);
+        drawText(title, canvas.width / 2, 100, 24, '#ff00ff', 'center');
         drawIcon(iconType, canvas.width / 2, 200);
-        drawText(question, canvas.width / 2, 350, 18, '#fff', canvas.width - 40);
+        drawText(question, canvas.width / 2, 350, 18, '#fff');
         drawButton(option1.text, 150, 500, 400, 100, option1.id);
         drawButton(option2.text, 650, 500, 400, 100, option2.id);
     }
 
     function drawResultScreen(message, color, nextState) {
-        if (animationState.alpha < 1) {
-            animationState.alpha += 0.02;
-        }
+        if (animationState.alpha < 1) animationState.alpha += 0.02;
         ctx.globalAlpha = Math.min(animationState.alpha, 1);
-        drawText(message, canvas.width / 2, canvas.height / 2, 24, color, canvas.width - 40);
+        drawText(message, canvas.width / 2, canvas.height / 2, 24, color);
         ctx.globalAlpha = 1.0;
 
         if (animationState.alpha >= 1 && !isTransitioning) {
@@ -297,151 +660,87 @@ Let's make your app a viral hit.`;
         }
     }
 
-    // --- MAIN GAME LOOP ---
+    // Game Loop
     function gameLoop() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        animationState.frame++;
+        // If strategy mode is active, we can skip drawing to save resources, but keeping it running ensures state is preserved
+        if (body.classList.contains('show-strategy')) {
+             requestAnimationFrame(gameLoop);
+             return;
+        }
 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         switch (gameState) {
             case GAME_STATES.CHOOSE_PATH:
-                drawChoiceScreen("Welcome, Founder!", "What strategy do you need help with?",
-                {text: "B2B (Enterprise Contracts)", id: "b2b"},
-                {text: "B2C (Viral Growth)", id: "b2c"}, 'path');
-                break;
-
-            // --- B2B Path ---
-            case GAME_STATES.B2B_CHOOSE_LEAD_GEN:
-                drawChoiceScreen("Goal: Secure Enterprise Contracts", "How do you find leads?",
-                {text: "Inbound Content Strategy", id: "inbound"},
-                {text: "Aggressive Cold Outreach", id: "outbound"}, 'lead-gen');
-                break;
-            case GAME_STATES.B2B_CHOOSE_TRUST:
-                drawChoiceScreen("Goal: Secure Enterprise Contracts", "How do you build trust?",
-                {text: "Detailed Case Studies", id: "studies"},
-                {text: "Glossy Sales Decks", id: "decks"}, 'trust');
-                break;
-            case GAME_STATES.B2B_CHOOSE_SALES_CYCLE:
-                drawChoiceScreen("Goal: Secure Enterprise Contracts", "What's your sales approach?",
-                {text: "Consultative Partnership", id: "consultative"},
-                {text: "High-Pressure Tactics", id: "pressure"}, 'sales-cycle');
-                break;
-            case GAME_STATES.B2B_RESULT:
-                userChoices.score = (userChoices.leadGen === 'inbound' ? 33 : 5) +
-                                    (userChoices.trust === 'studies' ? 34 : 5) +
-                                    (userChoices.salesCycle === 'consultative' ? 33 : 5);
-                let b2bMessage = userChoices.score > 80 ? "Result: Major Partnerships Secured!" : "Result: Stuck with low-value clients.";
-                let b2bColor = userChoices.score > 80 ? "#00ff00" : "#ff4d4d";
-                drawResultScreen(b2bMessage, b2bColor, GAME_STATES.SHOW_PITCH);
-                break;
-
-            // --- B2C Path ---
-             case GAME_STATES.B2C_CHOOSE_ATTENTION:
-                drawChoiceScreen("Goal: Achieve Viral Growth", "How do you grab attention?",
-                {text: "Authentic Viral Content", id: "viral"},
-                {text: "Generic Banner Ads", id: "generic"}, 'attention');
-                break;
-            case GAME_STATES.B2C_CHOOSE_ENGAGEMENT:
-                drawChoiceScreen("Goal: Achieve Viral Growth", "How do you drive engagement?",
-                {text: "Build an Active Community", id: "community"},
-                {text: "Ignore Comments & DMs", id: "ignore"}, 'engagement');
-                break;
-            case GAME_STATES.B2C_CHOOSE_CONVERSION:
-                drawChoiceScreen("Goal: Achieve Viral Growth", "How do you convert users?",
-                {text: "Personalized Funnels", id: "funnels"},
-                {text: "Confusing Website", id: "confusing"}, 'conversion');
-                break;
-             case GAME_STATES.B2C_RESULT:
-                userChoices.score = (userChoices.attention === 'viral' ? 33 : 5) +
-                                    (userChoices.engagement === 'community' ? 34 : 5) +
-                                    (userChoices.conversion === 'funnels' ? 33 : 5);
-                let b2cMessage = userChoices.score > 80 ? "Result: Topping the App Store!" : "Result: Lost in the noise...";
-                let b2cColor = userChoices.score > 80 ? "#00ff00" : "#ff4d4d";
-                drawResultScreen(b2cMessage, b2cColor, GAME_STATES.SHOW_PITCH);
+                drawChoiceScreen("Welcome, Founder!", "What strategy do you need?", {text: "B2B (Enterprise)", id: "b2b"}, {text: "B2C (Viral Growth)", id: "b2c"}, 'path');
                 break;
             
+            // B2B
+            case GAME_STATES.B2B_CHOOSE_LEAD_GEN:
+                drawChoiceScreen("Goal: Enterprise Contracts", "How do you find leads?", {text: "Inbound Content", id: "inbound"}, {text: "Cold Outreach", id: "outbound"}, 'lead-gen');
+                break;
+            case GAME_STATES.B2B_CHOOSE_TRUST:
+                drawChoiceScreen("Goal: Enterprise Contracts", "How do you build trust?", {text: "Case Studies", id: "studies"}, {text: "Sales Decks", id: "decks"}, 'trust');
+                break;
+            case GAME_STATES.B2B_CHOOSE_SALES_CYCLE:
+                drawChoiceScreen("Goal: Enterprise Contracts", "Your sales approach?", {text: "Consultative", id: "consultative"}, {text: "High Pressure", id: "pressure"}, 'sales-cycle');
+                break;
+            case GAME_STATES.B2B_RESULT:
+                let b2bScore = (userChoices.leadGen === 'inbound' ? 33 : 5) + (userChoices.trust === 'studies' ? 34 : 5) + (userChoices.salesCycle === 'consultative' ? 33 : 5);
+                userChoices.score = b2bScore;
+                drawResultScreen(b2bScore > 80 ? "Result: Major Partnerships Secured!" : "Result: Stuck with low-value clients.", b2bScore > 80 ? "#00ff00" : "#ff4d4d", GAME_STATES.SHOW_PITCH);
+                break;
+
+            // B2C
+            case GAME_STATES.B2C_CHOOSE_ATTENTION:
+                drawChoiceScreen("Goal: Viral Growth", "How do you grab attention?", {text: "Viral Content", id: "viral"}, {text: "Banner Ads", id: "generic"}, 'attention');
+                break;
+            case GAME_STATES.B2C_CHOOSE_ENGAGEMENT:
+                drawChoiceScreen("Goal: Viral Growth", "How do you drive engagement?", {text: "Community", id: "community"}, {text: "Ignore DMs", id: "ignore"}, 'engagement');
+                break;
+            case GAME_STATES.B2C_CHOOSE_CONVERSION:
+                drawChoiceScreen("Goal: Viral Growth", "How do you convert users?", {text: "Funnels", id: "funnels"}, {text: "Bad UX", id: "confusing"}, 'conversion');
+                break;
+            case GAME_STATES.B2C_RESULT:
+                let b2cScore = (userChoices.attention === 'viral' ? 33 : 5) + (userChoices.engagement === 'community' ? 34 : 5) + (userChoices.conversion === 'funnels' ? 33 : 5);
+                userChoices.score = b2cScore;
+                drawResultScreen(b2cScore > 80 ? "Result: Topping the App Store!" : "Result: Lost in the noise...", b2cScore > 80 ? "#00ff00" : "#ff4d4d", GAME_STATES.SHOW_PITCH);
+                break;
+
+            // Final
             case GAME_STATES.SHOW_PITCH:
                 drawText(userChoices.score > 80 ? "Excellent Result!" : "It could have been better.", canvas.width / 2, 100, 20, "#ffff00");
                 const pitch = userChoices.path === 'b2b' ? b2bPitchText : b2cPitchText;
                 const lines = pitch.split('\n');
                 lines.forEach((line, i) => {
-                    drawText(line, canvas.width/2, 250 + i * 40, 16, '#fff', canvas.width - 40);
+                    drawText(line.trim(), canvas.width/2, 200 + i * 40, 16, '#fff', 'center');
                 });
-                drawButton("Let's Talk Strategy", canvas.width / 2 - 200, 600, 400, 100, 'contact');
+                drawButton("Contact Me", canvas.width / 2 - 200, 600, 400, 100, 'contact');
                 break;
         }
         requestAnimationFrame(gameLoop);
     }
-    
-    // --- EVENT HANDLERS ---
+
+    // Input Handling
     let clickRegions = {};
     function updateRegions() {
         clickRegions = {};
         if (gameState === GAME_STATES.SHOW_PITCH) {
             clickRegions['contact'] = { x: canvas.width / 2 - 200, y: 600, w: 400, h: 100 };
-        } else if (gameState.includes("CHOOSE")) {
+        } else if (gameState.toString().includes("CHOOSE")) {
              clickRegions['option1'] = { x: 150, y: 500, w: 400, h: 100 };
              clickRegions['option2'] = { x: 650, y: 500, w: 400, h: 100 };
         }
     }
 
-    function handleClick(event) {
+    canvas.addEventListener('mousemove', (e) => {
+        if(body.classList.contains('show-strategy')) return;
         const rect = canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
-        updateRegions();
-
-        for (const [id, region] of Object.entries(clickRegions)) {
-            if (mouseX >= region.x && mouseX <= region.x + region.w &&
-                mouseY >= region.y && mouseY <= region.y + region.h) {
-                
-                switch(gameState) {
-                    case GAME_STATES.CHOOSE_PATH:
-                        userChoices.path = id === 'option1' ? 'b2b' : 'b2c';
-                        gameState = userChoices.path === 'b2b' ? GAME_STATES.B2B_CHOOSE_LEAD_GEN : GAME_STATES.B2C_CHOOSE_ATTENTION;
-                        break;
-                    // B2B CHOICES
-                    case GAME_STATES.B2B_CHOOSE_LEAD_GEN:
-                        userChoices.leadGen = id === 'option1' ? 'inbound' : 'outbound';
-                        gameState = GAME_STATES.B2B_CHOOSE_TRUST;
-                        break;
-                    case GAME_STATES.B2B_CHOOSE_TRUST:
-                        userChoices.trust = id === 'option1' ? 'studies' : 'decks';
-                        gameState = GAME_STATES.B2B_CHOOSE_SALES_CYCLE;
-                        break;
-                    case GAME_STATES.B2B_CHOOSE_SALES_CYCLE:
-                        userChoices.salesCycle = id === 'option1' ? 'consultative' : 'pressure';
-                        gameState = GAME_STATES.B2B_RESULT;
-                        break;
-                    // B2C CHOICES
-                    case GAME_STATES.B2C_CHOOSE_ATTENTION:
-                        userChoices.attention = id === 'option1' ? 'viral' : 'generic';
-                        gameState = GAME_STATES.B2C_CHOOSE_ENGAGEMENT;
-                        break;
-                    case GAME_STATES.B2C_CHOOSE_ENGAGEMENT:
-                        userChoices.engagement = id === 'option1' ? 'community' : 'ignore';
-                        gameState = GAME_STATES.B2C_CHOOSE_CONVERSION;
-                        break;
-                    case GAME_STATES.B2C_CHOOSE_CONVERSION:
-                        userChoices.conversion = id === 'option1' ? 'funnels' : 'confusing';
-                        gameState = GAME_STATES.B2C_RESULT;
-                        break;
-                    // FINAL
-                    case GAME_STATES.SHOW_PITCH:
-                        if (id === 'contact') {
-                            window.open('mailto:your-email@example.com?subject=AI Strategy Inquiry');
-                        }
-                        break;
-                }
-                hoverTarget = null;
-                return;
-            }
-        }
-    }
-
-    function handleMouseMove(event) {
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
+        // Scale mouse coordinates to canvas resolution
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (e.clientX - rect.left) * scaleX;
+        const mouseY = (e.clientY - rect.top) * scaleY;
         
         updateRegions();
         hoverTarget = null;
@@ -455,21 +754,294 @@ Let's make your app a viral hit.`;
                 break;
             }
         }
-    }
-    
-    modeSwitch.addEventListener('change', () => {
-        const isProfessionalMode = modeSwitch.checked;
-        document.body.classList.toggle('light-mode', isProfessionalMode);
-        gameContainer.style.display = isProfessionalMode ? 'none' : 'flex';
-        qaContainer.classList.toggle('visible', isProfessionalMode);
     });
 
-    canvas.addEventListener('click', handleClick);
-    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('click', (e) => {
+        if(body.classList.contains('show-strategy')) return;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (e.clientX - rect.left) * scaleX;
+        const mouseY = (e.clientY - rect.top) * scaleY;
+        
+        updateRegions();
+
+        for (const [id, region] of Object.entries(clickRegions)) {
+            if (mouseX >= region.x && mouseX <= region.x + region.w &&
+                mouseY >= region.y && mouseY <= region.y + region.h) {
+                
+                // Logic Flow
+                if (gameState === GAME_STATES.CHOOSE_PATH) {
+                    userChoices.path = id === 'option1' ? 'b2b' : 'b2c';
+                    gameState = userChoices.path === 'b2b' ? GAME_STATES.B2B_CHOOSE_LEAD_GEN : GAME_STATES.B2C_CHOOSE_ATTENTION;
+                }
+                // B2B
+                else if (gameState === GAME_STATES.B2B_CHOOSE_LEAD_GEN) {
+                    userChoices.leadGen = id === 'option1' ? 'inbound' : 'outbound';
+                    gameState = GAME_STATES.B2B_CHOOSE_TRUST;
+                } else if (gameState === GAME_STATES.B2B_CHOOSE_TRUST) {
+                    userChoices.trust = id === 'option1' ? 'studies' : 'decks';
+                    gameState = GAME_STATES.B2B_CHOOSE_SALES_CYCLE;
+                } else if (gameState === GAME_STATES.B2B_CHOOSE_SALES_CYCLE) {
+                    userChoices.salesCycle = id === 'option1' ? 'consultative' : 'pressure';
+                    gameState = GAME_STATES.B2B_RESULT;
+                }
+                // B2C
+                else if (gameState === GAME_STATES.B2C_CHOOSE_ATTENTION) {
+                    userChoices.attention = id === 'option1' ? 'viral' : 'generic';
+                    gameState = GAME_STATES.B2C_CHOOSE_ENGAGEMENT;
+                } else if (gameState === GAME_STATES.B2C_CHOOSE_ENGAGEMENT) {
+                    userChoices.engagement = id === 'option1' ? 'community' : 'ignore';
+                    gameState = GAME_STATES.B2C_CHOOSE_CONVERSION;
+                } else if (gameState === GAME_STATES.B2C_CHOOSE_CONVERSION) {
+                    userChoices.conversion = id === 'option1' ? 'funnels' : 'confusing';
+                    gameState = GAME_STATES.B2C_RESULT;
+                }
+                // Final
+                else if (gameState === GAME_STATES.SHOW_PITCH) {
+                    if (id === 'contact') {
+                        // Switch to Strategy mode and open contact window
+                        modeSwitch.checked = true;
+                        modeSwitch.dispatchEvent(new Event('change'));
+                        setTimeout(() => {
+                           const contactWin = document.getElementById('contact-window');
+                           if(contactWin) {
+                               contactWin.classList.remove('hidden');
+                               if(window.innerWidth >= 1024) contactWin.classList.add('lg:window-desktop');
+                           }
+                        }, 500);
+                    }
+                }
+                return;
+            }
+        }
+    });
 
     initializeGame();
     gameLoop();
+
+
+    // ==========================================
+    // LOGIC: THE STRATEGY (OS)
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+        const timeEl = document.getElementById('time');
+        const dock = document.querySelector('.dock');
+        let isDesktop = window.innerWidth >= 1024;
+        const windows = document.querySelectorAll('.window');
+
+        // Clock
+        function updateTime() {
+            const now = new Date();
+            const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            timeEl.textContent = now.toLocaleDateString('en-US', options).replace(',', '');
+        }
+        updateTime();
+        setInterval(updateTime, 1000 * 60);
+
+        // Window Management
+        function openWindow(windowEl) {
+            windows.forEach(w => w.style.zIndex = 500);
+            windowEl.classList.remove('hidden');
+            windowEl.style.zIndex = 501;
+            if (isDesktop) {
+                windowEl.classList.add('lg:window-desktop');
+            } else {
+                windowEl.classList.remove('lg:window-desktop');
+                if (dock) dock.classList.add('hidden');
+            }
+        }
+
+        function closeWindow(windowEl) {
+            windowEl.classList.add('hidden');
+            const anyWindowOpen = Array.from(windows).some(w => !w.classList.contains('hidden'));
+            if (!isDesktop && !anyWindowOpen) {
+                if (dock) dock.classList.remove('hidden');
+            }
+        }
+
+        // Draggable Logic (Desktop Only)
+        function makeWindowDraggable(windowEl) {
+            const header = windowEl.querySelector('.window-header');
+            if (!header) return;
+            let isDragging = false, offsetX, offsetY;
+            
+            header.addEventListener('mousedown', (e) => {
+                if (!isDesktop) return;
+                isDragging = true;
+                const rect = windowEl.getBoundingClientRect();
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+                header.style.cursor = 'grabbing';
+                openWindow(windowEl); // Bring to front
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging || !isDesktop) return;
+                windowEl.style.left = `${e.clientX - offsetX}px`;
+                windowEl.style.top = `${e.clientY - offsetY}px`;
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                if (header) header.style.cursor = 'move';
+            });
+        }
+
+        // Draggable Icons
+        function makeIconDraggable(iconEl) {
+            let isDragging = false, hasDragged = false, offsetX, offsetY;
+            iconEl.addEventListener('mousedown', (e) => {
+                if (!isDesktop) return;
+                isDragging = true; hasDragged = false;
+                offsetX = e.clientX - iconEl.getBoundingClientRect().left;
+                offsetY = e.clientY - iconEl.getBoundingClientRect().top;
+                iconEl.style.cursor = 'grabbing';
+                iconEl.style.zIndex = 600;
+            });
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging || !isDesktop) return;
+                hasDragged = true;
+                iconEl.style.left = `${e.clientX - offsetX}px`;
+                iconEl.style.top = `${e.clientY - offsetY}px`;
+            });
+            document.addEventListener('mouseup', () => {
+                if (!isDesktop) return;
+                isDragging = false;
+                iconEl.style.cursor = 'grab';
+                iconEl.style.zIndex = 100;
+                setTimeout(() => { hasDragged = false; }, 0);
+            });
+            return () => hasDragged;
+        }
+
+        // Inject HTML Content into Windows
+        const windowHeaderHTML = (title) => `<div class="window-header"><div class="traffic-lights"><div class="traffic-light close"></div><div class="traffic-light minimize"></div><div class="traffic-light maximize"></div></div><span class="flex-grow text-center pr-8">${title}</span></div>`;
+
+        // CV Window
+        document.getElementById('cv-window').querySelector('.window-content').innerHTML = `
+            ${windowHeaderHTML('CV - Leonard Zirk')}
+            <div class="window-body">
+                <div class="text-center mb-6"><h1 class="text-3xl font-bold text-white">Leonard Zirk</h1><p class="text-xl text-gray-300">Creative Strategist & Technologist</p></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center text-sm mb-6">
+                    <div><strong class="block text-gray-400">PHONE</strong>+491637150123</div>
+                    <div><strong class="block text-gray-400">ADDRESS</strong>Transvaalstraße 6, 13351</div>
+                    <div><strong class="block text-gray-400">EMAIL</strong>leonard.zirk@gmail.com</div>
+                </div>
+                <h2>About</h2><p class="italic">"I turn complex science into captivating stories."</p>
+                <h2>Work Experience</h2><p><strong>Creative Strategist</strong> | Ozmoze Gmbh<br>Clients: Telekom, Tinder, Duolingo.</p>
+                <h2>Education</h2><p><strong>BS Biology</strong> (2020-2025)<br><strong>BS Psychology</strong> (2020-2024)</p>
+            </div>`;
+        
+        // Contact Window
+        document.getElementById('contact-window').querySelector('.window-content').innerHTML = `
+            ${windowHeaderHTML('Contact Me')}
+            <div class="window-body">
+                <form id="contact-form">
+                    <div class="mb-4"><label class="block mb-2 text-gray-300">Name</label><input class="w-full bg-gray-800 border border-gray-600 rounded-lg p-2 text-white" type="text" id="name" required></div>
+                    <div class="mb-4"><label class="block mb-2 text-gray-300">Email</label><input class="w-full bg-gray-800 border border-gray-600 rounded-lg p-2 text-white" type="email" id="email" required></div>
+                    <div class="mb-4"><label class="block mb-2 text-gray-300">Message</label><textarea class="w-full bg-gray-800 border border-gray-600 rounded-lg p-2 text-white" id="message" rows="4" required></textarea></div>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded-lg font-medium">Send</button>
+                </form>
+            </div>`;
+
+        // Other Windows
+        document.getElementById('koplin-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Dr. Koplin')}<div class="window-body p-4 flex gap-4 items-start"><div data-url="https://www.tiktok.com/@drkoplin" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tik%20tok%20icon.png?updatedAt=1752678704069" alt="TikTok Icon"></div><p>TikTok</p></div></div>`;
+        document.getElementById('readme-desktop-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('read me.txt')}<div class="window-body"><h2>Welcome!</h2><p>Double click icons or swipe on mobile.</p></div>`;
+        document.getElementById('duolingo-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Duolingo')}<div class="window-body duolingo-body"><div class="duolingo-progress-bar"><div class="duolingo-progress"></div></div><div class="duolingo-mascot-container"><img src="https://ik.imagekit.io/ex6ksvxsvk/duo%20app.png?updatedAt=1753448064337" alt="Duo" class="w-20"><div class="duolingo-speech-bubble">What did Leo do?</div></div><div class="duolingo-options"><button class="duolingo-option" data-correct="true"><span>💡</span><span>Social Media Strategy</span></button><button class="duolingo-option" data-correct="false"><span>🚀</span><span>Rocket Science</span></button></div><button class="duolingo-continue-btn">Check</button></div>`;
+        
+        document.getElementById('tinder-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Tinder')}<div class="window-body p-4 flex flex-wrap gap-4"><div id="tinder-swipe-icon" class="mobile-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/tinder%20app.png?updatedAt=1753448867039"></div><p>Swipe</p></div></div>`;
+        document.getElementById('tinder-swipe-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Swipe')}<div class="window-body tinder-body"><div class="tinder-header"><img src="https://ik.imagekit.io/ex6ksvxsvk/tinder%20app.png?updatedAt=1753448867039"></div><div class="tinder-stack"><div class="tinder-card"><img class="tinder-card-img" src="https://ik.imagekit.io/ex6ksvxsvk/d81839c1-024b-4f7a-b037-472795553a6a.JPG"><div class="tinder-card-info"><h3>Leonard</h3><p>Strategist</p></div></div></div><div class="tinder-controls"><button class="tinder-btn dislike"><i class="fas fa-times"></i></button><button class="tinder-btn like"><i class="fas fa-heart"></i></button></div></div>`;
+        document.getElementById('modulor-window').querySelector('.window-content').innerHTML = `${windowHeaderHTML('Modulor')}<div class="window-body p-4 flex gap-4"><div data-url="https://www.instagram.com/modulorberlin" class="mobile-icon link-icon"><div class="icon-bg"><img src="https://ik.imagekit.io/ex6ksvxsvk/instagramicon.webp?updatedAt=1752678971026"></div><p>Insta</p></div></div>`;
+
+        // Event Listeners for OS
+        windows.forEach(w => {
+            w.querySelectorAll('.close').forEach(btn => btn.addEventListener('click', () => closeWindow(w)));
+            if(isDesktop) makeWindowDraggable(w);
+        });
+
+        // Icon Mapping
+        const iconWindowMap = {
+            'cv-dock-icon': 'cv-window', 
+            'contact-dock-icon': 'contact-window',
+            'koplin-icon-mobile': 'koplin-window', 'koplin-icon-desktop': 'koplin-window',
+            'readme-desktop-icon': 'readme-desktop-window',
+            'duolingo-icon-mobile': 'duolingo-window', 'duolingo-icon-desktop': 'duolingo-window',
+            'tinder-icon-mobile': 'tinder-window', 'tinder-icon-desktop': 'tinder-window',
+            'modulor-icon-mobile': 'modulor-window', 'modulor-icon-desktop': 'modulor-window'
+        };
+
+        for (const [iconId, windowId] of Object.entries(iconWindowMap)) {
+            const iconEl = document.getElementById(iconId);
+            const windowEl = document.getElementById(windowId);
+            if (iconEl && windowEl) {
+                if (isDesktop && iconEl.classList.contains('desktop-icon')) {
+                    const wasDragged = makeIconDraggable(iconEl);
+                    iconEl.addEventListener('click', () => { if (!wasDragged()) openWindow(windowEl); });
+                } else {
+                    iconEl.addEventListener('click', () => openWindow(windowEl));
+                }
+            }
+        }
+        
+        // External Links
+        document.querySelectorAll('.link-icon').forEach(icon => {
+            icon.addEventListener('click', () => window.open(icon.dataset.url, '_blank'));
+        });
+
+        // Nested Tinder Icons
+        document.getElementById('tinder-swipe-icon')?.addEventListener('click', () => openWindow(document.getElementById('tinder-swipe-window')));
+
+        // Contact Form
+        document.getElementById('contact-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            window.open(`mailto:leonard.zirk@gmail.com?subject=Contact&body=${document.getElementById('message').value}`);
+        });
+
+        // Duolingo Logic
+        const duoBtn = document.querySelector('.duolingo-continue-btn');
+        const duoOptions = document.querySelectorAll('.duolingo-option');
+        duoOptions.forEach(opt => opt.addEventListener('click', () => {
+            duoOptions.forEach(o => o.classList.remove('selected', 'correct', 'incorrect'));
+            opt.classList.add('selected');
+            duoBtn.classList.add('active');
+            
+            duoBtn.onclick = () => {
+                if(opt.dataset.correct === 'true') opt.classList.add('correct');
+                else opt.classList.add('incorrect');
+            };
+        }));
+
+        // Resize Handler
+        function handleResize() {
+            isDesktop = window.innerWidth >= 1024;
+            const desktopIcons = document.getElementById('desktop-icons-container');
+            const mobileView = document.getElementById('mobile-view-wrapper');
+            
+            if(desktopIcons && mobileView) {
+                if (isDesktop) {
+                    desktopIcons.classList.remove('hidden');
+                    mobileView.classList.add('hidden');
+                    mobileView.classList.remove('lg:hidden'); // Tailwind override logic
+                } else {
+                    desktopIcons.classList.add('hidden');
+                    mobileView.classList.remove('hidden');
+                }
+            }
+        }
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Init
+        
+        // Tinder Swipe (Simple)
+        document.querySelector('.tinder-btn.like')?.addEventListener('click', () => {
+             document.querySelector('.tinder-card').style.transform = 'translateX(500px) rotate(30deg)';
+             setTimeout(() => openWindow(document.getElementById('contact-window')), 300);
+        });
+        document.querySelector('.tinder-btn.dislike')?.addEventListener('click', () => {
+             document.querySelector('.tinder-card').style.transform = 'translateX(-500px) rotate(-30deg)';
+             setTimeout(() => { document.querySelector('.tinder-card').style.transform = ''; }, 500);
+        });
+    });
 </script>
 </body>
 </html>
-
