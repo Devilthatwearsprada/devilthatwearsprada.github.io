@@ -27,7 +27,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Better for mobile scrolling */
+            justify-content: flex-start;
             overflow-x: hidden;
             overflow-y: auto;
             user-select: none;
@@ -49,7 +49,7 @@
         h1 {
             color: #fbbf24;
             text-shadow: 4px 4px #be123c;
-            font-size: clamp(16px, 5vw, 24px); /* Fluid font size */
+            font-size: clamp(16px, 5vw, 24px);
             margin-bottom: 30px;
             line-height: 1.5;
             padding: 0 10px;
@@ -59,14 +59,14 @@
             background: transparent;
             border: 2px solid #334155;
             color: #94a3b8;
-            padding: 20px; /* Larger touch target */
+            padding: 20px;
             font-family: 'Press Start 2P', cursive;
             font-size: clamp(10px, 3vw, 12px);
             cursor: pointer;
             transition: all 0.2s;
             text-transform: uppercase;
             width: 90%;
-            max-width: 380px;
+            max-width: 450px;
             margin: 0 auto;
         }
 
@@ -77,19 +77,29 @@
             transform: scale(1.02);
             box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
         }
+        
+        .special-btn {
+            border-color: #ef4444;
+            color: #fca5a5;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+        }
+        .special-btn:hover {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
 
         /* --- GAME CONTAINER --- */
         #game-wrapper {
             display: none;
             position: relative;
-            border: 8px solid #2a2a3a; /* Thinner border on mobile */
+            border: 8px solid #2a2a3a;
             border-radius: 4px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             background: #000;
             margin-top: 10px;
             width: 100%;
             max-width: 640px;
-            /* Maintain aspect ratio or adapt to content */
         }
 
         @media (min-width: 600px) {
@@ -103,7 +113,7 @@
             display: block;
             image-rendering: pixelated;
             width: 100%;
-            height: auto; /* Maintains aspect ratio */
+            height: auto;
         }
 
         /* --- SHARED UI OVERLAYS --- */
@@ -115,7 +125,7 @@
             pointer-events: none;
             z-index: 50;
             animation: flicker 0.15s infinite;
-            opacity: 0.5; /* Slightly less intense on mobile */
+            opacity: 0.5;
         }
         
         .screen-overlay {
@@ -146,7 +156,7 @@
             gap: 15px;
             align-items: center;
             justify-content: center;
-            flex-wrap: wrap; /* Allow wrapping on small screens */
+            flex-wrap: wrap;
         }
 
         /* Description Area */
@@ -159,7 +169,7 @@
             border: 1px solid #1e293b;
             padding: 15px;
             font-family: monospace;
-            font-size: 11px; /* Readable on mobile */
+            font-size: 11px;
             line-height: 1.5;
             color: #94a3b8;
             white-space: pre-wrap;
@@ -194,7 +204,6 @@
             font-size: 10px;
         }
 
-        /* Back Button - Responsive Positioning */
         #back-btn {
             background: #be123c;
             border: none;
@@ -205,7 +214,7 @@
             cursor: pointer;
             z-index: 200;
             display: none;
-            margin-bottom: 10px; /* Static flow on mobile */
+            margin-bottom: 10px;
             width: 100%;
             max-width: 640px;
             text-align: center;
@@ -220,7 +229,6 @@
             100% { opacity: 0.9; }
         }
 
-        /* Helper for injected UI elements */
         .ui-label-top {
             position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-around;
             text-shadow: 2px 2px #000; font-size: clamp(8px, 2.5vw, 12px); text-transform: uppercase;
@@ -232,18 +240,16 @@
             padding: 0 5px;
         }
         
-        /* Range Slider Styling - Touch Friendly */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 10px 0; }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; height: 24px; width: 24px; background: #3b82f6;
             cursor: pointer; margin-top: -10px; box-shadow: 0 0 5px #3b82f6; border: 2px solid #fff;
-            border-radius: 50%; /* Easier to grab */
+            border-radius: 50%;
         }
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%; height: 4px; cursor: pointer; background: #333; border: 1px solid #555;
         }
 
-        /* Control Group Layout */
         .control-group {
             width: 100%;
             display: flex;
@@ -258,6 +264,23 @@
             }
         }
 
+        .hud-bar {
+            position: absolute; top: 40px; right: 10px; width: 20px; height: 100px;
+            border: 2px solid #555; background: #111;
+        }
+        .hud-fill { width: 100%; position: absolute; bottom: 0; transition: height 0.1s; }
+        .key-hint {
+            color: #666; font-size: 8px; text-align: center; margin-top: 5px;
+        }
+        
+        .rev-btn {
+            background: #22c55e; color: #000; font-family: inherit; font-size: 10px;
+            border: 2px solid #fff; padding: 10px; cursor: pointer; text-transform: uppercase;
+            margin-top: 10px; width: 100%;
+        }
+        .rev-btn:active { background: #15803d; color: #fff; }
+        .rev-active { background: #ef4444 !important; color: #fff !important; animation: flicker 0.2s infinite; }
+
     </style>
 </head>
 <body>
@@ -269,10 +292,11 @@
         <button class="menu-btn" onclick="GameManager.load('nutcracker')">2. Feedback Loops</button>
         <button class="menu-btn" onclick="GameManager.load('shutter')">3. Shutter Speed (Tau)</button>
         <button class="menu-btn" onclick="GameManager.load('wanderer')">4. The Wanderer (Linear)</button>
-        <button class="menu-btn" onclick="GameManager.load('chimney')">5. Rudolph's Pipe (Non-Linear)</button>
+        <button class="menu-btn" onclick="GameManager.load('chimney')">5. Blind Rudolph (Non-Linear)</button>
+        <button class="menu-btn special-btn" onclick="GameManager.load('signalRunner')">6. Receptor Dynamics</button>
     </div>
 
-    <!-- Eject Button (Top for mobile ease) -->
+    <!-- Eject Button -->
     <button id="back-btn" onclick="GameManager.exit()">EJECT CARTRIDGE (BACK TO MENU)</button>
 
     <!-- GAME AREA -->
@@ -283,10 +307,10 @@
         <div class="screen-overlay"></div>
     </div>
 
-    <!-- CONTROLS AREA (Below Canvas) -->
+    <!-- CONTROLS AREA -->
     <div id="controls-area"></div>
 
-    <!-- DESCRIPTION AREA (Scientific Log) -->
+    <!-- DESCRIPTION AREA -->
     <div id="description-area"></div>
 
     <script>
@@ -298,78 +322,94 @@
         const descriptionArea = document.getElementById('description-area');
         
         let animationId = null;
+        let keys = {};
 
-        // --- DESCRIPTIONS (Biophysics Mapping + Strategy Narrative) ---
+        window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
+        window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+
+        // --- DESCRIPTIONS ---
         const descriptions = {
             snowstorm: `<h3>1. Chaos vs. Order (The Snowstorm)</h3>
 <div class="narrative-text">
-    "Look closely at the Snowstorm. In Scenario A (Chaos), both walkers are blind. They drift randomly. Their movements are uncorrelated. To a physicist, the 'Mutual Information' between them is zero. They burn energy to move, but they produce nothing but heat.<br><br>
-    In Scenario B (Order), we have a directed Walker receiving signals. The Counter-Intuitive Truth: You might assume the 'ordered' walk is efficient. Wrong. To maintain that correlation in a noisy environment, constant correction is required. Order is expensive."
+    "Look closely at the Snowstorm. In Scenario A (Chaos), both walkers are blind. They drift randomly. Mutual Information is zero. They burn energy, but produce no order.<br><br>
+    In Scenario B (Order), the Red Leader stands <strong>outside</strong> the storm (Safe Zone), shouting directions. The Blue dot is trapped inside, fighting the noise. To maintain correlation, the Follower must constantly correct its path. Order is expensive."
 </div>
 <hr style="border-color: #334155; margin-bottom: 10px;">
 <div class="variable-text">
-    <strong><em>x</em> (Signal):</strong> The Directed Walker (Scenario B). Moves with intent.<br>
-    <strong><em>y</em> (Response):</strong> The Tracking.<br>
-    <strong><em>D</em> (Diffusion/Noise):</strong> The random jitter of the "Snow" particles. This represents the thermal bath.<br>
-    <strong>Visual Proof:</strong> In Scenario A, T<sub>y&rarr;x</sub> = 0. In Scenario B, the correlation exists.
+    <strong><em>x</em> (Signal):</strong> The Red Leader (Safe Zone). Moves with intent.<br>
+    <strong><em>y</em> (Response):</strong> The Blue Follower (Storm Zone).<br>
+    <strong><em>D</em> (Diffusion/Noise):</strong> The green data-snow.<br>
+    <strong>Visual Proof:</strong> Scenario A: T=0. Scenario B: Correlation exists but costs energy.
 </div>`,
 
             nutcracker: `<h3>2. Feedback Loops (The Nutcracker)</h3>
 <div class="narrative-text">
-    "Now we break the causal link. On the left, you see a Feedback Loop. Like two dancers, they influence each other. They share the energy load. The system is closed, and the thermodynamics are 'symmetric.'<br><br>
-    On the right, we have the Signal-Response Model. The Soldier (<em>x</em>) marches, completely ignoring the Mime (<em>y</em>). The Mime is desperate to copy the Soldier's history. Watch the Mime sweat. That sweat is Mapping Irreversibility (&Phi;). Because the Mime cannot tell the Soldier to slow down (Zero Feedback), he pays the full thermodynamic price for every bit of memory he stores."
+    "On the left, a Feedback Loop (Dancers). They share energy. The system is 'symmetric.'<br><br>
+    On the right, Signal-Response (Soldier & Mime). The Soldier (<em>x</em>) ignores the Mime (<em>y</em>). The Mime is desperate to copy the history. Watch the Mime sweat. That sweat is Mapping Irreversibility (&Phi;). You cannot have the copy without the cost."
 </div>
 <hr style="border-color: #334155; margin-bottom: 10px;">
 <div class="variable-text">
-    <strong>Topology:</strong><br>
-    &bull; <strong>Left Side:</strong> &part;g<sub>x</sub> / &part;y &ne; 0 (Feedback Loop). Energy is shared.<br>
-    &bull; <strong>Right Side:</strong> &part;g<sub>x</sub> / &part;y = 0 (Signal-Response). Soldier ignores Mime.<br>
-    <strong>&Phi; (Irreversibility):</strong> The Blue Sweat Drops. Represents heat dissipation required by the Second Law.<br>
-    <strong>T<sub>y&rarr;x</sub> (Memory):</strong> The Mime’s Pose. His body shape is a "record" of where the Soldier was.
+    <strong>Topology:</strong> Left: &part;g<sub>x</sub>/&part;y &ne; 0. Right: &part;g<sub>x</sub>/&part;y = 0.<br>
+    <strong>&Phi; (Irreversibility):</strong> Blue Sweat Drops (Heat).<br>
+    <strong>T (Memory):</strong> The Mime’s Pose.
 </div>`,
 
             shutter: `<h3>3. Shutter Speed (The Car Crash)</h3>
 <div class="narrative-text">
-    "Here is where the math meets reality. How much heat does observation generate? It depends on your shutter speed (&tau;).<br>
-    <strong>Noise (&tau; &rarr; 0):</strong> If you sample too fast, you don't see a car; you see vibrating pixels. High energy, zero information.<br>
-    <strong>Amnesia (&tau; &rarr; &infin;):</strong> If you wait too long, the car is gone. The correlation decays to zero.<br>
-    <strong>The Causal Peak (&tau; &approx; 0.5):</strong> Drag the slider to the middle. See the motion blur? That blur is the Arrow of Time. This is the only window where the system is thermodynamically efficient. Biology lives here."
+    "How much heat does observation generate? It depends on shutter speed (&tau;).<br>
+    <strong>Noise (&tau; &rarr; 0):</strong> Vibrating pixels. High energy, zero info.<br>
+    <strong>Amnesia (&tau; &rarr; &infin;):</strong> Correlation decays to zero.<br>
+    <strong>The Causal Peak (&tau; &approx; 0.5):</strong> The motion blur creates a vector (Arrow of Time). Biology lives here."
 </div>
 <hr style="border-color: #334155; margin-bottom: 10px;">
 <div class="variable-text">
-    <strong>&tau; (Tau):</strong> The Slider Bar. The time gap between snapshots.<br>
-    <strong><em>x</em><sub>t</sub> vs <em>x</em><sub>t+&tau;</sub>:</strong> The visual "Motion Blur."<br>
-    &bull; Small &tau;: Noise dominance.<br>
-    &bull; Large &tau;: Decorrelation.<br>
-    &bull; Medium &tau;: The Arrow of Time (Vector formation).
+    <strong>&tau; (Tau):</strong> Time gap between snapshots.<br>
+    <strong>Blur:</strong> Visualizes x<sub>t</sub> vs x<sub>t+&tau;</sub>.
 </div>`,
 
             wanderer: `<h3>4. The Wanderer (Linear Response)</h3>
 <div class="narrative-text">
-    "Let's translate the math into mechanics. Watch the Red Wanderer. Every step he takes creates a unique path—a History. The Blue Sled tries to follow that path. But the ground is rough. The sled doesn't just glide; it scrapes. That physical Drag—the friction resisting the movement—is the Mapping Irreversibility (&Phi;). It is the heat generated by the act of following.<br><br>
-    The Law: You cannot carve the tracks (store the history) without enduring the drag (paying the irreversibility). Memory is friction."
+    "Watch the Red Wanderer. Every step creates a History. The Blue Sled tries to follow. The Drag—the friction resisting movement—is Mapping Irreversibility (&Phi;). You cannot carve tracks (store history) without enduring drag. Memory is friction."
 </div>
 <hr style="border-color: #334155; margin-bottom: 10px;">
 <div class="variable-text">
-    <strong><em>x</em> (Signal):</strong> The Red Wanderer (Ornstein-Uhlenbeck process).<br>
-    <strong><em>y</em> (Response):</strong> The Blue Sled.<br>
-    <strong>&beta; (Relaxation Rate):</strong> Rope Stiffness. High &beta; = instant pull (high energy). Low &beta; = lag (low info).<br>
-    <strong>&Phi; (Entropy):</strong> The Orange Particles. No movement = No Information = No Heat.<br>
-    <strong>Inequality:</strong> &Phi; &ge; T. The particles prove the debt paid to track the signal.
+    <strong><em>x</em> (Signal):</strong> Red Wanderer.<br>
+    <strong><em>y</em> (Response):</strong> Blue Sled.<br>
+    <strong>&beta; (Relaxation):</strong> Rope Stiffness.<br>
+    <strong>&Phi; (Entropy):</strong> Orange Particles (Heat). &Phi; &ge; T.
+    <strong>Reverse:</strong> Press the button to reverse time. Notice how the tracks vanish. This violates entropy!
 </div>`,
 
-            chimney: `<h3>5. Rudolph's Pipe (Non-Linear Model)</h3>
+            chimney: `<h3>5. Blind Rudolph & Guy (Non-Linear)</h3>
 <div class="narrative-text">
-    "Finally, the real biological deal: The Receptor. This isn't a linear rope anymore. It's Rudolph's Pipe.<br>
-    <strong>The Walls (Saturation):</strong> If the Present hits the wall, it stops moving. Information flow drops to zero. The cell is blind because it's maxed out.<br>
-    <strong>The Sticky Snow (Threshold):</strong> The Present ignores small tugs. It only moves when the Signal (Rudolph) is strong enough to break the 'stickiness.' This filters out noise. Efficiency is about tuning your friction to the environment."
+    "<strong>The Audit:</strong> Rudolph ($x$) is flying blind in 2D space. Guy the Reindeer ($y$) is trapped in a CAGE. <br><br>
+    <strong>The Rope on a Spool (&beta;):</strong> Use the slider to unwind the rope. <br>
+    &bull; <strong>Short Rope:</strong> Guy slams against the cage bars. High Heat, High Info (You know where Rudolph is relative to the cage).<br>
+    &bull; <strong>Long Rope:</strong> Guy sits still. Zero Heat, Zero Info. <br>
+    <strong>Time Reverse:</strong> Press the button. The tracks vanish. The system runs backward, violating physics."
 </div>
 <hr style="border-color: #334155; margin-bottom: 10px;">
 <div class="variable-text">
-    <strong><em>x</em> (Signal):</strong> Rudolph (Red Dot). Fluctuating ligand concentration.<br>
-    <strong><em>y</em> (Response):</strong> The Gift Box. Receptor state (0 to 1).<br>
-    <strong>Walls:</strong> Saturation Limits. Hitting the wall stops Information Flow.<br>
-    <strong>Threshold (Stickiness):</strong> Non-Linearity. Simulates activation energy (k<sub>off</sub>). Filters small noise, reacts only to strong signals.
+    <strong><em>x</em> (Signal):</strong> Rudolph (Red). 2D Random Walk.<br>
+    <strong><em>y</em> (Response):</strong> Guy (Blue). Constrained by CAGE.<br>
+    <strong>Cage:</strong> Saturation Limits. <br>
+    <strong>Rope on Spool:</strong> Coupling Strength (&beta;).
+</div>`,
+
+            signalRunner: `<h3>6. Receptor Dynamics</h3>
+<div class="narrative-text">
+    "<strong>Biophysics Simulation:</strong> This graph visualizes the stochastic battle between a Signal (Red) and a Receptor Population (Blue).<br><br>
+    <strong>Control Variables:</strong><br>
+    1. <strong>[L] Ligand:</strong> The strength of the chemical signal.<br>
+    2. <strong>&beta; (Relaxation):</strong> How expensive is it to switch? (Heat/Stiffness).<br>
+    3. <strong>&tau; (Tau):</strong> The time lag for calculating information correlation.<br>
+    <strong>Inequality:</strong> Watch the bottom ratio. Entropy (&Phi;) is always greater than Information (T)."
+</div>
+<hr style="border-color: #334155; margin-bottom: 10px;">
+<div class="variable-text">
+    <strong><em>x</em> (Red Line):</strong> Ligand Conc.<br>
+    <strong><em>y</em> (Blue Area):</strong> Bound Receptors (0-100%).<br>
+    <strong>Yellow Line:</strong> Time Lag (&tau;).
 </div>`
         };
 
@@ -377,24 +417,20 @@
             activeGame: null,
 
             load: function(gameKey) {
-                // Hide Menu, Show Game
                 document.getElementById('main-menu').style.display = 'none';
                 document.getElementById('game-wrapper').style.display = 'block';
-                document.getElementById('back-btn').style.display = 'block'; // Make sure this is block
+                document.getElementById('back-btn').style.display = 'block';
                 
-                // Clear previous state
                 ctx.clearRect(0,0,canvas.width, canvas.height);
                 uiLayer.innerHTML = '';
                 controlsArea.innerHTML = '';
                 controlsArea.style.display = 'none';
 
-                // Set Description
                 if (descriptions[gameKey]) {
                     descriptionArea.innerHTML = descriptions[gameKey];
                     descriptionArea.style.display = 'block';
                 }
 
-                // Initialize specific game
                 if (games[gameKey]) {
                     this.activeGame = games[gameKey];
                     this.activeGame.init();
@@ -404,19 +440,13 @@
 
             exit: function() {
                 if (animationId) cancelAnimationFrame(animationId);
-                
-                // Show Menu, Hide Game
                 document.getElementById('main-menu').style.display = 'flex';
                 document.getElementById('game-wrapper').style.display = 'none';
                 document.getElementById('back-btn').style.display = 'none';
                 controlsArea.style.display = 'none';
                 descriptionArea.style.display = 'none';
-                
-                // Cleanup
                 this.activeGame = null;
                 uiLayer.innerHTML = '';
-                controlsArea.innerHTML = '';
-                descriptionArea.innerHTML = '';
             },
 
             loop: function() {
@@ -431,864 +461,582 @@
 
         const games = {
             
-            // --- GAME 1: SNOWSTORM (Chaos vs Order) - MODIFIED VERSION ---
+            // --- GAME 1: SNOWSTORM ---
             snowstorm: {
-                entities: [],
-                snow: [],
-                frameCount: 0,
-                towerDirection: 0,
-                lastShoutTime: 0,
-                SCALE: 4,
-
+                entities: [], snow: [], frameCount: 0, SCALE: 4, towerDirection: 0, lastShoutTime: 0,
                 init: function() {
-                    canvas.height = 320;
-                    this.frameCount = 0;
-                    this.entities = [];
-                    this.snow = [];
-                    
-                    const WIDTH = canvas.width / this.SCALE;
-                    const HEIGHT = canvas.height / this.SCALE;
-                    const HALF_W = WIDTH / 2;
-
-                    // UI
-                    uiLayer.innerHTML = `
-                        <div class="ui-label-top" style="color: #000; text-shadow:none;">
-                            <span>Scenario A: Chaos</span>
-                            <span>Scenario B: Order</span>
-                        </div>
-                    `;
-
-                    // Init Walkers
-                    // Sim 1: Two Random Walkers starting in center of left box
-                    const center1X = HALF_W / 2;
-                    const centerY = HEIGHT / 2;
-                    this.entities.push(this.createWalker(center1X - 2, centerY, 'random'));
-                    this.entities.push(this.createWalker(center1X + 2, centerY, 'random'));
-
-                    // Sim 2: One Directed Walker starting in center of right box
-                    const center2X = HALF_W + (HALF_W / 2);
-                    this.entities.push(this.createWalker(center2X, centerY, 'directed'));
-
-                    // Init Snow
-                    for(let i=0; i<50; i++) {
-                        this.snow.push({
-                            x: Math.random() * WIDTH,
-                            y: Math.random() * HEIGHT,
-                            speed: 0.2 + Math.random() * 0.5
-                        });
-                    }
+                    canvas.height = 320; this.frameCount=0; this.entities=[]; this.snow=[];
+                    const WIDTH=canvas.width/this.SCALE, HEIGHT=canvas.height/this.SCALE, HALF_W=WIDTH/2;
+                    uiLayer.innerHTML = `<div class="ui-label-top" style="color:#000; text-shadow:none;"><span>Scenario A: Chaos</span><span>Scenario B: Order</span></div>`;
+                    this.entities.push(this.createWalker(HALF_W/2-2, HEIGHT/2, 'random'));
+                    this.entities.push(this.createWalker(HALF_W/2+2, HEIGHT/2, 'random'));
+                    this.entities.push(this.createWalker(HALF_W+HALF_W/2, HEIGHT/2, 'directed'));
+                    for(let i=0; i<50; i++) this.snow.push({x:Math.random()*WIDTH, y:Math.random()*HEIGHT, speed:0.2+Math.random()*0.5});
                 },
-
                 createWalker: function(x, y, type) {
-                    return { 
-                        x: x, 
-                        y: y, 
-                        type: type,
-                        update: function(frameCount, towerDirection, WIDTH, HEIGHT, HALF_W) {
-                            if (frameCount % 10 !== 0) return;
-
-                            let dx = 0;
-                            let dy = 0;
-                            const step = 2;
-
-                            if (this.type === 'random') {
-                                const r = Math.floor(Math.random() * 4);
-                                if (r === 0) dy = -step;
-                                if (r === 1) dx = step;
-                                if (r === 2) dy = step;
-                                if (r === 3) dx = -step;
-                            } else if (this.type === 'directed') {
-                                if (towerDirection === 0) dy = -step;
-                                if (towerDirection === 1) dx = step;
-                                if (towerDirection === 2) dy = step;
-                                if (towerDirection === 3) dx = -step;
-                            }
-
-                            // Apply movement
-                            this.x += dx;
-                            this.y += dy;
-
-                            // Bounds
-                            const margin = 2;
-                            if (this.type === 'random') {
-                                if (this.x < margin) this.x = margin;
-                                if (this.x > HALF_W - margin) this.x = HALF_W - margin;
-                            } else {
-                                if (this.x < HALF_W + margin) this.x = HALF_W + margin;
-                                if (this.x > WIDTH - margin) this.x = WIDTH - margin;
-                            }
-                            
-                            if (this.y < margin) this.y = margin;
-                            if (this.y > HEIGHT - margin) this.y = HEIGHT - margin;
-                        }
-                    };
+                    return { x,y,type, update: function(fc, dir, w, h, hw) {
+                        if(fc%10!==0)return; let dx=0,dy=0,s=2;
+                        if(this.type==='random'){const r=Math.floor(Math.random()*4); if(r===0)dy=-s;if(r===1)dx=s;if(r===2)dy=s;if(r===3)dx=-s;}
+                        else{if(dir===0)dy=-s;if(dir===1)dx=s;if(dir===2)dy=s;if(dir===3)dx=-s;}
+                        this.x+=dx; this.y+=dy;
+                        if(this.type==='random'){this.x=Math.max(2,Math.min(hw-2,this.x));}else{this.x=Math.max(hw+2,Math.min(w-2,this.x));}
+                        this.y=Math.max(2,Math.min(h-2,this.y));
+                    }};
                 },
-
                 update: function() {
-                    const WIDTH = canvas.width / this.SCALE;
-                    const HEIGHT = canvas.height / this.SCALE;
-                    const HALF_W = WIDTH / 2;
-                    
+                    const W=canvas.width/this.SCALE, H=canvas.height/this.SCALE, HW=W/2;
                     this.frameCount++;
-
-                    if (this.frameCount - this.lastShoutTime > 60) {
-                        this.towerDirection = Math.floor(Math.random() * 4);
-                        this.lastShoutTime = this.frameCount;
-                    }
-
-                    this.entities.forEach(e => e.update(this.frameCount, this.towerDirection, WIDTH, HEIGHT, HALF_W));
-                    
-                    // Snow logic
-                    this.snow.forEach(p => {
-                        p.y += p.speed;
-                        p.x += Math.sin(this.frameCount * 0.05) * 0.5; // Wind wiggle
-                        if (p.y > HEIGHT) p.y = 0;
-                        if (p.x > WIDTH) p.x = 0;
-                    });
+                    if(this.frameCount-this.lastShoutTime>60){this.towerDirection=Math.floor(Math.random()*4);this.lastShoutTime=this.frameCount;}
+                    this.entities.forEach(e=>e.update(this.frameCount,this.towerDirection,W,H,HW));
+                    this.snow.forEach(p=>{p.y+=p.speed;p.x+=Math.sin(this.frameCount*0.05)*0.5;if(p.y>H)p.y=0;if(p.x>W)p.x=0;});
                 },
-
                 draw: function() {
-                    const WIDTH = canvas.width / this.SCALE;
-                    const HEIGHT = canvas.height / this.SCALE;
-                    const HALF_W = WIDTH / 2;
-
-                    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.scale(this.SCALE, this.SCALE);
-
-                    // 1. Draw Backgrounds
-                    // Yellow Snowstorm Background
-                    ctx.fillStyle = '#F0E68C'; // Khaki Yellow
-                    ctx.fillRect(0, 0, WIDTH, HEIGHT);
-
-                    // Green Safe Zones
-                    const safeSize = 40;
-                    ctx.fillStyle = '#32CD32'; // Lime Green
-                    ctx.fillRect((HALF_W/2) - safeSize/2, (HEIGHT/2) - safeSize/2, safeSize, safeSize);
-                    ctx.fillRect(HALF_W + (HALF_W/2) - safeSize/2, (HEIGHT/2) - safeSize/2, safeSize, safeSize);
-                    
-                    // Border between screens
-                    ctx.fillStyle = '#000';
-                    ctx.fillRect(HALF_W - 1, 0, 2, HEIGHT);
-
-                    // 2. Draw Snow
-                    ctx.fillStyle = '#FFF';
-                    this.snow.forEach(p => {
-                        ctx.fillRect(Math.floor(p.x), Math.floor(p.y), 1, 1);
-                    });
-
-                    // 3. Draw Tower (Right Side)
-                    const towerX = WIDTH - 20;
-                    const towerY = 20;
-                    
-                    // Tower Base
-                    ctx.fillStyle = '#8B4513'; // Saddle Brown
-                    ctx.fillRect(towerX, towerY, 8, 12);
-                    ctx.fillStyle = '#5c2e0b';
-                    ctx.fillRect(towerX+1, towerY+2, 1, 1);
-                    ctx.fillRect(towerX+5, towerY+6, 1, 1);
-                    
-                    // Top platform
-                    ctx.fillStyle = '#8B4513';
-                    ctx.fillRect(towerX-1, towerY, 10, 2);
-                    
-                    // Guy
-                    ctx.fillStyle = '#1E90FF'; // Dodger Blue
-                    ctx.fillRect(towerX+2, towerY-3, 4, 4); 
-                    ctx.fillStyle = '#FFCCAA'; // Face
-                    ctx.fillRect(towerX+3, towerY-2, 2, 2);
-
-                    // Speech Bubble
-                    this.drawSpeechBubble(towerX - 14, towerY - 8, this.towerDirection);
-
-                    // 4. Draw Entities
-                    ctx.fillStyle = '#000000'; // Black silhouettes
-                    this.entities.forEach(e => {
-                        ctx.fillRect(e.x, e.y, 3, 3); // Body
-                        ctx.fillRect(e.x+1, e.y-1, 1, 1); // Head
-                    });
+                    const W=canvas.width/this.SCALE, H=canvas.height/this.SCALE, HW=W/2;
+                    ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,canvas.width,canvas.height); ctx.scale(this.SCALE,this.SCALE);
+                    ctx.fillStyle='#F0E68C'; ctx.fillRect(0,0,W,H);
+                    const sz=40; ctx.fillStyle='#32CD32'; ctx.fillRect(HW/2-sz/2,H/2-sz/2,sz,sz); ctx.fillRect(HW+HW/2-sz/2,H/2-sz/2,sz,sz);
+                    ctx.fillStyle='#000'; ctx.fillRect(HW-1,0,2,H);
+                    ctx.fillStyle='#FFF'; this.snow.forEach(p=>ctx.fillRect(Math.floor(p.x),Math.floor(p.y),1,1));
+                    const tx=W-20, ty=20;
+                    ctx.fillStyle='#8B4513'; ctx.fillRect(tx,ty,8,12); ctx.fillStyle='#5c2e0b'; ctx.fillRect(tx+1,ty+2,1,1); ctx.fillRect(tx+5,ty+6,1,1);
+                    ctx.fillStyle='#8B4513'; ctx.fillRect(tx-1,ty,10,2); ctx.fillStyle='#1E90FF'; ctx.fillRect(tx+2,ty-3,4,4); ctx.fillStyle='#FFCCAA'; ctx.fillRect(tx+3,ty-2,2,2);
+                    this.drawBubble(tx-14,ty-8,this.towerDirection);
+                    ctx.fillStyle='#000'; this.entities.forEach(e=>{ctx.fillRect(e.x,e.y,3,3);ctx.fillRect(e.x+1,e.y-1,1,1);});
                 },
-
-                drawSpeechBubble: function(x, y, dir) {
-                    // Bubble box
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(x, y, 12, 11);
-                    ctx.strokeStyle = '#000';
-                    ctx.lineWidth = 1;
-                    ctx.strokeRect(x, y, 12, 11);
-
-                    // Arrow
-                    ctx.fillStyle = '#000';
-                    const cx = x + 6;
-                    const cy = y + 5.5;
-                    
-                    ctx.beginPath();
-                    if (dir === 0) { // Up
-                        ctx.moveTo(cx, cy-3); ctx.lineTo(cx-2, cy); ctx.lineTo(cx+2, cy);
-                    } else if (dir === 1) { // Right
-                        ctx.moveTo(cx+3, cy); ctx.lineTo(cx, cy-2); ctx.lineTo(cx, cy+2);
-                    } else if (dir === 2) { // Down
-                        ctx.moveTo(cx, cy+3); ctx.lineTo(cx-2, cy); ctx.lineTo(cx+2, cy);
-                    } else if (dir === 3) { // Left
-                        ctx.moveTo(cx-3, cy); ctx.lineTo(cx, cy-2); ctx.lineTo(cx, cy+2);
-                    }
-                    ctx.fill();
-
-                    // Tail
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(x+10, y+8, 2, 2);
-                    ctx.fillRect(x+8, y+10, 2, 2);
+                drawBubble: function(x,y,d) {
+                    ctx.fillStyle='#FFF';ctx.strokeStyle='#000';ctx.lineWidth=1;ctx.fillRect(x,y,12,11);ctx.strokeRect(x,y,12,11);
+                    ctx.fillStyle='#000';const cx=x+6,cy=y+5.5;ctx.beginPath();
+                    if(d===0){ctx.moveTo(cx,cy-3);ctx.lineTo(cx-2,cy);ctx.lineTo(cx+2,cy);}else if(d===1){ctx.moveTo(cx+3,cy);ctx.lineTo(cx,cy-2);ctx.lineTo(cx,cy+2);}
+                    else if(d===2){ctx.moveTo(cx,cy+3);ctx.lineTo(cx-2,cy);ctx.lineTo(cx+2,cy);}else{ctx.moveTo(cx-3,cy);ctx.lineTo(cx,cy-2);ctx.lineTo(cx,cy+2);}
+                    ctx.fill(); ctx.fillStyle='#FFF';ctx.fillRect(x+10,y+8,2,2);ctx.fillRect(x+8,y+10,2,2);
                 }
             },
 
-
-            // --- GAME 2: NUTCRACKER (Feedback) ---
+            // --- GAME 2: NUTCRACKER ---
             nutcracker: {
-                frameCount: 0,
-                SCALE: 4,
-                angle: 0, soldierAngle: 0,
-                history: [],
-                sweat: [], snow: [],
-
+                frameCount: 0, SCALE: 4, angle: 0, soldierAngle: 0, history: [], sweat: [], snow: [],
                 init: function() {
-                    canvas.height = 320;
-                    this.frameCount = 0;
-                    this.angle = 0;
-                    this.soldierAngle = 0;
-                    this.history = [];
-                    this.sweat = [];
-                    this.snow = [];
-                    
-                    const WIDTH = canvas.width/this.SCALE;
-                    const HEIGHT = canvas.height/this.SCALE;
-
-                    // UI
-                    uiLayer.innerHTML = `
-                        <div class="ui-label-top" style="color: #fbbf24;">
-                            <span>Feedback Loop</span>
-                            <span>Zero Feedback</span>
-                        </div>
-                        <div class="ui-label-bottom">
-                            <span>Shared Energy</span>
-                            <span>Heat &Phi; = Cost</span>
-                        </div>
-                    `;
-
-                    for(let i=0; i<40; i++) {
-                        this.snow.push({ x: Math.random()*WIDTH, y: Math.random()*HEIGHT, speed: 0.1+Math.random()*0.4});
-                    }
+                    canvas.height = 320; this.frameCount=0; this.angle=0; this.soldierAngle=0; this.history=[]; this.sweat=[]; this.snow=[];
+                    const WIDTH = canvas.width/this.SCALE; const HEIGHT = canvas.height/this.SCALE;
+                    uiLayer.innerHTML = `<div class="ui-label-top" style="color:#fbbf24;"><span>Feedback Loop</span><span>Signal Response</span></div><div class="ui-label-bottom"><span>Shared Energy</span><span>Heat &Phi; = Cost</span></div>`;
+                    for(let i=0;i<40;i++) this.snow.push({x:Math.random()*WIDTH,y:Math.random()*HEIGHT,speed:0.1+Math.random()*0.4});
                 },
-
                 update: function() {
-                    this.frameCount++;
-                    const WIDTH = canvas.width/this.SCALE;
-                    const HEIGHT = canvas.height/this.SCALE;
-                    
-                    // Logic Left (Dancers)
-                    this.angle += 0.05;
-
-                    // Logic Right (Soldier/Mime)
-                    const radius = 20;
-                    const center2X = (WIDTH/2) + (WIDTH/4);
-                    const center2Y = HEIGHT/2 + 10;
-                    
-                    this.soldierAngle += 0.04;
-                    const sX = center2X + Math.cos(this.soldierAngle) * (radius*0.8);
-                    const sY = center2Y + Math.sin(this.soldierAngle) * (radius*0.4) + 5;
-                    const sFlip = Math.sin(this.soldierAngle) > 0;
-
-                    this.history.push({x:sX, y:sY, flip:sFlip});
-                    if(this.history.length > 26) this.history.shift();
-
-                    // Sweat
-                    if(this.history.length >= 25 && this.frameCount % 10 === 0) {
-                        const past = this.history[0];
-                        this.sweat.push({ x: past.x, y: past.y-8, vx: (Math.random()-0.5), vy: -0.5-Math.random() });
+                    this.frameCount++; const WIDTH=canvas.width/this.SCALE; const HEIGHT=canvas.height/this.SCALE;
+                    this.angle+=0.05;
+                    const r=20, c2X=(WIDTH/2)+(WIDTH/4), c2Y=HEIGHT/2+10;
+                    this.soldierAngle+=0.04;
+                    const sX=c2X+Math.cos(this.soldierAngle)*(r*0.8), sY=c2Y+Math.sin(this.soldierAngle)*(r*0.4)+5;
+                    this.history.push({x:sX,y:sY,f:Math.sin(this.soldierAngle)>0});
+                    if(this.history.length>26) this.history.shift();
+                    if(this.history.length>=25 && this.frameCount%10===0) {
+                        const h=this.history[0]; this.sweat.push({x:h.x,y:h.y-8,vx:(Math.random()-0.5),vy:-0.5-Math.random()});
                     }
-                    for(let i=this.sweat.length-1; i>=0; i--) {
-                        this.sweat[i].x += this.sweat[i].vx;
-                        this.sweat[i].y += this.sweat[i].vy;
-                        this.sweat[i].vy += 0.05;
-                        if(this.sweat[i].y > HEIGHT) this.sweat.splice(i,1);
-                    }
-
-                    // Snow
-                    this.snow.forEach(p => {
-                        p.y += p.speed; p.x += Math.sin(this.frameCount*0.02)*0.2;
-                        if(p.y>HEIGHT) p.y=0; if(p.x>WIDTH) p.x=0;
-                    });
+                    for(let i=this.sweat.length-1;i>=0;i--){let p=this.sweat[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; if(p.y>HEIGHT)this.sweat.splice(i,1);}
+                    this.snow.forEach(p=>{p.y+=p.speed;p.x+=Math.sin(this.frameCount*0.02)*0.2;if(p.y>HEIGHT)p.y=0;if(p.x>WIDTH)p.x=0;});
                 },
-
                 draw: function() {
-                    const WIDTH = canvas.width/this.SCALE;
-                    const HEIGHT = canvas.height/this.SCALE;
-                    const HALF_W = WIDTH/2;
-                    const centerX = HALF_W/2;
-                    const centerY = HEIGHT/2 + 10;
-                    const radius = 20;
-
-                    ctx.setTransform(1,0,0,1,0,0);
-                    ctx.clearRect(0,0,canvas.width, canvas.height);
-                    ctx.scale(this.SCALE, this.SCALE);
-
-                    // BG Left
-                    ctx.fillStyle = '#1e293b'; ctx.fillRect(0,0,HALF_W, HEIGHT);
-                    ctx.fillStyle = '#e0f2fe'; ctx.beginPath(); ctx.ellipse(centerX, centerY+8, 28, 13, 0, 0, Math.PI*2); ctx.fill();
-                    
-                    // BG Right
-                    ctx.fillStyle = '#0f172a'; ctx.fillRect(HALF_W,0,HALF_W, HEIGHT);
-                    ctx.fillStyle = '#e2e8f0'; ctx.beginPath(); ctx.ellipse(centerX+HALF_W, centerY+8, 28, 13, 0, 0, Math.PI*2); ctx.fill();
-                    
-                    // Divider
-                    ctx.fillStyle = '#000'; ctx.fillRect(HALF_W-1, 0, 2, HEIGHT);
-
-                    // --- Left Dancers ---
-                    const d1X = centerX + Math.cos(this.angle)*(radius*0.7);
-                    const d1Y = centerY + Math.sin(this.angle)*(radius*0.35)+5;
-                    const d2X = centerX + Math.cos(this.angle+Math.PI)*(radius*0.7);
-                    const d2Y = centerY + Math.sin(this.angle+Math.PI)*(radius*0.35)+5;
-                    
-                    const drawDancer = (x,y, frame) => {
-                        ctx.fillStyle = '#f472b6'; ctx.fillRect(x-3, y+2, 7, 3); // Dress
-                        ctx.fillStyle = '#fdf2f8'; ctx.fillRect(x, y-1, 1, 3); // Pale pink body
-                        ctx.fillStyle = '#ffe4e6'; ctx.fillRect(x, y-3, 2, 2); // Head
-                        
-                        // Legs
-                        ctx.fillStyle = '#ffe4e6';
-                        if (Math.floor(frame / 10) % 2 === 0) {
-                            ctx.fillRect(x, y+5, 1, 3); 
-                        } else {
-                            ctx.fillRect(x-1, y+4, 1, 2); 
-                            ctx.fillRect(x+1, y+5, 1, 3);
-                        }
+                    const WIDTH=canvas.width/this.SCALE, HEIGHT=canvas.height/this.SCALE, HW=WIDTH/2, CX=HW/2, CY=HEIGHT/2+10, R=20;
+                    ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,canvas.width,canvas.height); ctx.scale(this.SCALE,this.SCALE);
+                    ctx.fillStyle='#1e293b'; ctx.fillRect(0,0,HW,HEIGHT);
+                    ctx.fillStyle='#e0f2fe'; ctx.beginPath(); ctx.ellipse(CX,CY+8,28,13,0,0,Math.PI*2); ctx.fill();
+                    ctx.fillStyle='#0f172a'; ctx.fillRect(HW,0,HW,HEIGHT);
+                    ctx.fillStyle='#e2e8f0'; ctx.beginPath(); ctx.ellipse(CX+HW,CY+8,28,13,0,0,Math.PI*2); ctx.fill();
+                    ctx.fillStyle='#000'; ctx.fillRect(HW-1,0,2,HEIGHT);
+                    const d1X=CX+Math.cos(this.angle)*(R*0.7), d1Y=CY+Math.sin(this.angle)*(R*0.35)+5;
+                    const d2X=CX+Math.cos(this.angle+Math.PI)*(R*0.7), d2Y=CY+Math.sin(this.angle+Math.PI)*(R*0.35)+5;
+                    const dd=(x,y,f)=>{
+                        ctx.fillStyle='#f472b6';ctx.fillRect(x-3,y+2,7,3);ctx.fillStyle='#fdf2f8';ctx.fillRect(x,y-1,1,3);ctx.fillStyle='#ffe4e6';ctx.fillRect(x,y-3,2,2);
+                        if(Math.floor(f/10)%2===0){ctx.fillRect(x,y+5,1,3);}else{ctx.fillRect(x-1,y+4,1,2);ctx.fillRect(x+1,y+5,1,3);}
                     };
-                    
-                    if (Math.sin(this.angle) < 0) { drawDancer(d1X,d1Y, this.frameCount); drawDancer(d2X,d2Y, this.frameCount); }
-                    else { drawDancer(d2X,d2Y, this.frameCount); drawDancer(d1X,d1Y, this.frameCount); }
-                    
-                    ctx.strokeStyle = '#fbcfe8'; ctx.beginPath(); ctx.moveTo(d1X+1, d1Y+2); ctx.lineTo(d2X+1, d2Y+2); ctx.stroke();
-
-                    // --- Right Soldier/Mime ---
-                    // Current Pos
-                    const center2X = centerX+HALF_W;
-                    const center2Y = centerY;
-                    const sX = center2X + Math.cos(this.soldierAngle) * (radius*0.8);
-                    const sY = center2Y + Math.sin(this.soldierAngle) * (radius*0.4) + 5;
-                    const sFlip = Math.sin(this.soldierAngle) > 0;
-                    
-                    const entities = [{t:'s', x:sX, y:sY, f:sFlip}];
-                    if(this.history.length >= 25) {
-                         const h = this.history[0];
-                         entities.push({t:'m', x:h.x, y:h.y, f:h.f});
-                    }
-                    entities.sort((a,b)=>a.y-b.y);
-
-                    entities.forEach(e => {
-                        ctx.save(); ctx.translate(e.x, e.y); if(e.f) ctx.scale(-1,1);
-                        
-                        const march = Math.floor(this.frameCount / 8) % 2;
-                        const ox = -2;
-                        const oy = 0;
-
-                        if(e.t==='s') {
-                            // Soldier
-                            // Hat
-                            ctx.fillStyle = '#000'; ctx.fillRect(ox, oy-6, 4, 5);
-                            ctx.fillStyle = '#fbbf24'; ctx.fillRect(ox+1, oy-4, 2, 1);
-                            // Face
-                            ctx.fillStyle = '#fca5a5'; ctx.fillRect(ox, oy-1, 4, 3);
-                            ctx.fillStyle = '#000'; ctx.fillRect(ox+1, oy+1, 2, 1); // Mustache
-                            // Coat
-                            ctx.fillStyle = '#ef4444'; ctx.fillRect(ox-1, oy+2, 6, 6);
-                            // Belt
-                            ctx.fillStyle = '#fff'; 
-                            ctx.fillRect(ox, oy+2, 1, 1); ctx.fillRect(ox+1, oy+3, 1, 1);
-                            ctx.fillRect(ox+2, oy+4, 1, 1); ctx.fillRect(ox+3, oy+5, 1, 1);
-                            // Legs
-                            ctx.fillStyle = '#1e293b'; 
-                            if (march === 0) { ctx.fillRect(ox, oy+8, 1, 4); ctx.fillRect(ox+3, oy+8, 1, 4); }
-                            else { ctx.fillRect(ox, oy+7, 1, 3); ctx.fillRect(ox+3, oy+8, 1, 4); }
-                        } else {
-                            // Mime
-                            // Beret
-                            ctx.fillStyle = '#000'; ctx.fillRect(ox, oy-5, 5, 2);
-                            // Face
-                            ctx.fillStyle = '#fff'; ctx.fillRect(ox+1, oy-3, 3, 3);
-                            // Shirt
-                            ctx.fillStyle = '#fff'; ctx.fillRect(ox, oy, 5, 6);
-                            ctx.fillStyle = '#334155'; ctx.fillRect(ox, oy+1, 5, 1); ctx.fillRect(ox, oy+3, 5, 1); ctx.fillRect(ox, oy+5, 5, 1);
-                            // Legs
-                            ctx.fillStyle = '#000';
-                            if (march === 0) { ctx.fillRect(ox+1, oy+6, 1, 4); ctx.fillRect(ox+3, oy+6, 1, 4); }
-                            else { ctx.fillRect(ox+1, oy+5, 1, 3); ctx.fillRect(ox+3, oy+6, 1, 4); }
+                    if(Math.sin(this.angle)<0){dd(d1X,d1Y,this.frameCount);dd(d2X,d2Y,this.frameCount);}else{dd(d2X,d2Y,this.frameCount);dd(d1X,d1Y,this.frameCount);}
+                    ctx.strokeStyle='#fbcfe8';ctx.beginPath();ctx.moveTo(d1X+1,d1Y+2);ctx.lineTo(d2X+1,d2Y+2);ctx.stroke();
+                    const c2X=CX+HW, c2Y=CY, sX=c2X+Math.cos(this.soldierAngle)*(R*0.8), sY=c2Y+Math.sin(this.soldierAngle)*(R*0.4)+5;
+                    const ents=[{t:'s',x:sX,y:sY,f:Math.sin(this.soldierAngle)>0}];
+                    if(this.history.length>=25){const h=this.history[0]; ents.push({t:'m',x:h.x,y:h.y,f:h.f});}
+                    ents.sort((a,b)=>a.y-b.y);
+                    ents.forEach(e=>{
+                        ctx.save();ctx.translate(e.x,e.y);if(e.f)ctx.scale(-1,1);
+                        const m=Math.floor(this.frameCount/8)%2, ox=-2, oy=0;
+                        if(e.t==='s'){
+                            ctx.fillStyle='#000';ctx.fillRect(ox,oy-6,4,5);ctx.fillStyle='#fbbf24';ctx.fillRect(ox+1,oy-4,2,1);
+                            ctx.fillStyle='#fca5a5';ctx.fillRect(ox,oy-1,4,3);ctx.fillStyle='#000';ctx.fillRect(ox+1,oy+1,2,1);
+                            ctx.fillStyle='#ef4444';ctx.fillRect(ox-1,oy+2,6,6);
+                            ctx.fillStyle='#fff';ctx.fillRect(ox,oy+2,1,1);ctx.fillRect(ox+1,oy+3,1,1);ctx.fillRect(ox+2,oy+4,1,1);ctx.fillRect(ox+3,oy+5,1,1);
+                            ctx.fillStyle='#1e293b';if(m===0){ctx.fillRect(ox,oy+8,1,4);ctx.fillRect(ox+3,oy+8,1,4);}else{ctx.fillRect(ox,oy+7,1,3);ctx.fillRect(ox+3,oy+8,1,4);}
+                        }else{
+                            ctx.fillStyle='#000';ctx.fillRect(ox,oy-5,5,2);ctx.fillStyle='#fff';ctx.fillRect(ox+1,oy-3,3,3);
+                            ctx.fillStyle='#fff';ctx.fillRect(ox,oy,5,6);ctx.fillStyle='#334155';ctx.fillRect(ox,oy+1,5,1);ctx.fillRect(ox,oy+3,5,1);ctx.fillRect(ox,oy+5,5,1);
+                            ctx.fillStyle='#000';if(m===0){ctx.fillRect(ox+1,oy+6,1,4);ctx.fillRect(ox+3,oy+6,1,4);}else{ctx.fillRect(ox+1,oy+5,1,3);ctx.fillRect(ox+3,oy+6,1,4);}
                         }
                         ctx.restore();
                     });
-
-                    // Sweat
-                    ctx.fillStyle = '#0ea5e9';
-                    this.sweat.forEach(p => ctx.fillRect(p.x, p.y, 1, 1));
-                    
-                    // Global Snow
-                    ctx.fillStyle = '#fff';
-                    this.snow.forEach(p => ctx.fillRect(Math.floor(p.x), Math.floor(p.y), 1, 1));
+                    ctx.fillStyle='#0ea5e9'; this.sweat.forEach(p=>ctx.fillRect(p.x,p.y,1,1));
+                    ctx.fillStyle='#fff'; this.snow.forEach(p=>ctx.fillRect(Math.floor(p.x),Math.floor(p.y),1,1));
                 }
             },
 
-
-            // --- GAME 3: SHUTTER SPEED (Tau) ---
+            // --- GAME 3: SHUTTER ---
             shutter: {
                 frameCount: 0, SCALE: 4, tau: 0.5,
-                
                 init: function() {
-                    canvas.height = 320;
-                    this.frameCount = 0;
-                    this.tau = 0.5;
-
-                    // UI
-                    uiLayer.innerHTML = `
-                        <div class="ui-label-top" style="color: #ff0055; text-align: left; padding-left: 10px;">TARGET: SPEEDING CAR</div>
-                        <div id="status-label" style="position:absolute; bottom:20px; width:100%; text-align:center; color:#fff; font-size:12px; text-shadow:2px 2px #000;">WAITING...</div>
-                    `;
-
+                    canvas.height = 320; this.frameCount=0; this.tau=0.5;
+                    uiLayer.innerHTML = `<div class="ui-label-top" style="color:#ff0055; text-align:left; padding-left:10px;">TARGET: SPEEDING CAR</div><div id="status-label" style="position:absolute; bottom:20px; width:100%; text-align:center; color:#fff; font-size:12px; text-shadow:2px 2px #000;">WAITING...</div>`;
                     controlsArea.style.display = 'flex';
-                    controlsArea.innerHTML = `
-                         <div class="control-group">
-                            <div style="display:flex; justify-content:space-between; width:100%; color:#94a3b8; font-size:10px; margin-bottom:5px;">
-                                <span>Noise</span>
-                                <span>Peak</span>
-                                <span>Loss</span>
-                            </div>
-                            <input type="range" id="shutterSlider" min="0" max="100" value="50">
-                            <div style="font-size:10px; color:#666; margin-top:5px; text-align:center;">ADJUST OBSERVATION TIME (&tau;)</div>
-                         </div>
+                    controlsArea.innerHTML = `<div class="control-group"><div style="display:flex; justify-content:space-between; width:100%; color:#94a3b8; font-size:10px; margin-bottom:5px;"><span>Noise</span><span>Peak</span><span>Loss</span></div><input type="range" id="shutterSlider" min="0" max="100" value="50"><div style="font-size:10px; color:#666; margin-top:5px; text-align:center;">ADJUST OBSERVATION TIME (&tau;)</div></div>`;
+                    document.getElementById('shutterSlider').addEventListener('input', e=>this.tau=parseInt(e.target.value)/100);
+                },
+                update: function() {
+                    this.frameCount++; const lbl = document.getElementById('status-label');
+                    if(this.tau<0.2){lbl.innerText="NOISE DOMINANCE (Zoomed, High Entropy)";lbl.style.color="#ef4444";}
+                    else if(this.tau>0.8){lbl.innerText="MEMORY LOSS (Signal Departed)";lbl.style.color="#64748b";}
+                    else{lbl.innerText="CAUSAL PEAK (Signal Captured)";lbl.style.color="#32CD32";}
+                },
+                draw: function() {
+                    const WIDTH=canvas.width/this.SCALE, HEIGHT=canvas.height/this.SCALE;
+                    ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,canvas.width,canvas.height); ctx.scale(this.SCALE,this.SCALE);
+                    ctx.fillStyle='#111'; ctx.fillRect(0,0,WIDTH,HEIGHT);
+                    ctx.fillStyle='#0f172a'; ctx.fillRect(0,0,WIDTH,HEIGHT/2); ctx.fillStyle='#333'; ctx.fillRect(0,HEIGHT/2,WIDTH,HEIGHT/2);
+                    ctx.fillStyle='#555'; const sp=(this.frameCount*4)%40; for(let i=-40;i<WIDTH;i+=40)ctx.fillRect(i-sp,HEIGHT/2+20,20,2);
+                    const cx=(WIDTH/2)-15, cy=(HEIGHT/2)+10; let z=1, b=0, o=1;
+                    if(this.tau<0.5){z=1+(1-(this.tau*2))*11;}else{const f=(this.tau-0.5)*2; o=1-f; b=f*5;}
+                    ctx.save();
+                    if(z>1){ctx.translate(cx+10,cy+10);ctx.scale(z,z);ctx.translate(-(cx+10),-(cy+10));}
+                    const l=1+Math.floor(b*10), st=b*2;
+                    for(let i=0;i<l;i++){
+                        ctx.globalAlpha=o*(1-(i/l)); const dx=cx-(i*st);
+                        ctx.fillStyle='#ef4444';ctx.fillRect(dx,cy,30,10);ctx.fillStyle='#7f1d1d';ctx.fillRect(dx+5,cy-6,18,6);
+                        ctx.fillStyle='#93c5fd';ctx.fillRect(dx+16,cy-5,6,4);ctx.fillStyle='#fbbf24';ctx.fillRect(dx,cy+4,30,2);
+                        ctx.fillStyle='#111';ctx.fillRect(dx+4,cy+8,6,6);ctx.fillRect(dx+20,cy+8,6,6);
+                    }
+                    ctx.restore();
+                    ctx.setTransform(1,0,0,1,0,0);
+                    if(this.tau<0.5){
+                        const a=(0.5-this.tau)*0.6, id=ctx.getImageData(0,0,canvas.width,canvas.height), d=id.data;
+                        for(let i=0;i<d.length;i+=4){if(Math.random()<a){const v=Math.random()*255;d[i]=v;d[i+1]=v;d[i+2]=v;}}
+                        ctx.putImageData(id,0,0);
+                    }
+                }
+            },
+
+            // --- GAME 4: THE WANDERER ---
+            wanderer: {
+                frameCount:0, SCALE:2, ropeLen:40, wSpeed:2, 
+                wanderer:{x:0,y:0,a:0,ta:0,t:0}, sled:{x:0,y:0,a:0}, 
+                particles:[], totalHeat:0, 
+                history: [], path: [], isReversing: false,
+
+                init: function() {
+                    canvas.height=360; this.frameCount=0; this.totalHeat=0; this.particles=[]; this.ropeLen=40; this.wSpeed=2;
+                    this.history = []; this.path = []; this.isReversing = false;
+                    const W=canvas.width, H=canvas.height;
+                    this.wanderer={x:W/2,y:H/2,a:0,ta:0,t:0}; this.sled={x:W/2,y:H/2+40,a:0};
+                    uiLayer.innerHTML=`<div class="ui-label-top" style="color:#1e3a8a;"><span>Signal (x)</span><span>Response (y)</span></div><div class="ui-label-bottom"><span id="wand-math">Heat &Phi; &ge; Info T</span></div>`;
+                    controlsArea.style.display='flex';
+                    controlsArea.innerHTML=`
+                        <div class="control-group"><label style="color:#94a3b8; font-size:10px;">Rope Length</label><input type="range" id="ropeSlider" min="10" max="100" value="40"></div>
+                        <div class="control-group"><label style="color:#94a3b8; font-size:10px;">Wanderer Speed</label><input type="range" id="speedSlider" min="1" max="10" value="3"></div>
+                        <button id="rev-btn" class="rev-btn" onmousedown="games.wanderer.setReverse(true)" onmouseup="games.wanderer.setReverse(false)" ontouchstart="games.wanderer.setReverse(true)" ontouchend="games.wanderer.setReverse(false)">HOLD TO REVERSE TIME</button>
                     `;
+                    document.getElementById('ropeSlider').addEventListener('input',e=>this.ropeLen=parseInt(e.target.value));
+                    document.getElementById('speedSlider').addEventListener('input',e=>this.wSpeed=parseInt(e.target.value));
+                },
+                setReverse: function(isRev) {
+                    this.isReversing = isRev;
+                    const btn = document.getElementById('rev-btn');
+                    if(btn) { if(isRev) btn.classList.add('rev-active'); else btn.classList.remove('rev-active'); }
+                },
+                update: function() {
+                    const W=canvas.width, H=canvas.height;
+                    if (this.isReversing) {
+                        if (this.history.length > 0) {
+                            const state = this.history.pop();
+                            this.wanderer.x = state.wx; this.wanderer.y = state.wy; this.wanderer.a = state.wa;
+                            this.sled.x = state.sx; this.sled.y = state.sy; this.sled.a = state.sa;
+                            this.totalHeat = state.heat;
+                            this.frameCount--;
+                            if (this.path.length > 0 && this.path[this.path.length-1].f >= this.frameCount) this.path.pop();
+                        }
+                    } else {
+                        this.frameCount++;
+                        if(this.frameCount>this.wanderer.t){this.wanderer.ta=Math.random()*Math.PI*2;this.wanderer.t=this.frameCount+30+Math.random()*60;}
+                        this.wanderer.a+=(this.wanderer.ta-this.wanderer.a)*0.05;
+                        this.wanderer.x+=Math.cos(this.wanderer.a)*this.wSpeed; this.wanderer.y+=Math.sin(this.wanderer.a)*this.wSpeed;
+                        if(this.wanderer.x<20||this.wanderer.x>W-20){this.wanderer.a=Math.PI-this.wanderer.a;this.wanderer.x=Math.max(20,Math.min(W-20,this.wanderer.x));}
+                        if(this.wanderer.y<20||this.wanderer.y>H-20){this.wanderer.a=-this.wanderer.a;this.wanderer.y=Math.max(20,Math.min(H-20,this.wanderer.y));}
+                        const dx=this.wanderer.x-this.sled.x, dy=this.wanderer.y-this.sled.y, d=Math.sqrt(dx*dx+dy*dy);
+                        let hg=0;
+                        if(d>this.ropeLen){
+                            const a=Math.atan2(dy,dx), tx=this.wanderer.x-Math.cos(a)*this.ropeLen, ty=this.wanderer.y-Math.sin(a)*this.ropeLen;
+                            const mx=(tx-this.sled.x)*0.1, my=(ty-this.sled.y)*0.1;
+                            this.sled.x+=mx; this.sled.y+=my; this.sled.a=Math.atan2(my,mx);
+                            this.path.push({x:this.sled.x, y:this.sled.y, f:this.frameCount});
+                            const md=Math.sqrt(mx*mx+my*my); hg=md*2;
+                            if(md>0.5) for(let i=0;i<Math.floor(md);i++) this.particles.push({x:this.sled.x,y:this.sled.y,vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*2,life:1});
+                        }
+                        this.totalHeat+=hg;
+                        this.history.push({wx:this.wanderer.x, wy:this.wanderer.y, wa:this.wanderer.a, sx:this.sled.x, sy:this.sled.y, sa:this.sled.a, heat:this.totalHeat});
+                        if(this.history.length > 1000) { this.history.shift(); this.path.shift(); }
+                    }
+                    document.getElementById('wand-math').innerText=`Entropy Generated (\u03A6): ${Math.floor(this.totalHeat)}`;
+                    for(let i=this.particles.length-1;i>=0;i--){let p=this.particles[i];p.x+=p.vx;p.y+=p.vy;p.life-=0.05;if(p.life<=0)this.particles.splice(i,1);}
+                },
+                draw: function() {
+                    ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle='#f0f9ff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+                    if (this.path.length > 1) {
+                        ctx.strokeStyle='#cbd5e1'; ctx.lineWidth=6; ctx.lineCap='round'; ctx.lineJoin='round';
+                        ctx.beginPath(); ctx.moveTo(this.path[0].x, this.path[0].y);
+                        for(let i=1; i<this.path.length; i++) ctx.lineTo(this.path[i].x, this.path[i].y);
+                        ctx.stroke();
+                    }
+                    ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(this.wanderer.x,this.wanderer.y);ctx.lineTo(this.sled.x,this.sled.y);ctx.stroke();ctx.setLineDash([]);
+                    ctx.save();ctx.translate(this.sled.x,this.sled.y);ctx.rotate(this.sled.a);ctx.fillStyle='#0284c7';ctx.fillRect(-10,-5,20,10);ctx.fillStyle='#0c4a6e';ctx.fillRect(-10,-8,20,2);ctx.fillRect(-10,6,20,2);ctx.restore();
+                    ctx.save();ctx.translate(this.wanderer.x,this.wanderer.y);const b=Math.sin(this.frameCount*0.2)*2;
+                    ctx.fillStyle='rgba(0,0,0,0.2)';ctx.beginPath();ctx.ellipse(0,10,8,4,0,0,Math.PI*2);ctx.fill();
+                    ctx.fillStyle='#dc2626';ctx.fillRect(-6,-10+b,12,14);ctx.fillStyle='#fecaca';ctx.fillRect(-4,-18+b,8,8);ctx.fillStyle='#991b1b';ctx.fillRect(-5,-20+b,10,4);ctx.restore();
+                    if (!this.isReversing) { ctx.fillStyle='#f59e0b';this.particles.forEach(p=>{ctx.globalAlpha=p.life;ctx.fillRect(p.x,p.y,2,2);});ctx.globalAlpha=1; }
+                }
+            },
+
+            // --- GAME 5: BLIND RUDOLPH & GUY (Overhauled) ---
+            chimney: {
+                frameCount:0, SCALE:2, 
+                wanderer:{x:320,y:100,a:0,ta:0,t:0}, sled:{x:320,y:250,a:0},
+                particles:[], totalHeat:0, ropeLen:100, wandererAmp:1,
+                history: [], path: [], isReversing: false,
+
+                init: function() {
+                    canvas.height=360; this.frameCount=0; this.totalHeat=0; this.particles=[]; 
+                    this.history = []; this.path = []; this.isReversing = false;
+                    const W=canvas.width, H=canvas.height;
                     
-                    document.getElementById('shutterSlider').addEventListener('input', (e) => {
-                        this.tau = parseInt(e.target.value) / 100;
-                    });
+                    this.wanderer={x:W/2, y:80, a:0, ta:0, t:0}; 
+                    this.sled={x:W/2, y:200, a:0};
+                    this.ropeLen = 100;
+
+                    uiLayer.innerHTML=`<div class="ui-label-top" style="color:#4ade80;"><span>Blind Rudolph (Free)</span><span>The Cage</span><span>Guy (Trapped)</span></div><div class="ui-label-bottom"><span id="chimney-status">Status: EQUILIBRIUM</span></div>`;
+                    
+                    controlsArea.style.display='flex';
+                    controlsArea.innerHTML=`
+                        <div class="control-group" style="width:100%"><label style="color:#94a3b8; font-size:10px;">Rope on a Spool (&beta;)</label><input type="range" id="ropeSlider" min="20" max="250" value="100"></div>
+                        <button id="rev-btn" class="rev-btn" onmousedown="games.chimney.setReverse(true)" onmouseup="games.chimney.setReverse(false)" ontouchstart="games.chimney.setReverse(true)" ontouchend="games.chimney.setReverse(false)">HOLD TO REVERSE TIME</button>
+                    `;
+                    document.getElementById('ropeSlider').addEventListener('input',e=>this.ropeLen=parseInt(e.target.value));
+                },
+
+                setReverse: function(isRev) {
+                    this.isReversing = isRev;
+                    const btn = document.getElementById('rev-btn');
+                    if(btn) { if(isRev) btn.classList.add('rev-active'); else btn.classList.remove('rev-active'); }
                 },
 
                 update: function() {
-                    this.frameCount++;
-                    const lbl = document.getElementById('status-label');
-                    if(this.tau < 0.2) { lbl.innerText = "NOISE DOMINANCE (Zoomed, High Entropy)"; lbl.style.color="#ef4444"; }
-                    else if(this.tau > 0.8) { lbl.innerText = "MEMORY LOSS (Signal Departed)"; lbl.style.color="#64748b"; }
-                    else { lbl.innerText = "CAUSAL PEAK (Signal Captured)"; lbl.style.color="#32CD32"; }
+                    const W=canvas.width, H=canvas.height;
+                    
+                    if (this.isReversing) {
+                        if (this.history.length > 0) {
+                            const state = this.history.pop();
+                            this.wanderer.x = state.wx; this.wanderer.y = state.wy; this.wanderer.a = state.wa;
+                            this.sled.x = state.sx; this.sled.y = state.sy; this.sled.a = state.sa;
+                            this.totalHeat = state.heat;
+                            this.frameCount--;
+                            if (this.path.length > 0 && this.path[this.path.length-1].f >= this.frameCount) this.path.pop();
+                        }
+                    } else {
+                        this.frameCount++;
+                        
+                        // 1. Rudolph 2D Random Walk (Signal)
+                        if(this.frameCount > this.wanderer.t){
+                            this.wanderer.ta = Math.random()*Math.PI*2;
+                            this.wanderer.t = this.frameCount + 30 + Math.random()*60;
+                        }
+                        this.wanderer.a += (this.wanderer.ta - this.wanderer.a)*0.05;
+                        this.wanderer.x += Math.cos(this.wanderer.a)*1.5; 
+                        this.wanderer.y += Math.sin(this.wanderer.a)*1.5;
+
+                        // Bounds for Rudolph (Free, Top/Mid)
+                        this.wanderer.x = Math.max(20, Math.min(W-20, this.wanderer.x));
+                        this.wanderer.y = Math.max(20, Math.min(H-20, this.wanderer.y));
+
+                        // 2. Rope Physics (Response Follows Signal)
+                        const dx = this.wanderer.x - this.sled.x;
+                        const dy = this.wanderer.y - this.sled.y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        const ps = {x:this.sled.x, y:this.sled.y};
+
+                        // Logic: If rope is tight, pull Guy
+                        if (dist > this.ropeLen) {
+                            const angle = Math.atan2(dy, dx);
+                            const targetX = this.wanderer.x - Math.cos(angle)*this.ropeLen;
+                            const targetY = this.wanderer.y - Math.sin(angle)*this.ropeLen;
+                            
+                            // Slide towards target
+                            this.sled.x += (targetX - this.sled.x) * 0.2;
+                            this.sled.y += (targetY - this.sled.y) * 0.2;
+                            this.sled.a = Math.atan2(dy, dx); // Face Rudolph
+                        }
+
+                        // 3. CAGE Constraints (The Trap)
+                        // Centered cage
+                        const CW = 120, CH = 120;
+                        const CL = W/2 - CW/2, CR = W/2 + CW/2, CT = H/2 - CH/2, CB = H/2 + CH/2;
+                        
+                        let hit = false;
+                        if(this.sled.x < CL) { this.sled.x = CL; hit=true; }
+                        if(this.sled.x > CR) { this.sled.x = CR; hit=true; }
+                        if(this.sled.y < CT) { this.sled.y = CT; hit=true; }
+                        if(this.sled.y > CB) { this.sled.y = CB; hit=true; }
+
+                        // 4. Heat & Tracks
+                        const moveDist = Math.sqrt(Math.pow(this.sled.x-ps.x,2) + Math.pow(this.sled.y-ps.y,2));
+                        
+                        if (moveDist > 0.1) {
+                            this.path.push({x:this.sled.x, y:this.sled.y, f:this.frameCount});
+                            if (this.path.length > 500) this.path.shift();
+
+                            // Heat
+                            const hf = moveDist * 5;
+                            for(let i=0; i<Math.floor(hf); i++) {
+                                this.particles.push({
+                                    x:this.sled.x, y:this.sled.y, 
+                                    vx:(Math.random()-0.5)*4, vy:(Math.random()-0.5)*4, 
+                                    life:1, color:'#fef3c7'
+                                });
+                            }
+                        }
+
+                        // UI Status
+                        const sl=document.getElementById('chimney-status');
+                        if(hit){sl.innerText="Status: PINNED (Blindness)";sl.style.color="#ef4444";}
+                        else if(moveDist>0.1){sl.innerText="Status: TRACKING";sl.style.color="#fbbf24";}
+                        else{sl.innerText="Status: SLACK (No Info)";sl.style.color="#64748b";}
+
+                        // Save History
+                        this.history.push({
+                            wx:this.wanderer.x, wy:this.wanderer.y, wa:this.wanderer.a,
+                            sx:this.sled.x, sy:this.sled.y, sa:this.sled.a,
+                            heat:0 // Simplified
+                        });
+                        if(this.history.length>1000) { this.history.shift(); this.path.shift(); }
+                    }
+
+                    // Particles always update forward
+                    for(let i=this.particles.length-1;i>=0;i--){let p=this.particles[i];p.x+=p.vx;p.y+=p.vy;p.life-=0.05;if(p.life<=0)this.particles.splice(i,1);}
                 },
 
                 draw: function() {
-                    const WIDTH = canvas.width/this.SCALE;
-                    const HEIGHT = canvas.height/this.SCALE;
+                    const W=canvas.width, H=canvas.height;
+                    ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,W,H);
                     
-                    ctx.setTransform(1,0,0,1,0,0);
-                    ctx.clearRect(0,0,canvas.width,canvas.height);
-                    
-                    // 1. Scene (Low Res)
-                    ctx.scale(this.SCALE, this.SCALE);
-                    
-                    // BG
-                    ctx.fillStyle = '#111'; ctx.fillRect(0,0,WIDTH,HEIGHT);
-                    ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,WIDTH,HEIGHT/2); // Sky
-                    ctx.fillStyle = '#333'; ctx.fillRect(0,HEIGHT/2,WIDTH,HEIGHT/2); // Ground
-                    
-                    // Road
-                    ctx.fillStyle = '#555';
-                    const speed = (this.frameCount*4)%40;
-                    for(let i=-40; i<WIDTH; i+=40) ctx.fillRect(i-speed, HEIGHT/2+20, 20, 2);
+                    // Background
+                    ctx.fillStyle='#0f172a';ctx.fillRect(0,0,W,H); 
 
-                    // Car Logic
-                    const cx = (WIDTH/2)-15, cy = (HEIGHT/2)+10;
-                    let zoom=1, blur=0, opacity=1;
-                    
-                    if(this.tau < 0.5) {
-                        zoom = 1 + (1-(this.tau*2))*11;
-                    } else {
-                        const f = (this.tau-0.5)*2;
-                        opacity = 1-f; blur = f*5;
+                    // Cage Floor
+                    const CW=120, CH=120;
+                    const CL=W/2-CW/2, CR=W/2+CW/2, CT=H/2-CH/2, CB=H/2+CH/2;
+                    ctx.fillStyle='#1e293b'; ctx.fillRect(CL, CT, CW, CH);
+
+                    // Tracks (Inside Cage mostly)
+                    if (this.path.length > 1) {
+                        ctx.strokeStyle='#cbd5e1'; ctx.lineWidth=4; ctx.lineCap='round'; ctx.lineJoin='round';
+                        ctx.beginPath();
+                        ctx.moveTo(this.path[0].x, this.path[0].y);
+                        for(let i=1; i<this.path.length; i++) ctx.lineTo(this.path[i].x, this.path[i].y);
+                        ctx.stroke();
                     }
 
-                    // Draw Car
-                    ctx.save();
-                    if(zoom>1) {
-                         ctx.translate(cx+10, cy+10); ctx.scale(zoom, zoom); ctx.translate(-(cx+10), -(cy+10));
-                    }
-                    const layers = 1+Math.floor(blur*10);
-                    const step = blur*2;
-                    for(let i=0; i<layers; i++) {
-                        ctx.globalAlpha = opacity * (1-(i/layers));
-                        const dx = cx - (i*step);
-                        ctx.fillStyle = '#ef4444'; ctx.fillRect(dx, cy, 30, 10); // Body
-                        ctx.fillStyle = '#7f1d1d'; ctx.fillRect(dx+5, cy-6, 18, 6); // Cabin
-                        ctx.fillStyle = '#93c5fd'; ctx.fillRect(dx+16, cy-5, 6, 4); // Glass
-                        ctx.fillStyle = '#fbbf24'; ctx.fillRect(dx, cy+4, 30, 2); // Stripe
-                        ctx.fillStyle = '#111'; ctx.fillRect(dx+4, cy+8, 6,6); ctx.fillRect(dx+20, cy+8, 6,6); // Wheels
-                    }
-                    ctx.restore();
-                    
-                    // 2. Noise (High Res)
-                    ctx.setTransform(1,0,0,1,0,0);
-                    if(this.tau < 0.5) {
-                        const amount = (0.5-this.tau)*0.6; // max 30%
-                        const id = ctx.getImageData(0,0,canvas.width,canvas.height);
-                        const d = id.data;
-                        for(let i=0; i<d.length; i+=4) {
-                            if(Math.random()<amount) {
-                                const v = Math.random()*255; d[i]=v; d[i+1]=v; d[i+2]=v;
-                            }
-                        }
-                        ctx.putImageData(id, 0,0);
-                    }
-                }
-            },
+                    // Cage Bars
+                    ctx.strokeStyle='#22c55e'; ctx.lineWidth=4;
+                    ctx.strokeRect(CL, CT, CW, CH);
 
-
-            // --- GAME 4: THE WANDERER (Rope Physics) ---
-            wanderer: {
-                frameCount:0, SCALE:2,
-                ropeLen: 40, wSpeed: 2,
-                wanderer: {x:0, y:0, a:0, ta:0, t:0},
-                sled: {x:0, y:0, a:0},
-                particles: [], totalHeat: 0,
-                snowCanvas: null, snowCtx: null,
-
-                init: function() {
-                    canvas.height = 360; // Larger height for this one
-                    this.frameCount = 0;
-                    this.totalHeat = 0;
-                    this.particles = [];
-                    this.ropeLen = 40;
-                    this.wSpeed = 2;
-
-                    const WIDTH = canvas.width; 
-                    const HEIGHT = canvas.height; 
-
-                    this.wanderer = {x:WIDTH/2, y:HEIGHT/2, a:0, ta:0, t:0};
-                    this.sled = {x:WIDTH/2, y:HEIGHT/2+40, a:0};
-
-                    // UI
-                    uiLayer.innerHTML = `
-                        <div class="ui-label-top" style="color: #1e3a8a;">
-                            <span>Signal (x)</span>
-                            <span>Response (y)</span>
-                        </div>
-                        <div class="ui-label-bottom">
-                            <span id="wand-math">Heat &Phi; &ge; Info T</span>
-                        </div>
-                    `;
-
-                    controlsArea.style.display = 'flex';
-                    controlsArea.innerHTML = `
-                         <div class="control-group">
-                            <label style="color:#94a3b8; font-size:10px;">Rope Length (Lag)</label>
-                            <input type="range" id="ropeSlider" min="10" max="100" value="40">
-                         </div>
-                         <div class="control-group">
-                            <label style="color:#94a3b8; font-size:10px;">Wanderer Speed</label>
-                            <input type="range" id="speedSlider" min="1" max="10" value="3">
-                         </div>
-                    `;
-
-                    document.getElementById('ropeSlider').addEventListener('input', e => this.ropeLen=parseInt(e.target.value));
-                    document.getElementById('speedSlider').addEventListener('input', e => this.wSpeed=parseInt(e.target.value));
-                    
-                    // Create an offscreen canvas for persistent tracks
-                    this.snowCanvas = document.createElement('canvas');
-                    this.snowCanvas.width = WIDTH;
-                    this.snowCanvas.height = HEIGHT;
-                    this.snowCtx = this.snowCanvas.getContext('2d');
-                    this.snowCtx.fillStyle = '#f0f9ff';
-                    this.snowCtx.fillRect(0,0,WIDTH,HEIGHT);
-                },
-
-                update: function() {
-                    this.frameCount++;
-                    const WIDTH = canvas.width;
-                    const HEIGHT = canvas.height;
-
-                    // Wanderer
-                    if(this.frameCount > this.wanderer.t) {
-                        this.wanderer.ta = Math.random()*Math.PI*2;
-                        this.wanderer.t = this.frameCount + 30 + Math.random()*60;
-                    }
-                    const diff = this.wanderer.ta - this.wanderer.a;
-                    this.wanderer.a += diff*0.05;
-                    this.wanderer.x += Math.cos(this.wanderer.a)*this.wSpeed;
-                    this.wanderer.y += Math.sin(this.wanderer.a)*this.wSpeed;
-                    
-                    // Bounds
-                    if(this.wanderer.x < 20 || this.wanderer.x > WIDTH-20) { this.wanderer.a = Math.PI - this.wanderer.a; this.wanderer.x = Math.max(20, Math.min(WIDTH-20, this.wanderer.x)); }
-                    if(this.wanderer.y < 20 || this.wanderer.y > HEIGHT-20) { this.wanderer.a = -this.wanderer.a; this.wanderer.y = Math.max(20, Math.min(HEIGHT-20, this.wanderer.y)); }
-
-                    // Sled
+                    // Rope
+                    ctx.beginPath();
+                    ctx.strokeStyle='#94a3b8';ctx.lineWidth=2;
+                    // Slack vs Tight visual
                     const dx = this.wanderer.x - this.sled.x;
                     const dy = this.wanderer.y - this.sled.y;
                     const dist = Math.sqrt(dx*dx + dy*dy);
-                    let heatGen = 0;
-
-                    if(dist > this.ropeLen) {
-                        const angle = Math.atan2(dy, dx);
-                        const tx = this.wanderer.x - Math.cos(angle)*this.ropeLen;
-                        const ty = this.wanderer.y - Math.sin(angle)*this.ropeLen;
-                        
-                        const mx = (tx - this.sled.x)*0.1;
-                        const my = (ty - this.sled.y)*0.1;
-                        
-                        const prevX = this.sled.x;
-                        const prevY = this.sled.y;
-                        this.sled.x += mx; this.sled.y += my;
-                        this.sled.a = Math.atan2(my, mx);
-
-                        // Tracks
-                        this.snowCtx.strokeStyle = '#cbd5e1'; this.snowCtx.lineWidth=6; this.snowCtx.lineCap='round';
-                        this.snowCtx.beginPath(); this.snowCtx.moveTo(prevX, prevY); this.snowCtx.lineTo(this.sled.x, this.sled.y); this.snowCtx.stroke();
-
-                        // Heat
-                        const moved = Math.sqrt(mx*mx+my*my);
-                        heatGen = moved * 2;
-                        if(moved > 0.5) {
-                            for(let i=0; i<Math.floor(moved); i++) {
-                                this.particles.push({x:this.sled.x, y:this.sled.y, vx:(Math.random()-0.5)*2, vy:(Math.random()-0.5)*2, life:1});
-                            }
-                        }
+                    if (dist < this.ropeLen - 10) {
+                        // Draw slack curve (bezier)
+                        ctx.moveTo(this.wanderer.x, this.wanderer.y);
+                        ctx.quadraticCurveTo(this.wanderer.x, this.sled.y, this.sled.x, this.sled.y);
+                    } else {
+                        // Tight
+                        ctx.moveTo(this.wanderer.x, this.wanderer.y);
+                        ctx.lineTo(this.sled.x, this.sled.y);
                     }
+                    ctx.stroke();
 
-                    this.totalHeat += heatGen;
-                    document.getElementById('wand-math').innerText = `Entropy Generated (\u03A6): ${Math.floor(this.totalHeat)}`;
+                    // Rudolph
+                    const rx=this.wanderer.x, ry=this.wanderer.y;
+                    ctx.save(); ctx.translate(rx,ry);
+                    if (Math.cos(this.wanderer.a) < 0) ctx.scale(-1,1); // Face direction
+                    ctx.fillStyle='#92400e';ctx.fillRect(-10,-6,20,12);ctx.fillStyle='#b45309';ctx.fillRect(8,-10,10,10);
+                    ctx.fillStyle='#ef4444';ctx.shadowColor='#ef4444';ctx.shadowBlur=10;ctx.beginPath();ctx.arc(18,-5,3,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+                    ctx.fillStyle='#fcd34d';ctx.fillRect(10,-14,2,4);ctx.fillRect(14,-14,2,4);
+                    const l=Math.sin(this.frameCount*0.5)*3;ctx.fillStyle='#92400e';ctx.fillRect(-8,6+l,4,6);ctx.fillRect(4,6-l,4,6);
+                    ctx.restore(); 
 
-                    // Particles
-                    for(let i=this.particles.length-1; i>=0; i--) {
-                        let p = this.particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=0.05;
-                        if(p.life<=0) this.particles.splice(i,1);
-                    }
-                },
-
-                draw: function() {
-                    ctx.setTransform(1,0,0,1,0,0);
-                    ctx.drawImage(this.snowCanvas, 0, 0);
-
-                    // Rope
-                    ctx.strokeStyle = '#0f172a'; ctx.lineWidth=2; ctx.setLineDash([4,4]);
-                    ctx.beginPath(); ctx.moveTo(this.wanderer.x, this.wanderer.y); ctx.lineTo(this.sled.x, this.sled.y); ctx.stroke(); ctx.setLineDash([]);
-
-                    // Sled
-                    ctx.save(); ctx.translate(this.sled.x, this.sled.y); ctx.rotate(this.sled.a);
-                    ctx.fillStyle = '#0284c7'; ctx.fillRect(-10,-5,20,10);
-                    ctx.fillStyle = '#0c4a6e'; ctx.fillRect(-10,-8,20,2); ctx.fillRect(-10,6,20,2);
+                    // Guy (The Follower - Blue Reindeer)
+                    const gx=this.sled.x, gy=this.sled.y;
+                    ctx.save(); ctx.translate(gx,gy);
+                    // if (Math.cos(this.sled.a) < 0) ctx.scale(-1,1); // Face direction
+                    ctx.fillStyle='#3b82f6';ctx.fillRect(-10,-6,20,12); // Blue Body
+                    ctx.fillStyle='#2563eb';ctx.fillRect(8,-10,10,10); // Blue Head
+                    ctx.fillStyle='#60a5fa';ctx.fillRect(10,-14,2,4);ctx.fillRect(14,-14,2,4); // Antlers
+                    ctx.fillStyle='#1d4ed8';ctx.fillRect(-8,6,4,6);ctx.fillRect(4,6,4,6); // Legs
                     ctx.restore();
 
-                    // Wanderer
-                    ctx.save(); ctx.translate(this.wanderer.x, this.wanderer.y);
-                    const bob = Math.sin(this.frameCount*0.2)*2;
-                    ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.beginPath(); ctx.ellipse(0,10,8,4,0,0,Math.PI*2); ctx.fill(); // Shadow
-                    ctx.fillStyle = '#dc2626'; ctx.fillRect(-6, -10+bob, 12, 14); // Body
-                    ctx.fillStyle = '#fecaca'; ctx.fillRect(-4, -18+bob, 8, 8); // Head
-                    ctx.fillStyle = '#991b1b'; ctx.fillRect(-5, -20+bob, 10, 4); // Hat
-                    ctx.restore();
-
-                    // Heat
-                    ctx.fillStyle = '#f59e0b';
-                    this.particles.forEach(p => { ctx.globalAlpha=p.life; ctx.fillRect(p.x, p.y, 2, 2); });
-                    ctx.globalAlpha = 1;
+                    if (!this.isReversing) { ctx.fillStyle='#f59e0b';this.particles.forEach(p=>{ctx.globalAlpha=p.life;ctx.fillRect(p.x,p.y,3,3);});ctx.globalAlpha=1; }
                 }
             },
-            
-            // --- GAME 5: RUDOLPH'S PIPE TROUBLE (Non-Linear Model) ---
-            chimney: {
-                frameCount: 0, SCALE: 2,
-                wandererX: 320, sledX: 320,
-                targetWandererX: 320, wandererTimer: 0,
-                particles: [], totalHeat: 0,
-                stickiness: 2, wandererAmp: 1,
+
+            // --- GAME 6: SIGNAL RUNNER (Receptor Dynamics) ---
+            signalRunner: {
+                frameCount: 0,
+                SCALE: 2,
+                ligand: [], receptor: [], switchCountWindow: [],
+                beta: 0.15, tau: 20, ligandMean: 0.5,
+                metrics: { dissipation:0, information:0, receptorState:0 },
+                numReceptors: 100, historyLimit: 600,
 
                 init: function() {
-                    canvas.height = 360;
+                    canvas.height = 300;
                     this.frameCount = 0;
-                    this.totalHeat = 0;
-                    this.particles = [];
-                    this.wandererX = 320;
-                    this.sledX = 320;
-                    this.stickiness = 2; // Threshold force to move
-                    this.wandererAmp = 1; // Range multiplier
+                    this.ligand = new Array(this.historyLimit).fill(0.5);
+                    this.receptor = new Array(this.historyLimit).fill(50);
+                    this.switchCountWindow = new Array(60).fill(0);
+                    this.beta = 0.15;
+                    this.tau = 20;
+                    this.ligandMean = 0.5;
+                    this.metrics = { dissipation:0, information:0, receptorState:50 };
 
-                    // UI
                     uiLayer.innerHTML = `
-                        <div class="ui-label-top" style="color: #4ade80;">
-                            <span>Wall (0)</span>
-                            <span>The Tube</span>
-                            <span>Wall (1)</span>
+                        <div style="position:absolute; top:10px; left:10px; font-size:10px; color:#ef4444;">[L] Ligand Input</div>
+                        <div style="position:absolute; top:25px; left:10px; font-size:10px; color:#3b82f6;">Receptor Output [%]</div>
+                        <div class="hud-bar" style="right:10px; height:120px; border-color:#334155;">
+                            <div style="position:absolute; bottom:0; width:100%; background:#ef4444; height:${this.metrics.dissipation*10}%" id="dissip-bar"></div>
                         </div>
-                        <div class="ui-label-bottom">
-                            <span id="chimney-status">Status: EQUILIBRIUM</span>
+                        <div style="position:absolute; top:20px; right:35px; text-align:right;">
+                            <div style="font-size:10px; color:#ef4444;">DISSIPATION (&Phi;) <span id="val-phi">0.00</span></div>
+                            <div style="font-size:10px; color:#22c55e; margin-top:5px;">INFORMATION (T) <span id="val-t">0.00</span></div>
+                            <div style="font-size:10px; color:#3b82f6; margin-top:5px;">OCCUPANCY <span id="val-occ">50%</span></div>
                         </div>
                     `;
 
                     controlsArea.style.display = 'flex';
                     controlsArea.innerHTML = `
-                        <div class="control-group">
-                            <label style="color:#94a3b8; font-size:10px;">Flight Range</label>
-                            <input type="range" id="ampSlider" min="1" max="50" value="10">
-                        </div>
-                        <div class="control-group">
-                            <label style="color:#94a3b8; font-size:10px;">Pipe Tightness</label>
-                            <input type="range" id="stickSlider" min="0" max="10" value="2">
-                        </div>
+                        <div class="control-group"><label style="color:#ef4444; font-size:10px;">[L] Mean Ligand</label><input type="range" id="ligandSlider" min="1" max="30" value="5"></div>
+                        <div class="control-group"><label style="color:#3b82f6; font-size:10px;">&beta; (Relaxation/Cost)</label><input type="range" id="betaSlider" min="1" max="50" value="15"></div>
+                        <div class="control-group" style="width:100%"><label style="color:#fbbf24; font-size:10px;">&tau; (Time Lag)</label><input type="range" id="tauSlider" min="0" max="200" value="20"></div>
                     `;
 
-                    document.getElementById('ampSlider').addEventListener('input', e => this.wandererAmp = parseInt(e.target.value) / 10);
-                    document.getElementById('stickSlider').addEventListener('input', e => this.stickiness = parseInt(e.target.value));
+                    document.getElementById('ligandSlider').addEventListener('input', e => this.ligandMean = parseInt(e.target.value)/10);
+                    document.getElementById('betaSlider').addEventListener('input', e => this.beta = parseInt(e.target.value)/100);
+                    document.getElementById('tauSlider').addEventListener('input', e => this.tau = parseInt(e.target.value));
                 },
 
                 update: function() {
-                    this.frameCount++;
-                    const WIDTH = canvas.width;
-                    const CENTER = WIDTH / 2;
-                    const CHIMNEY_WIDTH = 120;
-                    const WALL_L = CENTER - CHIMNEY_WIDTH/2;
-                    const WALL_R = CENTER + CHIMNEY_WIDTH/2;
+                    // Physics Logic
+                    const theta = 0.05, sigma = 0.1;
+                    const prevL = this.ligand[this.ligand.length-1];
+                    const noise = (Math.random()-0.5)*2;
+                    let newL = prevL + theta*(this.ligandMean - prevL) + sigma*noise;
+                    newL = Math.max(0.0, newL);
 
-                    // 1. Update Rudolph (The Signal)
-                    if (this.frameCount > this.wandererTimer) {
-                        const range = 200 * this.wandererAmp; 
-                        this.targetWandererX = CENTER + (Math.random() - 0.5) * 2 * range;
-                        this.wandererTimer = this.frameCount + 60 + Math.random() * 60;
-                    }
-                    const dx = this.targetWandererX - this.wandererX;
-                    this.wandererX += dx * 0.02; 
+                    const prevR = this.receptor[this.receptor.length-1];
+                    const k_on = 0.3;
+                    let binds=0, unbinds=0;
 
-                    // 2. Physics: Rope Tension & Stickiness
-                    const tension = (this.wandererX - this.sledX) * 0.1;
-                    let velocity = 0;
+                    // Stochastic update
+                    for(let i=0; i<prevR; i++) if(Math.random() < this.beta) unbinds++;
+                    const free = this.numReceptors - prevR;
+                    const p_bind = Math.min(1, k_on * newL);
+                    for(let i=0; i<free; i++) if(Math.random() < p_bind) binds++;
 
-                    if (Math.abs(tension) > this.stickiness) {
-                        velocity = (Math.abs(tension) - this.stickiness) * Math.sign(tension);
-                    }
+                    const newR = prevR + binds - unbinds;
 
-                    // 3. Move Present
-                    const prevSledX = this.sledX;
-                    this.sledX += velocity;
+                    // Buffers
+                    this.ligand.push(newL); this.ligand.shift();
+                    this.receptor.push(newR); this.receptor.shift();
 
-                    // 4. Saturation (Walls)
-                    let hitWall = false;
-                    if (this.sledX <= WALL_L) { this.sledX = WALL_L; hitWall = true; }
-                    if (this.sledX >= WALL_R) { this.sledX = WALL_R; hitWall = true; }
-
-                    // 5. Thermodynamics (Heat Generation)
-                    const movedDist = Math.abs(this.sledX - prevSledX);
-                    let heatFrame = 0;
+                    // Metrics
+                    const totalEvents = binds + unbinds;
+                    this.switchCountWindow.push(totalEvents);
+                    this.switchCountWindow.shift();
+                    const eventRate = this.switchCountWindow.reduce((a,b)=>a+b,0) / this.switchCountWindow.length;
                     
-                    if (movedDist > 0.1) {
-                         heatFrame = movedDist * 5; 
-                         for(let i=0; i<Math.floor(heatFrame); i++) {
-                             this.particles.push({
-                                 x: this.sledX + (Math.random()-0.5)*20, 
-                                 y: 180 + (Math.random()-0.5)*20, 
-                                 vx: (Math.random()-0.5)*4, 
-                                 vy: (Math.random()-0.5)*4, 
-                                 life: 1.0, color: '#fef3c7' // Dust/Sparks
-                             });
-                         }
-                    }
+                    const phi = (eventRate / this.numReceptors) * (1 + this.beta*10) * 10;
+                    
+                    // Correlation (T)
+                    const corr = this.calcCorr(this.receptor, this.ligand, this.tau);
+                    const t = Math.max(0, corr*corr);
 
-                    const statusLbl = document.getElementById('chimney-status');
-                    if (hitWall) {
-                        statusLbl.innerText = "Status: SATURATED (Blindness)";
-                        statusLbl.style.color = "#ef4444";
-                    } else if (movedDist > 0.1) {
-                        statusLbl.innerText = "Status: DRAGGING";
-                        statusLbl.style.color = "#fbbf24";
-                    } else {
-                        statusLbl.innerText = "Status: STUCK (Sub-Threshold)";
-                        statusLbl.style.color = "#64748b";
-                    }
+                    this.metrics = { dissipation: phi, information: t, receptorState: newR };
+                    this.frameCount++;
 
-                    for(let i=this.particles.length-1; i>=0; i--) {
-                        let p = this.particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=0.05;
-                        if(p.life<=0) this.particles.splice(i,1);
+                    if(this.frameCount%5===0) {
+                        document.getElementById('val-phi').innerText = phi.toFixed(2);
+                        document.getElementById('val-t').innerText = t.toFixed(2);
+                        document.getElementById('val-occ').innerText = newR + "%";
+                        document.getElementById('dissip-bar').style.height = Math.min(100, phi*10) + "%";
                     }
                 },
 
-                draw: function() {
-                    const WIDTH = canvas.width;
-                    const HEIGHT = canvas.height;
-                    const CENTER = WIDTH / 2;
-                    const CHIMNEY_WIDTH = 120;
-                    const WALL_L = CENTER - CHIMNEY_WIDTH/2;
-                    const WALL_R = CENTER + CHIMNEY_WIDTH/2;
-                    
-                    ctx.setTransform(1,0,0,1,0,0);
-                    ctx.clearRect(0,0,WIDTH,HEIGHT);
-                    
-                    // Background
-                    ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,WIDTH,HEIGHT); 
-                    
-                    // The Pipe (Inner Void)
-                    ctx.fillStyle = '#000'; ctx.fillRect(WALL_L, 0, CHIMNEY_WIDTH, HEIGHT);
-                    
-                    // Draw Pipe Structure
-                    ctx.fillStyle = '#22c55e'; // Light Green
-                    ctx.fillRect(WALL_L-40, 0, 40, HEIGHT); // Left Wall Body
-                    ctx.fillRect(WALL_R, 0, 40, HEIGHT);   // Right Wall Body
-                    
-                    ctx.fillStyle = '#15803d'; // Dark Green Outline
-                    ctx.fillRect(WALL_L, 0, 4, HEIGHT);
-                    ctx.fillRect(WALL_R-4, 0, 4, HEIGHT);
-                    ctx.fillRect(WALL_L-40, 0, 4, HEIGHT);
-                    ctx.fillRect(WALL_R+36, 0, 4, HEIGHT);
+                calcCorr: function(yArr, xArr, lag) {
+                    const n = yArr.length;
+                    if (n < lag + 10) return 0;
+                    let sx=0, sy=0, sxy=0, sx2=0, sy2=0;
+                    const count = n-lag;
+                    for(let i=lag; i<n; i++) {
+                        const y = yArr[i];
+                        const x = xArr[i-lag];
+                        sx+=x; sy+=y; sxy+=x*y; sx2+=x*x; sy2+=y*y;
+                    }
+                    const num = (count*sxy) - (sx*sy);
+                    const den = Math.sqrt((count*sx2 - sx*sx) * (count*sy2 - sy*sy));
+                    return den===0 ? 0 : num/den;
+                },
 
-                    // Draw Rope
-                    ctx.beginPath();
-                    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
-                    ctx.moveTo(this.wandererX, 100); 
-                    ctx.lineTo(this.sledX, 180);     
+                draw: function() {
+                    const W = canvas.width, H = canvas.height;
+                    const groundY = H - 20;
+                    const ceilingY = H * 0.4;
+                    const graphH = groundY - ceilingY;
+
+                    ctx.clearRect(0, 0, W, H);
+
+                    // Saturation Line
+                    ctx.strokeStyle = '#334155'; ctx.setLineDash([4,4]); ctx.lineWidth=1;
+                    ctx.beginPath(); ctx.moveTo(0, ceilingY); ctx.lineTo(W, ceilingY); ctx.stroke();
+                    ctx.fillStyle='#64748b'; ctx.font='10px monospace'; ctx.fillText('SATURATION', 5, ceilingY-5);
+                    ctx.setLineDash([]);
+
+                    // Draw Ligand (Red)
+                    ctx.beginPath(); ctx.strokeStyle='#ef4444'; ctx.lineWidth=2;
+                    const xStep = W / this.historyLimit;
+                    this.ligand.forEach((val, i) => {
+                        const x = i * xStep;
+                        const y = groundY - (val * graphH);
+                        if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+                    });
                     ctx.stroke();
 
-                    // Draw Rudolph (The Signal)
-                    const rx = this.wandererX;
-                    const ry = 100;
-                    ctx.save(); ctx.translate(rx, ry);
-                    
-                    // Body
-                    ctx.fillStyle = '#92400e'; ctx.fillRect(-10, -6, 20, 12);
-                    // Head
-                    ctx.fillStyle = '#b45309'; ctx.fillRect(8, -10, 10, 10);
-                    // Nose (Glowing Red)
-                    ctx.fillStyle = '#ef4444'; 
-                    ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 10;
-                    ctx.beginPath(); ctx.arc(18, -5, 3, 0, Math.PI*2); ctx.fill();
-                    ctx.shadowBlur = 0;
-                    // Antlers
-                    ctx.fillStyle = '#fcd34d'; 
-                    ctx.fillRect(10, -14, 2, 4); ctx.fillRect(14, -14, 2, 4);
-                    // Legs (Simple bobbing)
-                    const legOff = Math.sin(this.frameCount*0.5)*3;
-                    ctx.fillStyle = '#92400e'; 
-                    ctx.fillRect(-8, 6+legOff, 4, 6); ctx.fillRect(4, 6-legOff, 4, 6);
-
-                    ctx.restore();
-                    ctx.fillStyle = '#fff'; ctx.font = "10px monospace"; ctx.fillText("RUDOLPH", rx-20, ry-30);
-
-                    // Draw Present (The Response)
-                    const px = this.sledX;
-                    const py = 180;
-                    ctx.save(); ctx.translate(px, py);
-                    // Box
-                    ctx.fillStyle = '#dc2626'; ctx.fillRect(-12, -12, 24, 24);
-                    // Ribbon (Gold Cross)
-                    ctx.fillStyle = '#fcd34d'; 
-                    ctx.fillRect(-4, -12, 8, 24); // Vertical
-                    ctx.fillRect(-12, -4, 24, 8); // Horizontal
-                    // Bow
-                    ctx.beginPath(); ctx.arc(0, -12, 6, 0, Math.PI, true); ctx.fill();
-                    ctx.restore();
-
-                    // Draw Particles (Dust/Sparks)
-                    this.particles.forEach(p => {
-                        ctx.fillStyle = p.color;
-                        ctx.globalAlpha = p.life;
-                        ctx.fillRect(p.x, p.y, 3, 3);
+                    // Draw Receptor (Blue Area)
+                    ctx.beginPath(); ctx.fillStyle='rgba(59, 130, 246, 0.4)'; ctx.strokeStyle='#3b82f6';
+                    ctx.moveTo(0, groundY);
+                    this.receptor.forEach((val, i) => {
+                        const x = i * xStep;
+                        const y = groundY - ((val/this.numReceptors) * graphH);
+                        ctx.lineTo(x,y);
                     });
-                    ctx.globalAlpha = 1.0;
+                    ctx.lineTo(W, groundY); ctx.fill(); ctx.stroke();
+
+                    // Tau Line
+                    const pastX = W - (this.tau * xStep);
+                    ctx.setLineDash([5,5]); ctx.strokeStyle='#fbbf24'; ctx.beginPath();
+                    ctx.moveTo(pastX, 0); ctx.lineTo(pastX, H); ctx.stroke();
+                    ctx.fillStyle='#fbbf24'; ctx.fillText(`-${this.tau}`, pastX-20, H-5);
                 }
             }
         };
