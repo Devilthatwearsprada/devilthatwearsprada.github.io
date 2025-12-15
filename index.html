@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>80s Thermodynamics Arcade</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
@@ -11,6 +11,11 @@
             --text-color: #dbeafe;
             --accent-color: #ff0055;
             --crt-scanline: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -22,11 +27,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Better for mobile scrolling */
             overflow-x: hidden;
-            overflow-y: auto; /* Allow scrolling for descriptions */
+            overflow-y: auto;
             user-select: none;
-            padding: 20px 0;
+            padding: 20px 10px;
         }
 
         /* --- MENU STYLES --- */
@@ -36,53 +41,69 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            margin-top: 50px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
         }
 
         h1 {
             color: #fbbf24;
             text-shadow: 4px 4px #be123c;
-            font-size: 24px;
-            margin-bottom: 40px;
+            font-size: clamp(16px, 5vw, 24px); /* Fluid font size */
+            margin-bottom: 30px;
             line-height: 1.5;
+            padding: 0 10px;
         }
 
         .menu-btn {
             background: transparent;
             border: 2px solid #334155;
             color: #94a3b8;
-            padding: 15px 20px;
+            padding: 20px; /* Larger touch target */
             font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
+            font-size: clamp(10px, 3vw, 12px);
             cursor: pointer;
             transition: all 0.2s;
             text-transform: uppercase;
-            width: 380px;
+            width: 90%;
+            max-width: 380px;
             margin: 0 auto;
         }
 
-        .menu-btn:hover {
+        .menu-btn:active, .menu-btn:hover {
             border-color: #38bdf8;
             color: #fff;
             background: rgba(56, 189, 248, 0.1);
-            transform: scale(1.05);
+            transform: scale(1.02);
             box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
         }
 
         /* --- GAME CONTAINER --- */
         #game-wrapper {
-            display: none; /* Hidden by default */
+            display: none;
             position: relative;
-            border: 16px solid #2a2a3a;
+            border: 8px solid #2a2a3a; /* Thinner border on mobile */
             border-radius: 4px;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             background: #000;
-            margin-top: 20px;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 640px;
+            /* Maintain aspect ratio or adapt to content */
+        }
+
+        @media (min-width: 600px) {
+            #game-wrapper {
+                border-width: 16px;
+                box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            }
         }
 
         canvas {
             display: block;
             image-rendering: pixelated;
+            width: 100%;
+            height: auto; /* Maintains aspect ratio */
         }
 
         /* --- SHARED UI OVERLAYS --- */
@@ -94,6 +115,7 @@
             pointer-events: none;
             z-index: 50;
             animation: flicker 0.15s infinite;
+            opacity: 0.5; /* Slightly less intense on mobile */
         }
         
         .screen-overlay {
@@ -114,8 +136,9 @@
         /* Dynamic UI Control Panel (Below Canvas) */
         #controls-area {
             display: none;
-            margin-top: 20px;
-            width: 640px;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 640px;
             background: #111;
             padding: 15px;
             border: 2px solid #333;
@@ -123,59 +146,57 @@
             gap: 15px;
             align-items: center;
             justify-content: center;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
         }
 
         /* Description Area */
         #description-area {
             display: none;
-            margin-top: 20px;
-            width: 640px;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 640px;
             background: #0f172a;
             border: 1px solid #1e293b;
-            padding: 20px;
-            font-family: monospace; /* Monospace for scientific log feel */
-            font-size: 12px;
-            line-height: 1.6;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 11px; /* Readable on mobile */
+            line-height: 1.5;
             color: #94a3b8;
-            box-sizing: border-box;
             white-space: pre-wrap;
             border-radius: 4px;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
         }
 
         #description-area h3 {
             color: #38bdf8;
             font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
+            font-size: 12px;
             margin-top: 0;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-transform: uppercase;
             border-bottom: 1px solid #334155;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
 
-        #description-area strong {
-            color: #e2e8f0;
-        }
+        #description-area strong { color: #e2e8f0; }
+        #description-area em { color: #fbbf24; font-style: normal; }
 
-        #description-area em {
-            color: #fbbf24;
-            font-style: normal;
-        }
-
+        /* Back Button - Responsive Positioning */
         #back-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
             background: #be123c;
             border: none;
             color: white;
-            padding: 10px;
+            padding: 12px 16px;
             font-family: inherit;
             font-size: 10px;
             cursor: pointer;
             z-index: 200;
             display: none;
+            margin-bottom: 10px; /* Static flow on mobile */
+            width: 100%;
+            max-width: 640px;
+            text-align: center;
+            border-radius: 4px;
         }
         
         #back-btn:hover { background: #e11d48; }
@@ -189,21 +210,39 @@
         /* Helper for injected UI elements */
         .ui-label-top {
             position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-around;
-            text-shadow: 2px 2px #000; font-size: 12px; text-transform: uppercase;
+            text-shadow: 2px 2px #000; font-size: clamp(8px, 2.5vw, 12px); text-transform: uppercase;
+            padding: 0 5px;
         }
         .ui-label-bottom {
             position: absolute; bottom: 10px; width: 100%; display: flex; justify-content: space-around;
-            text-shadow: 2px 2px #000; font-size: 10px; color: #94a3b8;
+            text-shadow: 2px 2px #000; font-size: clamp(7px, 2.5vw, 10px); color: #94a3b8;
+            padding: 0 5px;
         }
         
-        /* Range Slider Styling */
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        /* Range Slider Styling - Touch Friendly */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 10px 0; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 16px; width: 16px; background: #3b82f6;
-            cursor: pointer; margin-top: -6px; box-shadow: 0 0 5px #3b82f6; border: 2px solid #fff;
+            -webkit-appearance: none; height: 24px; width: 24px; background: #3b82f6;
+            cursor: pointer; margin-top: -10px; box-shadow: 0 0 5px #3b82f6; border: 2px solid #fff;
+            border-radius: 50%; /* Easier to grab */
         }
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%; height: 4px; cursor: pointer; background: #333; border: 1px solid #555;
+        }
+
+        /* Control Group Layout */
+        .control-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        
+        @media (min-width: 600px) {
+            .control-group {
+                width: 45%;
+                margin-bottom: 0;
+            }
         }
 
     </style>
@@ -220,7 +259,8 @@
         <button class="menu-btn" onclick="GameManager.load('chimney')">5. Rudolph's Pipe (Non-Linear)</button>
     </div>
 
-    <button id="back-btn" onclick="GameManager.exit()">EJECT CARTRIDGE</button>
+    <!-- Eject Button (Top for mobile ease) -->
+    <button id="back-btn" onclick="GameManager.exit()">EJECT CARTRIDGE (BACK TO MENU)</button>
 
     <!-- GAME AREA -->
     <div id="game-wrapper">
@@ -301,7 +341,7 @@ Unlike the Wanderer, small tugs don't move the sled. The force must exceed a thr
                 // Hide Menu, Show Game
                 document.getElementById('main-menu').style.display = 'none';
                 document.getElementById('game-wrapper').style.display = 'block';
-                document.getElementById('back-btn').style.display = 'block';
+                document.getElementById('back-btn').style.display = 'block'; // Make sure this is block
                 
                 // Clear previous state
                 ctx.clearRect(0,0,canvas.width, canvas.height);
@@ -713,14 +753,14 @@ Unlike the Wanderer, small tugs don't move the sled. The force must exceed a thr
 
                     controlsArea.style.display = 'flex';
                     controlsArea.innerHTML = `
-                         <div style="display:flex; flex-direction:column; width:100%; align-items:center;">
+                         <div class="control-group">
                             <div style="display:flex; justify-content:space-between; width:100%; color:#94a3b8; font-size:10px; margin-bottom:5px;">
-                                <span>Noise (&tau;&rarr;0)</span>
-                                <span>Causal Peak</span>
-                                <span>Memory Loss (&tau;&rarr;&infin;)</span>
+                                <span>Noise</span>
+                                <span>Peak</span>
+                                <span>Loss</span>
                             </div>
                             <input type="range" id="shutterSlider" min="0" max="100" value="50">
-                            <div style="font-size:10px; color:#666; margin-top:5px;">ADJUST OBSERVATION TIME (&tau;)</div>
+                            <div style="font-size:10px; color:#666; margin-top:5px; text-align:center;">ADJUST OBSERVATION TIME (&tau;)</div>
                          </div>
                     `;
                     
@@ -829,8 +869,8 @@ Unlike the Wanderer, small tugs don't move the sled. The force must exceed a thr
                     // UI
                     uiLayer.innerHTML = `
                         <div class="ui-label-top" style="color: #1e3a8a;">
-                            <span>Signal (x): Wanderer</span>
-                            <span>Response (y): Sled</span>
+                            <span>Signal (x)</span>
+                            <span>Response (y)</span>
                         </div>
                         <div class="ui-label-bottom">
                             <span id="wand-math">Heat &Phi; &ge; Info T</span>
@@ -839,11 +879,11 @@ Unlike the Wanderer, small tugs don't move the sled. The force must exceed a thr
 
                     controlsArea.style.display = 'flex';
                     controlsArea.innerHTML = `
-                         <div style="width:45%;">
+                         <div class="control-group">
                             <label style="color:#94a3b8; font-size:10px;">Rope Length (Lag)</label>
                             <input type="range" id="ropeSlider" min="10" max="100" value="40">
                          </div>
-                         <div style="width:45%;">
+                         <div class="control-group">
                             <label style="color:#94a3b8; font-size:10px;">Wanderer Speed</label>
                             <input type="range" id="speedSlider" min="1" max="10" value="3">
                          </div>
@@ -974,9 +1014,9 @@ Unlike the Wanderer, small tugs don't move the sled. The force must exceed a thr
                     // UI
                     uiLayer.innerHTML = `
                         <div class="ui-label-top" style="color: #4ade80;">
-                            <span>Pipe Wall L</span>
-                            <span>The Mario Tube</span>
-                            <span>Pipe Wall R</span>
+                            <span>Wall (0)</span>
+                            <span>The Tube</span>
+                            <span>Wall (1)</span>
                         </div>
                         <div class="ui-label-bottom">
                             <span id="chimney-status">Status: EQUILIBRIUM</span>
@@ -985,12 +1025,12 @@ Unlike the Wanderer, small tugs don't move the sled. The force must exceed a thr
 
                     controlsArea.style.display = 'flex';
                     controlsArea.innerHTML = `
-                        <div style="width:45%;">
+                        <div class="control-group">
                             <label style="color:#94a3b8; font-size:10px;">Flight Range</label>
                             <input type="range" id="ampSlider" min="1" max="50" value="10">
                         </div>
-                        <div style="width:45%;">
-                            <label style="color:#94a3b8; font-size:10px;">Pipe Tightness (Friction)</label>
+                        <div class="control-group">
+                            <label style="color:#94a3b8; font-size:10px;">Pipe Tightness</label>
                             <input type="range" id="stickSlider" min="0" max="10" value="2">
                         </div>
                     `;
@@ -1052,10 +1092,10 @@ Unlike the Wanderer, small tugs don't move the sled. The force must exceed a thr
 
                     const statusLbl = document.getElementById('chimney-status');
                     if (hitWall) {
-                        statusLbl.innerText = "Status: SATURATED (Blindness/Zero Heat)";
+                        statusLbl.innerText = "Status: SATURATED (Blindness)";
                         statusLbl.style.color = "#ef4444";
                     } else if (movedDist > 0.1) {
-                        statusLbl.innerText = "Status: DRAGGING (Info Recorded)";
+                        statusLbl.innerText = "Status: DRAGGING";
                         statusLbl.style.color = "#fbbf24";
                     } else {
                         statusLbl.innerText = "Status: STUCK (Sub-Threshold)";
