@@ -18,13 +18,15 @@
             color: var(--text-color);
             font-family: 'Press Start 2P', cursive;
             margin: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto; /* Allow scrolling for descriptions */
             user-select: none;
+            padding: 20px 0;
         }
 
         /* --- MENU STYLES --- */
@@ -34,6 +36,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            margin-top: 50px;
         }
 
         h1 {
@@ -74,6 +77,7 @@
             border-radius: 4px;
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
             background: #000;
+            margin-top: 20px;
         }
 
         canvas {
@@ -119,6 +123,44 @@
             gap: 15px;
             align-items: center;
             justify-content: center;
+        }
+
+        /* Description Area */
+        #description-area {
+            display: none;
+            margin-top: 20px;
+            width: 640px;
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            padding: 20px;
+            font-family: monospace; /* Monospace for scientific log feel */
+            font-size: 12px;
+            line-height: 1.6;
+            color: #94a3b8;
+            box-sizing: border-box;
+            white-space: pre-wrap;
+            border-radius: 4px;
+            margin-bottom: 50px;
+        }
+
+        #description-area h3 {
+            color: #38bdf8;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+
+        #description-area strong {
+            color: #e2e8f0;
+        }
+
+        #description-area em {
+            color: #fbbf24;
+            font-style: normal;
         }
 
         #back-btn {
@@ -175,7 +217,7 @@
         <button class="menu-btn" onclick="GameManager.load('nutcracker')">2. Feedback Loops</button>
         <button class="menu-btn" onclick="GameManager.load('shutter')">3. Shutter Speed (Tau)</button>
         <button class="menu-btn" onclick="GameManager.load('wanderer')">4. The Wanderer (Linear)</button>
-        <button class="menu-btn" onclick="GameManager.load('chimney')">5. Ice Chimney (Non-Linear)</button>
+        <button class="menu-btn" onclick="GameManager.load('chimney')">5. Rudolph's Pipe (Non-Linear)</button>
     </div>
 
     <button id="back-btn" onclick="GameManager.exit()">EJECT CARTRIDGE</button>
@@ -191,14 +233,66 @@
     <!-- CONTROLS AREA (Below Canvas) -->
     <div id="controls-area"></div>
 
+    <!-- DESCRIPTION AREA (Scientific Log) -->
+    <div id="description-area"></div>
+
     <script>
         // --- GAME ENGINE & STATE MANAGEMENT ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const uiLayer = document.getElementById('game-ui');
         const controlsArea = document.getElementById('controls-area');
+        const descriptionArea = document.getElementById('description-area');
         
         let animationId = null;
+
+        // --- DESCRIPTIONS (Biophysics Mapping) ---
+        const descriptions = {
+            snowstorm: `<h3>1. Chaos vs. Order (Snowstorm)</h3>
+<strong><em>x</em> (Signal):</strong> The "Leader" square in Scenario B. It moves with intent (Directed Walk).
+<strong><em>y</em> (Response):</strong> The "Follower" square in Scenario B. It attempts to copy the Leader's position.
+<strong><em>D</em> (Diffusion/Noise):</strong> The random jitter of the "Snow" particles. This represents the thermal bath that makes tracking difficult.
+<strong>Visual Proof:</strong> In Scenario A, <em>x</em> and <em>y</em> are uncorrelated (T<sub>y&rarr;x</sub> = 0). In Scenario B, the correlation exists.`,
+
+            nutcracker: `<h3>2. Feedback Loops (The Nutcracker)</h3>
+<strong>Topology:</strong>
+&bull; <strong>Left Side (Ballerinas):</strong> &part;g<sub>x</sub> / &part;y &ne; 0. This is a Feedback Loop. The energy is shared; there is no clear "cost" to copying because they are a coupled system.
+&bull; <strong>Right Side (Soldier & Mime):</strong> &part;g<sub>x</sub> / &part;y = 0. This is the Signal-Response Model. The Soldier (<em>x</em>) ignores the Mime (<em>y</em>).
+
+<strong>&Phi; (Irreversibility):</strong> The Blue Sweat Drops.
+<strong>Physics:</strong> The Mime (<em>y</em>) must physically exert himself to match the Soldier's history. The sweat is the heat dissipation required by the Second Law of Information Thermodynamics.
+<strong>T<sub>y&rarr;x</sub> (Memory):</strong> The Mime’s Pose. His current body shape is a "record" of where the Soldier was 1 second ago.`,
+
+            shutter: `<h3>3. Shutter Speed (The Car Crash)</h3>
+<strong>&tau; (Tau / Sampling Interval):</strong> The Slider Bar.
+<strong>Physics:</strong> This is the most critical variable. It determines the time gap between snapshots.
+
+<strong><em>x</em><sub>t</sub> vs <em>x</em><sub>t+&tau;</sub>:</strong> The visual "Motion Blur."
+&bull; If <strong>&tau;</strong> is too small (left), the blur is invisible (Noise dominance).
+&bull; If <strong>&tau;</strong> is too large (right), the car is gone (Decorrelation).
+&bull; If <strong>&tau; &approx; 0.5</strong> (middle), the blur creates a vector. This vector is the Arrow of Time.`,
+
+            wanderer: `<h3>4. The Wanderer (Linear Response)</h3>
+<strong><em>x</em> (Signal):</strong> The Red Wanderer. It follows a stochastic path (Ornstein-Uhlenbeck process).
+<strong><em>y</em> (Response):</strong> The Blue Sled. It is pulled toward <em>x</em> by a spring (the rope).
+
+<strong>&beta; (Relaxation Rate):</strong> The Rope Stiffness.
+&bull; A stiff rope (high &beta;) pulls the sled instantly but burns high energy.
+&bull; A loose rope (low &beta;, long lag) saves energy but loses information.
+
+<strong>&Phi; (Entropy Production):</strong> The Orange Particles.
+These appear only when the sled scrapes against the ground (friction). No movement = No Information = No Heat.
+<strong>Inequality:</strong> The UI explicitly states &Phi; &ge; T. The pile of orange particles is the physical proof of the debt paid to track the Red Wanderer.`,
+
+            chimney: `<h3>5. Rudolph's Pipe (Non-Linear Model)</h3>
+<strong><em>x</em> (Signal):</strong> The Red Dot (Rudolph) at the top. It fluctuates randomly (ligand concentration).
+<strong><em>y</em> (Response):</strong> The Red Gift Box inside the pipe. It represents the receptor state (0 to 1).
+
+<strong>Walls (0 and 1):</strong> The Saturation Limits. When the present hits the wall, <em>y</em> cannot change further, meaning Information Flow stops (Blindness).
+
+<strong>Threshold (Stickiness):</strong> The Non-Linearity.
+Unlike the Wanderer, small tugs don't move the sled. The force must exceed a threshold (activation energy). This simulates the "Goldilocks" behavior of biological receptors—they ignore small noise and only react to strong signals.`
+        };
 
         const GameManager = {
             activeGame: null,
@@ -214,6 +308,12 @@
                 uiLayer.innerHTML = '';
                 controlsArea.innerHTML = '';
                 controlsArea.style.display = 'none';
+
+                // Set Description
+                if (descriptions[gameKey]) {
+                    descriptionArea.innerHTML = descriptions[gameKey];
+                    descriptionArea.style.display = 'block';
+                }
 
                 // Initialize specific game
                 if (games[gameKey]) {
@@ -231,11 +331,13 @@
                 document.getElementById('game-wrapper').style.display = 'none';
                 document.getElementById('back-btn').style.display = 'none';
                 controlsArea.style.display = 'none';
+                descriptionArea.style.display = 'none';
                 
                 // Cleanup
                 this.activeGame = null;
                 uiLayer.innerHTML = '';
                 controlsArea.innerHTML = '';
+                descriptionArea.innerHTML = '';
             },
 
             loop: function() {
@@ -851,7 +953,7 @@
                 }
             },
             
-            // --- GAME 5: ICE CHIMNEY (Non-Linear Model) ---
+            // --- GAME 5: RUDOLPH'S PIPE TROUBLE (Non-Linear Model) ---
             chimney: {
                 frameCount: 0, SCALE: 2,
                 wandererX: 320, sledX: 320,
@@ -871,10 +973,10 @@
 
                     // UI
                     uiLayer.innerHTML = `
-                        <div class="ui-label-top" style="color: #60a5fa;">
-                            <span>Wall (0%)</span>
-                            <span>The Ice Chimney</span>
-                            <span>Wall (100%)</span>
+                        <div class="ui-label-top" style="color: #4ade80;">
+                            <span>Pipe Wall L</span>
+                            <span>The Mario Tube</span>
+                            <span>Pipe Wall R</span>
                         </div>
                         <div class="ui-label-bottom">
                             <span id="chimney-status">Status: EQUILIBRIUM</span>
@@ -884,11 +986,11 @@
                     controlsArea.style.display = 'flex';
                     controlsArea.innerHTML = `
                         <div style="width:45%;">
-                            <label style="color:#94a3b8; font-size:10px;">Signal Strength (Range)</label>
+                            <label style="color:#94a3b8; font-size:10px;">Flight Range</label>
                             <input type="range" id="ampSlider" min="1" max="50" value="10">
                         </div>
                         <div style="width:45%;">
-                            <label style="color:#94a3b8; font-size:10px;">Snow Stickiness (Threshold)</label>
+                            <label style="color:#94a3b8; font-size:10px;">Pipe Tightness (Friction)</label>
                             <input type="range" id="stickSlider" min="0" max="10" value="2">
                         </div>
                     `;
@@ -905,29 +1007,24 @@
                     const WALL_L = CENTER - CHIMNEY_WIDTH/2;
                     const WALL_R = CENTER + CHIMNEY_WIDTH/2;
 
-                    // 1. Update Wanderer (The Signal)
-                    // Random walk with drift based on slider amplitude
+                    // 1. Update Rudolph (The Signal)
                     if (this.frameCount > this.wandererTimer) {
-                        // Choose a new target way outside bounds to show blindness
                         const range = 200 * this.wandererAmp; 
                         this.targetWandererX = CENTER + (Math.random() - 0.5) * 2 * range;
                         this.wandererTimer = this.frameCount + 60 + Math.random() * 60;
                     }
                     const dx = this.targetWandererX - this.wandererX;
-                    this.wandererX += dx * 0.02; // Smooth movement
+                    this.wandererX += dx * 0.02; 
 
                     // 2. Physics: Rope Tension & Stickiness
-                    const tension = (this.wandererX - this.sledX) * 0.1; // Spring constant
+                    const tension = (this.wandererX - this.sledX) * 0.1;
                     let velocity = 0;
 
-                    // Cooperativity / Sticky Snow Threshold
                     if (Math.abs(tension) > this.stickiness) {
-                        // Apply movement only if force > threshold
-                        // Velocity proportional to excess force
                         velocity = (Math.abs(tension) - this.stickiness) * Math.sign(tension);
                     }
 
-                    // 3. Move Sled
+                    // 3. Move Present
                     const prevSledX = this.sledX;
                     this.sledX += velocity;
 
@@ -937,39 +1034,34 @@
                     if (this.sledX >= WALL_R) { this.sledX = WALL_R; hitWall = true; }
 
                     // 5. Thermodynamics (Heat Generation)
-                    // Heat is generated by work against friction (movement through snow)
-                    // If hit wall, no movement = no heat, even if tension is high
                     const movedDist = Math.abs(this.sledX - prevSledX);
                     let heatFrame = 0;
                     
                     if (movedDist > 0.1) {
-                         heatFrame = movedDist * 5; // Scaling factor
-                         // Spawn particles
+                         heatFrame = movedDist * 5; 
                          for(let i=0; i<Math.floor(heatFrame); i++) {
                              this.particles.push({
                                  x: this.sledX + (Math.random()-0.5)*20, 
-                                 y: 180 + (Math.random()-0.5)*20, // Center Y
+                                 y: 180 + (Math.random()-0.5)*20, 
                                  vx: (Math.random()-0.5)*4, 
                                  vy: (Math.random()-0.5)*4, 
-                                 life: 1.0, color: '#f59e0b'
+                                 life: 1.0, color: '#fef3c7' // Dust/Sparks
                              });
                          }
                     }
 
-                    // Update UI text based on state
                     const statusLbl = document.getElementById('chimney-status');
                     if (hitWall) {
                         statusLbl.innerText = "Status: SATURATED (Blindness/Zero Heat)";
                         statusLbl.style.color = "#ef4444";
                     } else if (movedDist > 0.1) {
-                        statusLbl.innerText = "Status: DISSIPATING (Info Recorded)";
+                        statusLbl.innerText = "Status: DRAGGING (Info Recorded)";
                         statusLbl.style.color = "#fbbf24";
                     } else {
                         statusLbl.innerText = "Status: STUCK (Sub-Threshold)";
                         statusLbl.style.color = "#64748b";
                     }
 
-                    // Particles
                     for(let i=this.particles.length-1; i>=0; i--) {
                         let p = this.particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=0.05;
                         if(p.life<=0) this.particles.splice(i,1);
@@ -988,47 +1080,69 @@
                     ctx.clearRect(0,0,WIDTH,HEIGHT);
                     
                     // Background
-                    ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,WIDTH,HEIGHT); // Dark outside
+                    ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,WIDTH,HEIGHT); 
                     
-                    // The Chimney (Snow area)
-                    ctx.fillStyle = '#1e293b'; ctx.fillRect(WALL_L, 0, CHIMNEY_WIDTH, HEIGHT);
+                    // The Pipe (Inner Void)
+                    ctx.fillStyle = '#000'; ctx.fillRect(WALL_L, 0, CHIMNEY_WIDTH, HEIGHT);
                     
-                    // Draw Walls
-                    ctx.fillStyle = '#3b82f6'; 
-                    ctx.fillRect(WALL_L-5, 0, 5, HEIGHT); // Left Wall
-                    ctx.fillRect(WALL_R, 0, 5, HEIGHT);   // Right Wall
-
-                    // Draw Snow Texture inside chimney
-                    ctx.fillStyle = '#334155';
-                    for(let y=0; y<HEIGHT; y+=20) {
-                        for(let x=WALL_L+5; x<WALL_R; x+=20) {
-                            if ((x+y)%3===0) ctx.fillRect(x,y,2,2);
-                        }
-                    }
+                    // Draw Pipe Structure
+                    ctx.fillStyle = '#22c55e'; // Light Green
+                    ctx.fillRect(WALL_L-40, 0, 40, HEIGHT); // Left Wall Body
+                    ctx.fillRect(WALL_R, 0, 40, HEIGHT);   // Right Wall Body
+                    
+                    ctx.fillStyle = '#15803d'; // Dark Green Outline
+                    ctx.fillRect(WALL_L, 0, 4, HEIGHT);
+                    ctx.fillRect(WALL_R-4, 0, 4, HEIGHT);
+                    ctx.fillRect(WALL_L-40, 0, 4, HEIGHT);
+                    ctx.fillRect(WALL_R+36, 0, 4, HEIGHT);
 
                     // Draw Rope
                     ctx.beginPath();
                     ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
-                    ctx.moveTo(this.wandererX, 100); // Wanderer is "above" or at top
-                    ctx.lineTo(this.sledX, 180);     // Sled is in middle
+                    ctx.moveTo(this.wandererX, 100); 
+                    ctx.lineTo(this.sledX, 180);     
                     ctx.stroke();
 
-                    // Draw Wanderer (The Signal)
-                    // We draw him at Y=100 (Top area)
+                    // Draw Rudolph (The Signal)
+                    const rx = this.wandererX;
+                    const ry = 100;
+                    ctx.save(); ctx.translate(rx, ry);
+                    
+                    // Body
+                    ctx.fillStyle = '#92400e'; ctx.fillRect(-10, -6, 20, 12);
+                    // Head
+                    ctx.fillStyle = '#b45309'; ctx.fillRect(8, -10, 10, 10);
+                    // Nose (Glowing Red)
                     ctx.fillStyle = '#ef4444'; 
-                    ctx.beginPath(); ctx.arc(this.wandererX, 100, 8, 0, Math.PI*2); ctx.fill();
-                    ctx.fillStyle = '#fff'; ctx.font = "10px monospace"; ctx.fillText("SIGNAL", this.wandererX-15, 85);
+                    ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 10;
+                    ctx.beginPath(); ctx.arc(18, -5, 3, 0, Math.PI*2); ctx.fill();
+                    ctx.shadowBlur = 0;
+                    // Antlers
+                    ctx.fillStyle = '#fcd34d'; 
+                    ctx.fillRect(10, -14, 2, 4); ctx.fillRect(14, -14, 2, 4);
+                    // Legs (Simple bobbing)
+                    const legOff = Math.sin(this.frameCount*0.5)*3;
+                    ctx.fillStyle = '#92400e'; 
+                    ctx.fillRect(-8, 6+legOff, 4, 6); ctx.fillRect(4, 6-legOff, 4, 6);
 
-                    // Draw Sled (The Response)
-                    // Fixed Y=180
-                    ctx.fillStyle = '#3b82f6';
-                    ctx.fillRect(this.sledX - 10, 170, 20, 20);
-                    // Runners
-                    ctx.fillStyle = '#bfdbfe';
-                    ctx.fillRect(this.sledX - 10, 168, 20, 2);
-                    ctx.fillRect(this.sledX - 10, 190, 20, 2);
+                    ctx.restore();
+                    ctx.fillStyle = '#fff'; ctx.font = "10px monospace"; ctx.fillText("RUDOLPH", rx-20, ry-30);
 
-                    // Draw Particles (Heat)
+                    // Draw Present (The Response)
+                    const px = this.sledX;
+                    const py = 180;
+                    ctx.save(); ctx.translate(px, py);
+                    // Box
+                    ctx.fillStyle = '#dc2626'; ctx.fillRect(-12, -12, 24, 24);
+                    // Ribbon (Gold Cross)
+                    ctx.fillStyle = '#fcd34d'; 
+                    ctx.fillRect(-4, -12, 8, 24); // Vertical
+                    ctx.fillRect(-12, -4, 24, 8); // Horizontal
+                    // Bow
+                    ctx.beginPath(); ctx.arc(0, -12, 6, 0, Math.PI, true); ctx.fill();
+                    ctx.restore();
+
+                    // Draw Particles (Dust/Sparks)
                     this.particles.forEach(p => {
                         ctx.fillStyle = p.color;
                         ctx.globalAlpha = p.life;
