@@ -180,6 +180,19 @@
 
         #description-area strong { color: #e2e8f0; }
         #description-area em { color: #fbbf24; font-style: normal; }
+        
+        .narrative-text {
+            color: #dbeafe;
+            margin-bottom: 15px;
+            font-style: italic;
+            border-left: 3px solid #fbbf24;
+            padding-left: 10px;
+        }
+        
+        .variable-text {
+            color: #94a3b8;
+            font-size: 10px;
+        }
 
         /* Back Button - Responsive Positioning */
         #back-btn {
@@ -286,52 +299,78 @@
         
         let animationId = null;
 
-        // --- DESCRIPTIONS (Biophysics Mapping) ---
+        // --- DESCRIPTIONS (Biophysics Mapping + Strategy Narrative) ---
         const descriptions = {
-            snowstorm: `<h3>1. Chaos vs. Order (Snowstorm)</h3>
-<strong><em>x</em> (Signal):</strong> The "Leader" square in Scenario B. It moves with intent (Directed Walk).
-<strong><em>y</em> (Response):</strong> The "Follower" square in Scenario B. It attempts to copy the Leader's position.
-<strong><em>D</em> (Diffusion/Noise):</strong> The random jitter of the "Snow" particles. This represents the thermal bath that makes tracking difficult.
-<strong>Visual Proof:</strong> In Scenario A, <em>x</em> and <em>y</em> are uncorrelated (T<sub>y&rarr;x</sub> = 0). In Scenario B, the correlation exists.`,
+            snowstorm: `<h3>1. Chaos vs. Order (The Snowstorm)</h3>
+<div class="narrative-text">
+    "Look closely at the Snowstorm. In Scenario A (Chaos), both walkers are blind. They drift randomly. Their movements are uncorrelated. To a physicist, the 'Mutual Information' between them is zero. They burn energy to move, but they produce nothing but heat.<br><br>
+    In Scenario B (Order), we have a Leader (Red) and a Follower (Blue). The Blue dot is fighting the storm to stay close to the Red dot. The Counter-Intuitive Truth: You might assume the 'ordered' walk is efficient. Wrong. To maintain that correlation in a noisy environment, the Follower must constantly correct its path. Every correction requires work. The paper proves that Order is expensive."
+</div>
+<hr style="border-color: #334155; margin-bottom: 10px;">
+<div class="variable-text">
+    <strong><em>x</em> (Signal):</strong> The "Leader" square in Scenario B. It moves with intent (Directed Walk).<br>
+    <strong><em>y</em> (Response):</strong> The "Follower" square in Scenario B. It attempts to copy the Leader's position.<br>
+    <strong><em>D</em> (Diffusion/Noise):</strong> The random jitter of the "Snow" particles. This represents the thermal bath that makes tracking difficult.<br>
+    <strong>Visual Proof:</strong> In Scenario A, T<sub>y&rarr;x</sub> = 0. In Scenario B, the correlation exists.
+</div>`,
 
             nutcracker: `<h3>2. Feedback Loops (The Nutcracker)</h3>
-<strong>Topology:</strong>
-&bull; <strong>Left Side (Ballerinas):</strong> &part;g<sub>x</sub> / &part;y &ne; 0. This is a Feedback Loop. The energy is shared; there is no clear "cost" to copying because they are a coupled system.
-&bull; <strong>Right Side (Soldier & Mime):</strong> &part;g<sub>x</sub> / &part;y = 0. This is the Signal-Response Model. The Soldier (<em>x</em>) ignores the Mime (<em>y</em>).
-
-<strong>&Phi; (Irreversibility):</strong> The Blue Sweat Drops.
-<strong>Physics:</strong> The Mime (<em>y</em>) must physically exert himself to match the Soldier's history. The sweat is the heat dissipation required by the Second Law of Information Thermodynamics.
-<strong>T<sub>y&rarr;x</sub> (Memory):</strong> The Mime’s Pose. His current body shape is a "record" of where the Soldier was 1 second ago.`,
+<div class="narrative-text">
+    "Now we break the causal link. On the left, you see a Feedback Loop. Like two dancers, they influence each other. They share the energy load. The system is closed, and the thermodynamics are 'symmetric.'<br><br>
+    On the right, we have the Signal-Response Model. The Soldier (<em>x</em>) marches, completely ignoring the Mime (<em>y</em>). The Mime is desperate to copy the Soldier's history. Watch the Mime sweat. That sweat is Mapping Irreversibility (&Phi;). Because the Mime cannot tell the Soldier to slow down (Zero Feedback), he pays the full thermodynamic price for every bit of memory he stores."
+</div>
+<hr style="border-color: #334155; margin-bottom: 10px;">
+<div class="variable-text">
+    <strong>Topology:</strong><br>
+    &bull; <strong>Left Side:</strong> &part;g<sub>x</sub> / &part;y &ne; 0 (Feedback Loop). Energy is shared.<br>
+    &bull; <strong>Right Side:</strong> &part;g<sub>x</sub> / &part;y = 0 (Signal-Response). Soldier ignores Mime.<br>
+    <strong>&Phi; (Irreversibility):</strong> The Blue Sweat Drops. Represents heat dissipation required by the Second Law.<br>
+    <strong>T<sub>y&rarr;x</sub> (Memory):</strong> The Mime’s Pose. His body shape is a "record" of where the Soldier was.
+</div>`,
 
             shutter: `<h3>3. Shutter Speed (The Car Crash)</h3>
-<strong>&tau; (Tau / Sampling Interval):</strong> The Slider Bar.
-<strong>Physics:</strong> This is the most critical variable. It determines the time gap between snapshots.
-
-<strong><em>x</em><sub>t</sub> vs <em>x</em><sub>t+&tau;</sub>:</strong> The visual "Motion Blur."
-&bull; If <strong>&tau;</strong> is too small (left), the blur is invisible (Noise dominance).
-&bull; If <strong>&tau;</strong> is too large (right), the car is gone (Decorrelation).
-&bull; If <strong>&tau; &approx; 0.5</strong> (middle), the blur creates a vector. This vector is the Arrow of Time.`,
+<div class="narrative-text">
+    "Here is where the math meets reality. How much heat does observation generate? It depends on your shutter speed (&tau;).<br>
+    <strong>Noise (&tau; &rarr; 0):</strong> If you sample too fast, you don't see a car; you see vibrating pixels. High energy, zero information.<br>
+    <strong>Amnesia (&tau; &rarr; &infin;):</strong> If you wait too long, the car is gone. The correlation decays to zero.<br>
+    <strong>The Causal Peak (&tau; &approx; 0.5):</strong> Drag the slider to the middle. See the motion blur? That blur is the Arrow of Time. This is the only window where the system is thermodynamically efficient. Biology lives here."
+</div>
+<hr style="border-color: #334155; margin-bottom: 10px;">
+<div class="variable-text">
+    <strong>&tau; (Tau):</strong> The Slider Bar. The time gap between snapshots.<br>
+    <strong><em>x</em><sub>t</sub> vs <em>x</em><sub>t+&tau;</sub>:</strong> The visual "Motion Blur."<br>
+    &bull; Small &tau;: Noise dominance.<br>
+    &bull; Large &tau;: Decorrelation.<br>
+    &bull; Medium &tau;: The Arrow of Time (Vector formation).
+</div>`,
 
             wanderer: `<h3>4. The Wanderer (Linear Response)</h3>
-<strong><em>x</em> (Signal):</strong> The Red Wanderer. It follows a stochastic path (Ornstein-Uhlenbeck process).
-<strong><em>y</em> (Response):</strong> The Blue Sled. It is pulled toward <em>x</em> by a spring (the rope).
-
-<strong>&beta; (Relaxation Rate):</strong> The Rope Stiffness.
-&bull; A stiff rope (high &beta;) pulls the sled instantly but burns high energy.
-&bull; A loose rope (low &beta;, long lag) saves energy but loses information.
-
-<strong>&Phi; (Entropy Production):</strong> The Orange Particles.
-These appear only when the sled scrapes against the ground (friction). No movement = No Information = No Heat.
-<strong>Inequality:</strong> The UI explicitly states &Phi; &ge; T. The pile of orange particles is the physical proof of the debt paid to track the Red Wanderer.`,
+<div class="narrative-text">
+    "Let's translate the math into mechanics. Watch the Red Wanderer. Every step he takes creates a unique path—a History. The Blue Sled tries to follow that path. But the ground is rough. The sled doesn't just glide; it scrapes. That physical Drag—the friction resisting the movement—is the Mapping Irreversibility (&Phi;). It is the heat generated by the act of following.<br><br>
+    The Law: You cannot carve the tracks (store the history) without enduring the drag (paying the irreversibility). Memory is friction."
+</div>
+<hr style="border-color: #334155; margin-bottom: 10px;">
+<div class="variable-text">
+    <strong><em>x</em> (Signal):</strong> The Red Wanderer (Ornstein-Uhlenbeck process).<br>
+    <strong><em>y</em> (Response):</strong> The Blue Sled.<br>
+    <strong>&beta; (Relaxation Rate):</strong> Rope Stiffness. High &beta; = instant pull (high energy). Low &beta; = lag (low info).<br>
+    <strong>&Phi; (Entropy):</strong> The Orange Particles. No movement = No Information = No Heat.<br>
+    <strong>Inequality:</strong> &Phi; &ge; T. The particles prove the debt paid to track the signal.
+</div>`,
 
             chimney: `<h3>5. Rudolph's Pipe (Non-Linear Model)</h3>
-<strong><em>x</em> (Signal):</strong> The Red Dot (Rudolph) at the top. It fluctuates randomly (ligand concentration).
-<strong><em>y</em> (Response):</strong> The Red Gift Box inside the pipe. It represents the receptor state (0 to 1).
-
-<strong>Walls (0 and 1):</strong> The Saturation Limits. When the present hits the wall, <em>y</em> cannot change further, meaning Information Flow stops (Blindness).
-
-<strong>Threshold (Stickiness):</strong> The Non-Linearity.
-Unlike the Wanderer, small tugs don't move the sled. The force must exceed a threshold (activation energy). This simulates the "Goldilocks" behavior of biological receptors—they ignore small noise and only react to strong signals.`
+<div class="narrative-text">
+    "Finally, the real biological deal: The Receptor. This isn't a linear rope anymore. It's Rudolph's Pipe.<br>
+    <strong>The Walls (Saturation):</strong> If the Present hits the wall, it stops moving. Information flow drops to zero. The cell is blind because it's maxed out.<br>
+    <strong>The Sticky Snow (Threshold):</strong> The Present ignores small tugs. It only moves when the Signal (Rudolph) is strong enough to break the 'stickiness.' This filters out noise. Efficiency is about tuning your friction to the environment."
+</div>
+<hr style="border-color: #334155; margin-bottom: 10px;">
+<div class="variable-text">
+    <strong><em>x</em> (Signal):</strong> Rudolph (Red Dot). Fluctuating ligand concentration.<br>
+    <strong><em>y</em> (Response):</strong> The Gift Box. Receptor state (0 to 1).<br>
+    <strong>Walls:</strong> Saturation Limits. Hitting the wall stops Information Flow.<br>
+    <strong>Threshold (Stickiness):</strong> Non-Linearity. Simulates activation energy (k<sub>off</sub>). Filters small noise, reacts only to strong signals.
+</div>`
         };
 
         const GameManager = {
@@ -397,8 +436,6 @@ Unlike the Wanderer, small tugs don't move the sled. The force must exceed a thr
                 entities: [],
                 snow: [],
                 frameCount: 0,
-                towerDirection: 0,
-                lastShoutTime: 0,
                 SCALE: 4,
 
                 init: function() {
@@ -413,51 +450,72 @@ Unlike the Wanderer, small tugs don't move the sled. The force must exceed a thr
 
                     // UI
                     uiLayer.innerHTML = `
-                        <div class="ui-label-top" style="color: #fff;">
-                            <span>Scenario A: Chaos</span>
-                            <span>Scenario B: Order</span>
+                        <div class="ui-label-top" style="color: #4ade80;">
+                            <span>Scenario A: 2 Random Walkers</span>
+                            <span>Scenario B: Order (Blue follows Red)</span>
+                        </div>
+                        <div class="ui-label-bottom" style="text-transform: none; color: #fff; font-size: 9px; text-align:center; width:100%;">
+                            <span>The directed walk is faster... but which scenario burns more energy?</span>
                         </div>
                     `;
 
                     // Init Walkers
-                    // Sim 1: Random
-                    this.entities.push(this.createWalker((HALF_W/2)-2, HEIGHT/2, 'random'));
-                    this.entities.push(this.createWalker((HALF_W/2)+2, HEIGHT/2, 'random'));
-                    // Sim 2: Directed
-                    this.entities.push(this.createWalker(HALF_W + (HALF_W/2), HEIGHT/2, 'directed'));
+                    // Sim 1: 2 Random Walkers (White)
+                    this.entities.push({x: (HALF_W/2)-4, y: HEIGHT/2, type: 'white', update: this.randomWalk});
+                    this.entities.push({x: (HALF_W/2)+4, y: HEIGHT/2, type: 'white', update: this.randomWalk});
+                    
+                    // Sim 2: 1 Red (Leader), 1 Blue (Follower)
+                    const redX = HALF_W + (HALF_W/2);
+                    const redY = HEIGHT/2;
+                    // Red Walker (Random Leader)
+                    this.entities.push({x: redX, y: redY, type: 'red', update: this.randomWalk});
+                    // Blue Walker (Follows Red)
+                    this.entities.push({x: redX, y: redY + 10, type: 'blue', update: this.followWalk, targetIndex: 2});
 
-                    // Init Snow
-                    for(let i=0; i<50; i++) {
+                    // Init Snow (Green Storm)
+                    for(let i=0; i<80; i++) {
                         this.snow.push({
                             x: Math.random() * WIDTH,
                             y: Math.random() * HEIGHT,
-                            speed: 0.2 + Math.random() * 0.5
+                            speed: 0.5 + Math.random() * 1.5,
+                            opacity: Math.random()
                         });
                     }
                 },
 
-                createWalker: function(x, y, type) {
-                    return { x, y, type, update: function(frame, tDir, w, h, hw) {
-                        if (frame % 10 !== 0) return;
-                        let dx = 0, dy = 0, step = 2;
-                        
-                        if (this.type === 'random') {
-                            const r = Math.floor(Math.random() * 4);
-                            if (r===0) dy=-step; if (r===1) dx=step; if (r===2) dy=step; if (r===3) dx=-step;
-                        } else {
-                            if (tDir===0) dy=-step; if (tDir===1) dx=step; if (tDir===2) dy=step; if (tDir===3) dx=-step;
-                        }
-                        this.x += dx; this.y += dy;
-                        
-                        // Bounds
-                        const margin = 2;
-                        if (this.type === 'random') {
-                            this.x = Math.max(margin, Math.min(hw-margin, this.x));
-                        } else {
-                            this.x = Math.max(hw+margin, Math.min(w-margin, this.x));
-                        }
-                        this.y = Math.max(margin, Math.min(h-margin, this.y));
-                    }};
+                // Behaviors
+                randomWalk: function(w, h, hw, entities) {
+                    if (games.snowstorm.frameCount % 5 !== 0) return;
+                    const step = 2;
+                    const r = Math.floor(Math.random() * 4);
+                    if (r===0) this.y-=step; if (r===1) this.x+=step; 
+                    if (r===2) this.y+=step; if (r===3) this.x-=step;
+                    
+                    // Bounds (Left or Right side depending on start pos)
+                    const isLeft = this.x < hw;
+                    const minX = isLeft ? 2 : hw+2;
+                    const maxX = isLeft ? hw-2 : w-2;
+                    
+                    this.x = Math.max(minX, Math.min(maxX, this.x));
+                    this.y = Math.max(2, Math.min(h-2, this.y));
+                },
+
+                followWalk: function(w, h, hw, entities) {
+                    if (games.snowstorm.frameCount % 5 !== 0) return;
+                    const target = entities[this.targetIndex];
+                    const step = 2;
+                    
+                    // Simple chase logic
+                    if (this.x < target.x) this.x += step;
+                    if (this.x > target.x) this.x -= step;
+                    if (this.y < target.y) this.y += step;
+                    if (this.y > target.y) this.y -= step;
+                    
+                    // Bounds
+                    const minX = hw+2;
+                    const maxX = w-2;
+                    this.x = Math.max(minX, Math.min(maxX, this.x));
+                    this.y = Math.max(2, Math.min(h-2, this.y));
                 },
 
                 update: function() {
@@ -467,17 +525,12 @@ Unlike the Wanderer, small tugs don't move the sled. The force must exceed a thr
                     
                     this.frameCount++;
 
-                    if (this.frameCount - this.lastShoutTime > 60) {
-                        this.towerDirection = Math.floor(Math.random() * 4);
-                        this.lastShoutTime = this.frameCount;
-                    }
-
-                    this.entities.forEach(e => e.update(this.frameCount, this.towerDirection, WIDTH, HEIGHT, HALF_W));
+                    this.entities.forEach(e => e.update.call(e, WIDTH, HEIGHT, HALF_W, this.entities));
                     
-                    // Snow
+                    // Snow Logic
                     this.snow.forEach(p => {
                         p.y += p.speed;
-                        p.x += Math.sin(this.frameCount * 0.05) * 0.5;
+                        p.x += Math.sin(this.frameCount * 0.1) * 0.5; // Wind
                         if(p.y > HEIGHT) p.y = 0;
                         if(p.x > WIDTH) p.x = 0;
                     });
@@ -492,52 +545,42 @@ Unlike the Wanderer, small tugs don't move the sled. The force must exceed a thr
                     ctx.clearRect(0,0,canvas.width, canvas.height);
                     ctx.scale(this.SCALE, this.SCALE);
 
-                    // Backgrounds
-                    ctx.fillStyle = '#F0E68C'; ctx.fillRect(0,0,HALF_W, HEIGHT); // Left
-                    ctx.fillRect(HALF_W,0,HALF_W, HEIGHT); // Right
+                    // Backgrounds - The Green Storm
+                    ctx.fillStyle = '#022c22'; 
+                    ctx.fillRect(0,0,HALF_W, HEIGHT); // Left Storm
+                    ctx.fillRect(HALF_W,0,HALF_W, HEIGHT); // Right Storm
                     
                     // Safe Zones
-                    ctx.fillStyle = '#32CD32';
+                    ctx.fillStyle = '#1e3a8a';
                     const sz = 40;
                     ctx.fillRect((HALF_W/2)-sz/2, (HEIGHT/2)-sz/2, sz, sz);
                     ctx.fillRect(HALF_W+(HALF_W/2)-sz/2, (HEIGHT/2)-sz/2, sz, sz);
+                    
+                    ctx.strokeStyle = '#60a5fa'; ctx.lineWidth = 1;
+                    ctx.strokeRect((HALF_W/2)-sz/2, (HEIGHT/2)-sz/2, sz, sz);
+                    ctx.strokeRect(HALF_W+(HALF_W/2)-sz/2, (HEIGHT/2)-sz/2, sz, sz);
 
                     // Divider
                     ctx.fillStyle = '#000'; ctx.fillRect(HALF_W-1, 0, 2, HEIGHT);
 
-                    // Snow
-                    ctx.fillStyle = '#FFF';
-                    this.snow.forEach(p => ctx.fillRect(Math.floor(p.x), Math.floor(p.y), 1, 1));
-
-                    // Tower (Right Side)
-                    const tx = WIDTH - 20, ty = 20;
-                    ctx.fillStyle = '#8B4513'; ctx.fillRect(tx, ty, 8, 12); // Base
-                    ctx.fillRect(tx-1, ty, 10, 2); // Top
-                    ctx.fillStyle = '#1E90FF'; ctx.fillRect(tx+2, ty-3, 4, 4); // Hood
-
-                    // Bubble
-                    this.drawBubble(tx-14, ty-8, this.towerDirection);
+                    // Green Snow Storm Visualization
+                    this.snow.forEach(p => {
+                        ctx.fillStyle = `rgba(74, 222, 128, ${p.opacity})`; 
+                        ctx.fillRect(Math.floor(p.x), Math.floor(p.y), 1, 1);
+                    });
 
                     // Walkers
-                    ctx.fillStyle = '#000';
                     this.entities.forEach(e => {
+                        if (e.type === 'white') ctx.fillStyle = '#fff';
+                        else if (e.type === 'red') ctx.fillStyle = '#ef4444';
+                        else if (e.type === 'blue') ctx.fillStyle = '#3b82f6';
+                        
                         ctx.fillRect(e.x, e.y, 3, 3);
                         ctx.fillRect(e.x+1, e.y-1, 1, 1);
+                        // Small shadow
+                        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                        ctx.fillRect(e.x, e.y+3, 3, 1);
                     });
-                },
-
-                drawBubble: function(x, y, dir) {
-                    ctx.fillStyle = '#FFF'; ctx.strokeStyle='#000'; ctx.lineWidth=1;
-                    ctx.fillRect(x,y,12,11); ctx.strokeRect(x,y,12,11);
-                    // Arrow
-                    ctx.fillStyle = '#000';
-                    const cx = x+6, cy=y+5.5;
-                    ctx.beginPath();
-                    if(dir===0) { ctx.moveTo(cx,cy-3); ctx.lineTo(cx-2,cy); ctx.lineTo(cx+2,cy); }
-                    else if(dir===1) { ctx.moveTo(cx+3,cy); ctx.lineTo(cx,cy-2); ctx.lineTo(cx,cy+2); }
-                    else if(dir===2) { ctx.moveTo(cx,cy+3); ctx.lineTo(cx-2,cy); ctx.lineTo(cx+2,cy); }
-                    else { ctx.moveTo(cx-3,cy); ctx.lineTo(cx,cy-2); ctx.lineTo(cx,cy+2); }
-                    ctx.fill();
                 }
             },
 
