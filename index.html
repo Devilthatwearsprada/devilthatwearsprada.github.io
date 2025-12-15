@@ -304,13 +304,13 @@
             snowstorm: `<h3>1. Chaos vs. Order (The Snowstorm)</h3>
 <div class="narrative-text">
     "Look closely at the Snowstorm. In Scenario A (Chaos), both walkers are blind. They drift randomly. Their movements are uncorrelated. To a physicist, the 'Mutual Information' between them is zero. They burn energy to move, but they produce nothing but heat.<br><br>
-    In Scenario B (Order), we have a Leader (Red) and a Follower (Blue). The Blue dot is fighting the storm to stay close to the Red dot. The Counter-Intuitive Truth: You might assume the 'ordered' walk is efficient. Wrong. To maintain that correlation in a noisy environment, the Follower must constantly correct its path. Every correction requires work. The paper proves that Order is expensive."
+    In Scenario B (Order), we have a directed Walker receiving signals. The Counter-Intuitive Truth: You might assume the 'ordered' walk is efficient. Wrong. To maintain that correlation in a noisy environment, constant correction is required. Order is expensive."
 </div>
 <hr style="border-color: #334155; margin-bottom: 10px;">
 <div class="variable-text">
-    <strong><em>x</em> (Signal):</strong> The "Leader" square in Scenario B. It moves with intent (Directed Walk).<br>
-    <strong><em>y</em> (Response):</strong> The "Follower" square in Scenario B. It attempts to copy the Leader's position.<br>
-    <strong><em>D</em> (Diffusion/Noise):</strong> The random jitter of the "Snow" particles. This represents the thermal bath that makes tracking difficult.<br>
+    <strong><em>x</em> (Signal):</strong> The Directed Walker (Scenario B). Moves with intent.<br>
+    <strong><em>y</em> (Response):</strong> The Tracking.<br>
+    <strong><em>D</em> (Diffusion/Noise):</strong> The random jitter of the "Snow" particles. This represents the thermal bath.<br>
     <strong>Visual Proof:</strong> In Scenario A, T<sub>y&rarr;x</sub> = 0. In Scenario B, the correlation exists.
 </div>`,
 
@@ -431,11 +431,13 @@
 
         const games = {
             
-            // --- GAME 1: SNOWSTORM (Chaos vs Order) ---
+            // --- GAME 1: SNOWSTORM (Chaos vs Order) - MODIFIED VERSION ---
             snowstorm: {
                 entities: [],
                 snow: [],
                 frameCount: 0,
+                towerDirection: 0,
+                lastShoutTime: 0,
                 SCALE: 4,
 
                 init: function() {
@@ -450,72 +452,76 @@
 
                     // UI
                     uiLayer.innerHTML = `
-                        <div class="ui-label-top" style="color: #4ade80;">
-                            <span>Scenario A: 2 Random Walkers</span>
-                            <span>Scenario B: Order (Blue follows Red)</span>
-                        </div>
-                        <div class="ui-label-bottom" style="text-transform: none; color: #fff; font-size: 9px; text-align:center; width:100%;">
-                            <span>The directed walk is faster... but which scenario burns more energy?</span>
+                        <div class="ui-label-top" style="color: #000; text-shadow:none;">
+                            <span>Scenario A: Chaos</span>
+                            <span>Scenario B: Order</span>
                         </div>
                     `;
 
                     // Init Walkers
-                    // Sim 1: 2 Random Walkers (White)
-                    this.entities.push({x: (HALF_W/2)-4, y: HEIGHT/2, type: 'white', update: this.randomWalk});
-                    this.entities.push({x: (HALF_W/2)+4, y: HEIGHT/2, type: 'white', update: this.randomWalk});
-                    
-                    // Sim 2: 1 Red (Leader), 1 Blue (Follower)
-                    const redX = HALF_W + (HALF_W/2);
-                    const redY = HEIGHT/2;
-                    // Red Walker (Random Leader)
-                    this.entities.push({x: redX, y: redY, type: 'red', update: this.randomWalk});
-                    // Blue Walker (Follows Red)
-                    this.entities.push({x: redX, y: redY + 10, type: 'blue', update: this.followWalk, targetIndex: 2});
+                    // Sim 1: Two Random Walkers starting in center of left box
+                    const center1X = HALF_W / 2;
+                    const centerY = HEIGHT / 2;
+                    this.entities.push(this.createWalker(center1X - 2, centerY, 'random'));
+                    this.entities.push(this.createWalker(center1X + 2, centerY, 'random'));
 
-                    // Init Snow (Green Storm)
-                    for(let i=0; i<80; i++) {
+                    // Sim 2: One Directed Walker starting in center of right box
+                    const center2X = HALF_W + (HALF_W / 2);
+                    this.entities.push(this.createWalker(center2X, centerY, 'directed'));
+
+                    // Init Snow
+                    for(let i=0; i<50; i++) {
                         this.snow.push({
                             x: Math.random() * WIDTH,
                             y: Math.random() * HEIGHT,
-                            speed: 0.5 + Math.random() * 1.5,
-                            opacity: Math.random()
+                            speed: 0.2 + Math.random() * 0.5
                         });
                     }
                 },
 
-                // Behaviors
-                randomWalk: function(w, h, hw, entities) {
-                    if (games.snowstorm.frameCount % 5 !== 0) return;
-                    const step = 2;
-                    const r = Math.floor(Math.random() * 4);
-                    if (r===0) this.y-=step; if (r===1) this.x+=step; 
-                    if (r===2) this.y+=step; if (r===3) this.x-=step;
-                    
-                    // Bounds (Left or Right side depending on start pos)
-                    const isLeft = this.x < hw;
-                    const minX = isLeft ? 2 : hw+2;
-                    const maxX = isLeft ? hw-2 : w-2;
-                    
-                    this.x = Math.max(minX, Math.min(maxX, this.x));
-                    this.y = Math.max(2, Math.min(h-2, this.y));
-                },
+                createWalker: function(x, y, type) {
+                    return { 
+                        x: x, 
+                        y: y, 
+                        type: type,
+                        update: function(frameCount, towerDirection, WIDTH, HEIGHT, HALF_W) {
+                            if (frameCount % 10 !== 0) return;
 
-                followWalk: function(w, h, hw, entities) {
-                    if (games.snowstorm.frameCount % 5 !== 0) return;
-                    const target = entities[this.targetIndex];
-                    const step = 2;
-                    
-                    // Simple chase logic
-                    if (this.x < target.x) this.x += step;
-                    if (this.x > target.x) this.x -= step;
-                    if (this.y < target.y) this.y += step;
-                    if (this.y > target.y) this.y -= step;
-                    
-                    // Bounds
-                    const minX = hw+2;
-                    const maxX = w-2;
-                    this.x = Math.max(minX, Math.min(maxX, this.x));
-                    this.y = Math.max(2, Math.min(h-2, this.y));
+                            let dx = 0;
+                            let dy = 0;
+                            const step = 2;
+
+                            if (this.type === 'random') {
+                                const r = Math.floor(Math.random() * 4);
+                                if (r === 0) dy = -step;
+                                if (r === 1) dx = step;
+                                if (r === 2) dy = step;
+                                if (r === 3) dx = -step;
+                            } else if (this.type === 'directed') {
+                                if (towerDirection === 0) dy = -step;
+                                if (towerDirection === 1) dx = step;
+                                if (towerDirection === 2) dy = step;
+                                if (towerDirection === 3) dx = -step;
+                            }
+
+                            // Apply movement
+                            this.x += dx;
+                            this.y += dy;
+
+                            // Bounds
+                            const margin = 2;
+                            if (this.type === 'random') {
+                                if (this.x < margin) this.x = margin;
+                                if (this.x > HALF_W - margin) this.x = HALF_W - margin;
+                            } else {
+                                if (this.x < HALF_W + margin) this.x = HALF_W + margin;
+                                if (this.x > WIDTH - margin) this.x = WIDTH - margin;
+                            }
+                            
+                            if (this.y < margin) this.y = margin;
+                            if (this.y > HEIGHT - margin) this.y = HEIGHT - margin;
+                        }
+                    };
                 },
 
                 update: function() {
@@ -525,14 +531,19 @@
                     
                     this.frameCount++;
 
-                    this.entities.forEach(e => e.update.call(e, WIDTH, HEIGHT, HALF_W, this.entities));
+                    if (this.frameCount - this.lastShoutTime > 60) {
+                        this.towerDirection = Math.floor(Math.random() * 4);
+                        this.lastShoutTime = this.frameCount;
+                    }
+
+                    this.entities.forEach(e => e.update(this.frameCount, this.towerDirection, WIDTH, HEIGHT, HALF_W));
                     
-                    // Snow Logic
+                    // Snow logic
                     this.snow.forEach(p => {
                         p.y += p.speed;
-                        p.x += Math.sin(this.frameCount * 0.1) * 0.5; // Wind
-                        if(p.y > HEIGHT) p.y = 0;
-                        if(p.x > WIDTH) p.x = 0;
+                        p.x += Math.sin(this.frameCount * 0.05) * 0.5; // Wind wiggle
+                        if (p.y > HEIGHT) p.y = 0;
+                        if (p.x > WIDTH) p.x = 0;
                     });
                 },
 
@@ -541,46 +552,92 @@
                     const HEIGHT = canvas.height / this.SCALE;
                     const HALF_W = WIDTH / 2;
 
-                    ctx.setTransform(1,0,0,1,0,0);
-                    ctx.clearRect(0,0,canvas.width, canvas.height);
+                    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.scale(this.SCALE, this.SCALE);
 
-                    // Backgrounds - The Green Storm
-                    ctx.fillStyle = '#022c22'; 
-                    ctx.fillRect(0,0,HALF_W, HEIGHT); // Left Storm
-                    ctx.fillRect(HALF_W,0,HALF_W, HEIGHT); // Right Storm
-                    
-                    // Safe Zones
-                    ctx.fillStyle = '#1e3a8a';
-                    const sz = 40;
-                    ctx.fillRect((HALF_W/2)-sz/2, (HEIGHT/2)-sz/2, sz, sz);
-                    ctx.fillRect(HALF_W+(HALF_W/2)-sz/2, (HEIGHT/2)-sz/2, sz, sz);
-                    
-                    ctx.strokeStyle = '#60a5fa'; ctx.lineWidth = 1;
-                    ctx.strokeRect((HALF_W/2)-sz/2, (HEIGHT/2)-sz/2, sz, sz);
-                    ctx.strokeRect(HALF_W+(HALF_W/2)-sz/2, (HEIGHT/2)-sz/2, sz, sz);
+                    // 1. Draw Backgrounds
+                    // Yellow Snowstorm Background
+                    ctx.fillStyle = '#F0E68C'; // Khaki Yellow
+                    ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-                    // Divider
-                    ctx.fillStyle = '#000'; ctx.fillRect(HALF_W-1, 0, 2, HEIGHT);
+                    // Green Safe Zones
+                    const safeSize = 40;
+                    ctx.fillStyle = '#32CD32'; // Lime Green
+                    ctx.fillRect((HALF_W/2) - safeSize/2, (HEIGHT/2) - safeSize/2, safeSize, safeSize);
+                    ctx.fillRect(HALF_W + (HALF_W/2) - safeSize/2, (HEIGHT/2) - safeSize/2, safeSize, safeSize);
+                    
+                    // Border between screens
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(HALF_W - 1, 0, 2, HEIGHT);
 
-                    // Green Snow Storm Visualization
+                    // 2. Draw Snow
+                    ctx.fillStyle = '#FFF';
                     this.snow.forEach(p => {
-                        ctx.fillStyle = `rgba(74, 222, 128, ${p.opacity})`; 
                         ctx.fillRect(Math.floor(p.x), Math.floor(p.y), 1, 1);
                     });
 
-                    // Walkers
+                    // 3. Draw Tower (Right Side)
+                    const towerX = WIDTH - 20;
+                    const towerY = 20;
+                    
+                    // Tower Base
+                    ctx.fillStyle = '#8B4513'; // Saddle Brown
+                    ctx.fillRect(towerX, towerY, 8, 12);
+                    ctx.fillStyle = '#5c2e0b';
+                    ctx.fillRect(towerX+1, towerY+2, 1, 1);
+                    ctx.fillRect(towerX+5, towerY+6, 1, 1);
+                    
+                    // Top platform
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(towerX-1, towerY, 10, 2);
+                    
+                    // Guy
+                    ctx.fillStyle = '#1E90FF'; // Dodger Blue
+                    ctx.fillRect(towerX+2, towerY-3, 4, 4); 
+                    ctx.fillStyle = '#FFCCAA'; // Face
+                    ctx.fillRect(towerX+3, towerY-2, 2, 2);
+
+                    // Speech Bubble
+                    this.drawSpeechBubble(towerX - 14, towerY - 8, this.towerDirection);
+
+                    // 4. Draw Entities
+                    ctx.fillStyle = '#000000'; // Black silhouettes
                     this.entities.forEach(e => {
-                        if (e.type === 'white') ctx.fillStyle = '#fff';
-                        else if (e.type === 'red') ctx.fillStyle = '#ef4444';
-                        else if (e.type === 'blue') ctx.fillStyle = '#3b82f6';
-                        
-                        ctx.fillRect(e.x, e.y, 3, 3);
-                        ctx.fillRect(e.x+1, e.y-1, 1, 1);
-                        // Small shadow
-                        ctx.fillStyle = 'rgba(0,0,0,0.5)';
-                        ctx.fillRect(e.x, e.y+3, 3, 1);
+                        ctx.fillRect(e.x, e.y, 3, 3); // Body
+                        ctx.fillRect(e.x+1, e.y-1, 1, 1); // Head
                     });
+                },
+
+                drawSpeechBubble: function(x, y, dir) {
+                    // Bubble box
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(x, y, 12, 11);
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(x, y, 12, 11);
+
+                    // Arrow
+                    ctx.fillStyle = '#000';
+                    const cx = x + 6;
+                    const cy = y + 5.5;
+                    
+                    ctx.beginPath();
+                    if (dir === 0) { // Up
+                        ctx.moveTo(cx, cy-3); ctx.lineTo(cx-2, cy); ctx.lineTo(cx+2, cy);
+                    } else if (dir === 1) { // Right
+                        ctx.moveTo(cx+3, cy); ctx.lineTo(cx, cy-2); ctx.lineTo(cx, cy+2);
+                    } else if (dir === 2) { // Down
+                        ctx.moveTo(cx, cy+3); ctx.lineTo(cx-2, cy); ctx.lineTo(cx+2, cy);
+                    } else if (dir === 3) { // Left
+                        ctx.moveTo(cx-3, cy); ctx.lineTo(cx, cy-2); ctx.lineTo(cx, cy+2);
+                    }
+                    ctx.fill();
+
+                    // Tail
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(x+10, y+8, 2, 2);
+                    ctx.fillRect(x+8, y+10, 2, 2);
                 }
             },
 
